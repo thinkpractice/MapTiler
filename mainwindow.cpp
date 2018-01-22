@@ -11,10 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    _geoServiceProvider = new QGeoServiceProvider("osm");
-    _geoCodingManager = _geoServiceProvider->geocodingManager();
-    connect(_geoCodingManager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)), this, SLOT(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
-    connect(_geoCodingManager, SIGNAL(finished(QGeoCodeReply*)), this, SLOT(geoLocationFound(QGeoCodeReply*)));
+    setGeoServiceProvider(new QGeoServiceProvider("osm"));
 
     _geoServiceComboBox = findChild<QComboBox*>("geoServiceComboBox");
     connect(_geoServiceComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(comboBoxIndexChanged(const QString&)));
@@ -32,12 +29,25 @@ MainWindow::~MainWindow()
     delete _geoServiceProvider;
 }
 
+void MainWindow::setGeoServiceProvider(QGeoServiceProvider* serviceProvider)
+{
+    if (_geoServiceProvider)
+        delete _geoServiceProvider;
+    _geoServiceProvider = serviceProvider;
+    _geoCodingManager = _geoServiceProvider->geocodingManager();
+    connect(_geoCodingManager, SIGNAL(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)), this, SLOT(error(QGeoCodeReply*,QGeoCodeReply::Error,QString)));
+    connect(_geoCodingManager, SIGNAL(finished(QGeoCodeReply*)), this, SLOT(geoLocationFound(QGeoCodeReply*)));
+}
+
 QStandardItemModel* MainWindow::createServiceProviderList()
 {
     QStandardItemModel* serviceProviderModel = new QStandardItemModel();
     QStringList qGeoSrvList = QGeoServiceProvider::availableServiceProviders();
     for (QString entry : qGeoSrvList)
     {
+        QGeoServiceProvider provider(entry);
+        if (provider.geocodingFeatures().testFlag(QGeoServiceProvider::NoGeocodingFeatures))
+            continue;
         QStandardItem* item = new QStandardItem(entry);
         serviceProviderModel->appendRow(item);
     }
@@ -66,5 +76,5 @@ void MainWindow::error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString
 
 void MainWindow::comboBoxIndexChanged(const QString &text)
 {
-    cout << text.toStdString() << " selected in combobox" << endl;
+    setGeoServiceProvider(new QGeoServiceProvider(text));
 }

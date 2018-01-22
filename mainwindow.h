@@ -29,6 +29,7 @@ public slots:
 
 private:
     QStandardItemModel* createServiceProviderList();
+    void setGeoServiceProvider(QGeoServiceProvider* serviceProvider);
 
 private:
     Ui::MainWindow *ui;
