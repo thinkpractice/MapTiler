@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui location positioning
+QT       += core gui location positioning quickwidgets quickcontrols2
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,3 +32,6 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
+DISTFILES += \
+    mapview.qml
