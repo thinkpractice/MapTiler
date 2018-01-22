@@ -5,7 +5,7 @@ import QtPositioning 5.8
 Rectangle {
     id: rectangle
     width: 400
-    height: 200
+    height: 400
 
     Plugin {
         id: mapPlugin
