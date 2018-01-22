@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QListView>
 #include <QtLocation/QGeoServiceProvider>
 #include <QtLocation/QGeoCodingManager>
 #include <QtLocation/QGeoCodeReply>
@@ -37,6 +38,7 @@ private:
     QComboBox* _geoServiceComboBox;
     QGeoServiceProvider* _geoServiceProvider;
     QGeoCodingManager* _geoCodingManager;
+    QListView* _geoQueryResultsView;
 };
 
 #endif // MAINWINDOW_H

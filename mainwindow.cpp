@@ -1,13 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QStandardItem>
+#include <QGeoAddress>
 #include <iostream>
 
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    _geoServiceProvider(NULL)
 {
     ui->setupUi(this);
 
@@ -18,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _geoServiceComboBox->setModel(createServiceProviderList());
 
     _addressField = findChild<QLineEdit*>("addressField");
+    _geoQueryResultsView = findChild<QListView*>("geoQueryResultsView");
 
     QPushButton* searchButton = findChild<QPushButton*>("searchButton");
     connect(searchButton, SIGNAL(clicked(bool)), this, SLOT(searchButtonClicked(bool)));
@@ -62,11 +65,15 @@ void MainWindow::searchButtonClicked(bool checked)
 
 void MainWindow::geoLocationFound(QGeoCodeReply* reply)
 {
+    QStandardItemModel* geoQueryResultsModel = new QStandardItemModel();
     cout << reply->locations().size() << "error=" << reply->errorString().toStdString() << endl;
     for (auto location : reply->locations())
     {
-        cout << location.coordinate().latitude() << "," << location.coordinate().longitude() << endl;
+        QString locationString = QString("%1 - (%2, %3)").arg(location.address().text()).arg(location.coordinate().latitude()).arg(location.coordinate().longitude());
+        QStandardItem* queryResult = new QStandardItem(locationString);
+        geoQueryResultsModel->appendRow(queryResult);
     }
+    _geoQueryResultsView->setModel(geoQueryResultsModel);
 }
 
 void MainWindow::error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString)
