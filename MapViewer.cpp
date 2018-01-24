@@ -15,14 +15,33 @@ int main()
         cout << "Error occurred" << endl;
 	return -1;
     }
-
+    cout << "raster count=" << poDataset->GetRasterCount() << endl;
+    cout << "layer count=" << poDataset->GetLayerCount() << endl;
+    cout << "gcp count=" << poDataset->GetGCPCount() << endl;
     cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
+    cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
+
+    char** metadata = poDataset->GetMetadata("SUBDATASETS");
+    if (metadata)
+    {
+        for (int i = 0; metadata[i]; i++)
+	{
+	   cout << metadata[i] << endl;
+	}
+    }	
+
+    if (!poBand)
+    {
+	cout << "poBand not initialized" << endl;
+	return -1;
+    } 
 
     cout << "Get BlockSize" << endl;
     int nXBlockSize, nYBlockSize;
     poBand->GetBlockSize(&nXBlockSize, &nYBlockSize);
 
+    cout << "Calculate number of blocks" << endl;
     int nXBlocks = (poBand->GetXSize() + nXBlockSize - 1) / nXBlockSize;
     int nYBlocks = (poBand->GetYSize() + nYBlockSize - 1) / nYBlockSize;
     
