@@ -7,11 +7,17 @@
 
 using namespace std;
 
+struct Dataset
+{
+    string title;
+    string url;
+};
+
 vector<string> splitKeyValuePair(const char* keyValueString)
 {
     vector <string> matchResults;
 
-    regex re("(\\w+)=(.+)");
+    regex re(R"((\w+)=(.+))");
     cmatch matches;
     
     if (regex_match(keyValueString, matches, re))
@@ -25,36 +31,86 @@ vector<string> splitKeyValuePair(const char* keyValueString)
     return matchResults;
 }
 
+
+string getKeyType(string key)
+{
+    regex re(R"((\w+_\d+_)(\w+))");
+    smatch matches;
+    if (regex_match(key, matches, re))
+    {
+        return matches[2];
+    }
+    return "";
+}
+
 int main()
 {
-    GDALDataset  *poDataset;
     GDALAllRegister();
+
     const char *pszFilename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
-    poDataset = (GDALDataset *) GDALOpen( pszFilename, GA_ReadOnly );
-    if( poDataset == NULL )
+    GDALDataset  *wmtsDataset = (GDALDataset *) GDALOpen( pszFilename, GA_ReadOnly );
+    if( wmtsDataset == NULL )
     {
         cout << "Error occurred" << endl;
         return -1;
     }
+
+    char** metadata = wmtsDataset->GetMetadata("SUBDATASETS");
+
+    vector<Dataset> datasets;
+    if (metadata)
+    {
+        for (int i = 0; metadata[i]; i++)
+        {
+               vector<string> matches = splitKeyValuePair(metadata[i]);
+               string key = matches[1];
+               string value = matches[2];
+               string keyType = getKeyType(key);
+               Dataset dataset;
+               if (keyType == "NAME")
+               {
+                   dataset.url = value;
+                   datasets.push_back(dataset);
+               }
+               else if (keyType  == "DESC")
+               {
+                   Dataset& dataset = datasets.back();
+                   dataset.title = value;
+               }
+        }
+
+        int i = 0;
+        for (auto& dataset : datasets)
+        {
+            cout << i << ") title=" << dataset.title << ", url=" << dataset.url << endl;
+            i++;
+        }
+
+    }
+
+    GDALDataset *poDataset = wmtsDataset;
+    if (datasets.size() > 0)
+    {
+        cout << "Choose a dataset" << endl;
+        string input;
+        int datasetIndex = -1;
+        do
+        {
+            getline(cin, input);
+            datasetIndex = stoi(input);
+        }
+        while (datasetIndex >= 0 && datasetIndex < datasets.size());
+        poDataset = (GDALDataset*)GDALOpen(datasets[datasetIndex].url.c_str(), GA_ReadOnly);
+    }
+
+     
     cout << "raster count=" << poDataset->GetRasterCount() << endl;
     cout << "layer count=" << poDataset->GetLayerCount() << endl;
     cout << "gcp count=" << poDataset->GetGCPCount() << endl;
     cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
     cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
-
-    char** metadata = poDataset->GetMetadata("SUBDATASETS");
-    if (metadata)
-    {
-        for (int i = 0; metadata[i]; i++)
-        {
-               cout << metadata[i] << endl;
-               vector<string> matches = splitKeyValuePair(metadata[i]);
-               cout << matches[1] << endl;
-               cout << matches[2] << endl;
-        }
-    }
-
+    
     if (!poBand)
     {
         cout << "poBand not initialized" << endl;
