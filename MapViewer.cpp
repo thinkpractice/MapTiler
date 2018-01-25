@@ -91,15 +91,15 @@ int main()
     GDALDataset *poDataset = wmtsDataset;
     if (datasets.size() > 0)
     {
-        cout << "Choose a dataset" << endl;
         string input;
         int datasetIndex = -1;
         do
         {
+            cout << "Choose a dataset" << endl;
             getline(cin, input);
             datasetIndex = stoi(input);
         }
-        while (datasetIndex >= 0 && datasetIndex < datasets.size());
+        while (datasetIndex < 0 || datasetIndex >= datasets.size());
         poDataset = (GDALDataset*)GDALOpen(datasets[datasetIndex].url.c_str(), GA_ReadOnly);
     }
 
