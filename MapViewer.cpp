@@ -6,6 +6,7 @@
 #include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <GL/gl.h>
 
 using namespace std;
 
@@ -134,8 +135,8 @@ int main()
     cout << "===GeoTransform===" << endl;
 
 
-
-    cout << "raster count=" << poDataset->GetRasterCount() << endl;
+    int rasterCount = poDataset->GetRasterCount();
+    cout << "raster count=" << rasterCount << endl;
     cout << "raster X size=" << poDataset->GetRasterXSize() << endl;
     cout << "raster Y size=" << poDataset->GetRasterYSize() << endl;
     cout << "layer count=" << poDataset->GetLayerCount() << endl;
@@ -162,20 +163,30 @@ int main()
     
     cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
     cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";
-    /*
-    for (int y = 0; y < nYBlocks; y++)
+    
+    //ignore 4th raster for now
+    int arrayLength = nXBlockSize*nYBlockSize*(rasterCount-1);
+    GLubyte textureData[arrayLength];
+    for (int x  = 0; x < arrayLength; x += 3)
     {
+        textureData[x] = 255;
+        textureData[x+1] = 0;
+        textureData[x+2] = 0;
+    }
+    
+    /*for (int rasterIndex = 1; rasterIndex < rasterCount; rasterIndex++)
+    {
+        GDALRasterBand* band = poDataset->GetRasterBand(rasterIndex)
+         
         GByte* data = (GByte*)CPLMalloc(nXBlockSize * nYBlockSize);
-        for (int x = 0; x < nXBlocks; x++)
-        {
-            CPLErr error = poBand->ReadBlock(x, y, data);
-            if (error != CPLErr::CE_None)
-                CPLFree(data);
-                continue;
-        }
+        CPLErr error = band->ReadBlock(x, y, data);
+        if (error != CPLErr::CE_None)
+            CPLFree(data);
+            return;
+
+        
         CPLFree(data);
     }*/
-
     // Initialise GLFW
     if( !glfwInit() )
     {
@@ -184,10 +195,8 @@ int main()
     }
 
     glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2); // We want OpenGL 3.3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
     // Open a window and create its OpenGL context
     GLFWwindow* window; // (In the accompanying source code, this variable is global for simplicity)
@@ -209,10 +218,40 @@ int main()
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    // Create one OpenGL texture
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // "Bind" the newly created texture : all future texture functions will modify this texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Give the image to OpenGL
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, nXBlockSize, nYBlockSize, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
     do
     {
-        // Draw nothing, see you in tutorial 2 !
+        /*glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);*/
 
+        glClearDepth(1.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glEnable(GL_TEXTURE_2D);
+        //glColor3f(1.0, 1.0, 1.0);
+        glBindTexture( GL_TEXTURE_2D, textureID);
+        glBegin(GL_POLYGON);
+            glTexCoord2f(0.0, 0.0); glVertex3f(0.25, 0.25, 0.0);
+            glTexCoord2f(1.0, 0.0); glVertex3f(0.75, 0.25, 0.0);
+            glTexCoord2f(1.0, 1.0); glVertex3f(0.75, 0.75, 0.0);
+            glTexCoord2f(0.0, 1.0); glVertex3f(0.25, 0.75, 0.0);
+        glEnd();
+
+        
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -220,7 +259,7 @@ int main()
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
     glfwWindowShouldClose(window) == 0 );
-
+    
     GDALClose(poDataset);
     return 0;
 }
