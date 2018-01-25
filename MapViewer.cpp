@@ -121,12 +121,14 @@ int main()
     int nXBlockSize, nYBlockSize;
     poBand->GetBlockSize(&nXBlockSize, &nYBlockSize);
 
-    cout << "Calculate number of blocks" << endl;
+    cout << "Blocksize (" << nXBlockSize << "," << nYBlockSize << ")" << endl;
+
+    /*cout << "Calculate number of blocks" << endl;
     int nXBlocks = (poBand->GetXSize() + nXBlockSize - 1) / nXBlockSize;
     int nYBlocks = (poBand->GetYSize() + nYBlockSize - 1) / nYBlockSize;
     
     cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
-    cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";		
+    cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";
 
     for (int y = 0; y < nYBlocks; y++)
     {
@@ -139,7 +141,7 @@ int main()
                 continue;
         }
         CPLFree(data);
-    }
+    }*/
 
     return 0;
 }
