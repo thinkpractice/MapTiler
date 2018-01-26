@@ -7,4 +7,4 @@ project(MapViewer)
 include_directories(/usr/include/gdal)
 
 add_executable(MapViewer MapViewer.cpp)
-target_link_libraries(MapViewer libgdal.so)
+target_link_libraries(MapViewer libgdal.so libGL.so libGLEW.so libglfw.so)

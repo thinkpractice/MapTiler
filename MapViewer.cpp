@@ -271,10 +271,10 @@ int main()
         //glColor3f(1.0, 1.0, 1.0);
         glBindTexture( GL_TEXTURE_2D, textureID);
         glBegin(GL_POLYGON);
-            glTexCoord2f(0.0, 0.0); glVertex3f(0.25, 0.25, 0.0);
-            glTexCoord2f(1.0, 0.0); glVertex3f(0.75, 0.25, 0.0);
-            glTexCoord2f(1.0, 1.0); glVertex3f(0.75, 0.75, 0.0);
-            glTexCoord2f(0.0, 1.0); glVertex3f(0.25, 0.75, 0.0);
+            glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
+            glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
+            glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
+            glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
         glEnd();
 
         
