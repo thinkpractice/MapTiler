@@ -55,6 +55,29 @@ void printMetadataList(GDALDataset* dataset)
     }
 }
 
+
+GByte* getDataForBand(GDALDataset *poDataset, int rasterIndex, int x, int y, int width, int height)
+{
+    GDALRasterBand* band = poDataset->GetRasterBand(rasterIndex);
+     
+    printf( "Type=%s, ColorInterp=%s\n",
+    GDALGetDataTypeName(band->GetRasterDataType()),
+    GDALGetColorInterpretationName(
+            band->GetColorInterpretation()) );
+
+    GByte* data = (GByte*)CPLMalloc(width * height);
+
+    //CPLErr error = band->ReadBlock(x, y, data);
+    CPLErr error = band->RasterIO(GDALRWFlag::GF_Read, x, y, width, height, data, width, height, GDALDataType::GDT_Byte,0,0);
+    if (error != CPLErr::CE_None)
+    {
+        cout << "error=" << error << endl;
+        CPLFree(data);
+        return nullptr;
+    }
+    return data;
+}
+        
 int main()
 {
     GDALAllRegister();
@@ -163,30 +186,37 @@ int main()
     
     cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
     cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";
-    
-    //ignore 4th raster for now
-    int arrayLength = nXBlockSize*nYBlockSize*(rasterCount-1);
-    GLubyte textureData[arrayLength];
-    for (int x  = 0; x < arrayLength; x += 3)
-    {
-        textureData[x] = 255;
-        textureData[x+1] = 0;
-        textureData[x+2] = 0;
-    }
-    
-    /*for (int rasterIndex = 1; rasterIndex < rasterCount; rasterIndex++)
-    {
-        GDALRasterBand* band = poDataset->GetRasterBand(rasterIndex)
-         
-        GByte* data = (GByte*)CPLMalloc(nXBlockSize * nYBlockSize);
-        CPLErr error = band->ReadBlock(x, y, data);
-        if (error != CPLErr::CE_None)
-            CPLFree(data);
-            return;
 
-        
-        CPLFree(data);
-    }*/
+    int x = poDataset->GetRasterXSize() / 2 + 10000;
+    int y = poDataset->GetRasterYSize() / 2 + 10000;
+    int width = nXBlockSize * 10;
+    int height = nYBlockSize * 10;
+    GByte* redData = getDataForBand(poDataset, 1, x, y, width, height);
+    GByte* blueData = getDataForBand(poDataset, 2, x, y, width, height);
+    GByte* greenData = getDataForBand(poDataset, 3, x, y, width, height);
+    GByte* alphaData = getDataForBand(poDataset, 4, x, y, width, height);
+    if (!redData || !blueData || !greenData)
+    {
+        cout << "redData=" << redData << ",blueData=" << blueData << ",greenData=" << greenData << endl;
+        return -1;
+    }
+    //ignore 4th raster for now
+    int numberOfTilePixels = width*height;
+    int arrayLength = numberOfTilePixels * rasterCount;
+
+    GLubyte textureData[arrayLength];
+    for (int x  = 0, i = 0; x < arrayLength; x += rasterCount, i++)
+    {
+        textureData[x] = redData[i];
+        textureData[x+1] = blueData[i];
+        textureData[x+2] = greenData[i];
+        textureData[x+3] = alphaData[i];
+    }
+
+    CPLFree(redData);
+    CPLFree(blueData);
+    CPLFree(greenData);
+    
     // Initialise GLFW
     if( !glfwInit() )
     {
@@ -227,17 +257,13 @@ int main()
     glBindTexture(GL_TEXTURE_2D, textureID);
 
     // Give the image to OpenGL
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, nXBlockSize, nYBlockSize, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     do
     {
-        /*glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);*/
-
         glClearDepth(1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
