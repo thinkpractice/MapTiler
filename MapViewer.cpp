@@ -262,10 +262,30 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+    glClearStencil(0);
     do
     {
         glClearDepth(1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //Draw into the stencil buffer
+        glLoadIdentity();
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_ALWAYS, 1, 1);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        
+        glBegin(GL_TRIANGLES);
+            glVertex2f(0.25, 0.0);
+            glVertex2f(0.75, 0.0);
+            glVertex2f(0.5, 0.5);
+        glEnd();
+
+        //Draw texture
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+        glStencilFunc(GL_EQUAL, 1, 1);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
         glEnable(GL_TEXTURE_2D);
         //glColor3f(1.0, 1.0, 1.0);
@@ -277,7 +297,7 @@ int main()
             glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
         glEnd();
 
-        
+        glDisable(GL_STENCIL_TEST);
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
