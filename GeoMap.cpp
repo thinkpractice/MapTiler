@@ -13,26 +13,31 @@ Area GeoMap::GetMapArea()
 void GeoMap::GetTilesForArea(const Area& area)
 {
     //TODO convert area into rect, and get tiles for rect
-    Rect fullAreaRect = GetPixelRangeForArea(area);
+    Rect fullAreaRect = RectForArea(area);
     for (auto& tileRect : GetTilesForRect(fullAreaRect))
     {
-        GetTileForRect(tileRect);
+        Area tileArea = AreaForRect(tileRect);
+        GetTileForRect(tileArea, tileRect);
     }
 }
 
-Rect GeoMap::GetPixelRangeForArea(const Area& area)
+Rect GeoMap::RectForArea(const Area& area)
 {
     return Rect(0, 0, 0, 0);
 }
 
-vector<Rect> GeoMap::GetTilesForRect(Rect rect)
+Area GeoMap::AreaForRect(const Rect& rect)
+{
+}
+
+vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 {
     vector<Rect> tileRectangles;
 
     return tileRectangles;
 }
 
-GeoTile GeoMap::GetTileForRect(Rect rect)
+GeoTile GeoMap::GetTileForRect(const Area& area, const Rect& rect)
 {
-    return GeoTile(_mapArea);
+    return GeoTile(area);
 }

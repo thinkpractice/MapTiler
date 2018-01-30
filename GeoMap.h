@@ -17,9 +17,11 @@ class GeoMap
         void GetTilesForArea(const Area& area);
 
     private:
-        Rect GetPixelRangeForArea(const Area& area);
-        vector<Rect> GetTilesForRect(Rect rect);
-        GeoTile GetTileForRect(Rect rect);
+        Rect RectForArea(const Area& area);
+        Area AreaForRect(const Rect& rect);
+
+        vector<Rect> GetTilesForRect(const Rect& rect);
+        GeoTile GetTileForRect(const Area& area, const Rect& rect);
 
     private:
         Area _mapArea;
