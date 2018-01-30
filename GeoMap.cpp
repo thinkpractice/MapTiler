@@ -22,7 +22,7 @@ void GeoMap::GetTilesForArea(const Area& area)
 
 Rect GeoMap::GetPixelRangeForArea(const Area& area)
 {
-    return Rect(0,0, 0, 0);
+    return Rect(0, 0, 0, 0);
 }
 
 vector<Rect> GeoMap::GetTilesForRect(Rect rect)
@@ -34,4 +34,5 @@ vector<Rect> GeoMap::GetTilesForRect(Rect rect)
 
 GeoTile GeoMap::GetTileForRect(Rect rect)
 {
+    return GeoTile();
 }
