@@ -5,7 +5,7 @@ GeoMap::GeoMap(const Area& mapArea)
 {
 }
 
-Area GetMapArea()
+Area GeoMap::GetMapArea()
 {
     return _mapArea;
 }
@@ -34,5 +34,5 @@ vector<Rect> GeoMap::GetTilesForRect(Rect rect)
 
 GeoTile GeoMap::GetTileForRect(Rect rect)
 {
-    return GeoTile();
+    return GeoTile(_mapArea);
 }

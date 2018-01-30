@@ -6,7 +6,7 @@
 class Area
 {
     public:
-        Area(SpacialReference& leftTop, SpatialReference& bottomRight);
+        Area(const SpatialReference& leftTop, const SpatialReference& bottomRight);
 
         SpatialReference LeftTop();
         SpatialReference BottomRight();

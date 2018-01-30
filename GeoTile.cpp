@@ -1,6 +1,7 @@
 #include "GeoTile.h"
 
-GeoTile::GeoTile()
+GeoTile::GeoTile(const Area& area)
+            :   _area(area)
 {
 }
 

@@ -1,6 +1,6 @@
 #include "Area.h"
 
-Area::Area(SpatialReference& leftTop, SpatialReference& bottomRight)
+Area::Area(const SpatialReference& leftTop, const SpatialReference& bottomRight)
         :   _leftTop(leftTop),
             _bottomRight(bottomRight)
 {

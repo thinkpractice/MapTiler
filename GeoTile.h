@@ -6,7 +6,7 @@
 class GeoTile
 {
     public:
-        GeoTile();
+        GeoTile(const Area& area);
         virtual ~GeoTile();
 
     private:

@@ -3,6 +3,7 @@
 
 #include "Area.h"
 #include "Rect.h"
+#include "GeoTile.h"
 #include <vector>
 
 using namespace std;
