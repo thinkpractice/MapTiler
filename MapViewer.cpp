@@ -269,7 +269,7 @@ int main()
         
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Draw into the stencil buffer
+        //Draw mask into the stencil buffer
         glLoadIdentity();
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glEnable(GL_STENCIL_TEST);
