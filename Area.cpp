@@ -6,7 +6,6 @@ Area::Area(SpatialReference& leftTop, SpatialReference& bottomRight)
 {
 }
 
-
 SpatialReference Area::LeftTop()
 {
     return _leftTop;

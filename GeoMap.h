@@ -1,18 +1,27 @@
 #ifndef GEOMAP_H
 #define GEOMAP_H
 
-#include "SpatialReference.h"
+#include "Area.h"
+#include "Rect.h"
+#include <vector>
+
+using namespace std;
 
 class GeoMap
 {
     public:
-        GeoMap(const SpatialReference &reference);
+        GeoMap(const Area& mapArea);
         
-        SpatialReference GetMapReference();
+        Area GetMapArea();
         void GetTilesForArea(const Area& area);
 
     private:
-        SpatialReference _spatialReference;
+        Rect GetPixelRangeForArea(const Area& area);
+        vector<Rect> GetTilesForRect(Rect rect);
+        GeoTile GetTileForRect(Rect rect);
+
+    private:
+        Area _mapArea;
 
 };
 

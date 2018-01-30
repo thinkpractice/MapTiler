@@ -9,6 +9,7 @@ class SpatialReference
         SpatialReference(string epsgCode);
 
         string EpsgCode();
+        bool hasEpsgCode(string epsgCode);
 
     private:
         string _epsgCode;
