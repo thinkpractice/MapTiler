@@ -6,9 +6,10 @@
 class GeoMap
 {
     public:
-        GeoMap(SpatialReference &reference);
+        GeoMap(const SpatialReference &reference);
         
         SpatialReference GetMapReference();
+        void GetTilesForArea(const Area& area);
 
     private:
         SpatialReference _spatialReference;
