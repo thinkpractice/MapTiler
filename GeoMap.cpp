@@ -20,10 +20,18 @@ void GeoMap::GetTilesForArea(const Area& area)
     }
 }
 
-
 vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 {
     vector<Rect> tileRectangles;
+    int tileWidth, tileHeight = 0;
+    tie(tileWidth, tileHeight) = GetTileSize();
+    for (int x = rect.X(); x <= rect.Width() && x < WidthInPixels() ; x += tileWidth)
+    {
+        for (int y = rect.Y(); y <= rect.Height() && y < HeightInPixels(); y += tileHeight)
+        {
+            tileRectangles.push_back(Rect(x, y, tileWidth, tileHeight));
+        }
+    }
 
     return tileRectangles;
 }
