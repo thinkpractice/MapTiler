@@ -1,5 +1,8 @@
 #include "GeoMapProvider.h"
 #include "Utils.h"
+#include "GDALMap.h"
+#include "gdal_priv.h"
+#include <iostream>
 
 #define kNameFieldKey "NAME"
 #define kDescriptionFieldKey "DESC"
@@ -40,7 +43,7 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
     char** metadata = dataset->GetMetadata("SUBDATASETS");
     if (!metadata)
     {
-        maps.push_back(new GeoMap(_filename));
+        maps.push_back(new GDALMap(_filename));
     }
     
     for (int i = 0; metadata[i]; i++)
@@ -48,7 +51,7 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
            vector<string> matches = Utils::SplitKeyValuePair(metadata[i]);
            string key = matches[1];
            string value = matches[2];
-           string keyType = GetKeyType(key);
+           string keyType = Utils::GetKeyType(key);
            if (keyType == kNameFieldKey)
            {
                maps.push_back(new GDALMap(value));

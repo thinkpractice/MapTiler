@@ -20,7 +20,7 @@ class GeoMap
         virtual Area GetMapArea() = 0;
 
     protected:
-        virtual GeoTile* GetTileForRect(const Area& area, const Rect& rect) = 0;
+        virtual GeoTile* GetTileForRect(const Rect& rect, const Area& area) = 0;
 
         virtual Rect RectForArea(const Area& area) = 0;
         virtual Area AreaForRect(const Rect& rect) = 0;
@@ -28,7 +28,6 @@ class GeoMap
         vector<Rect> GetTilesForRect(const Rect& rect);
 
     private:
-        Area _mapArea;
         string _title;
 
 };

@@ -5,22 +5,22 @@ Rect::Rect(int x, int y, int width, int height)
 {
 }
 
-int Rect::X()
+int Rect::X() const
 {
     return _x;
 }
 
-int Rect::Y()
+int Rect::Y() const
 {
     return _y;
 }
 
-int Rect::Width()
+int Rect::Width() const
 {
     return _width;
 }
 
-int Rect::Height()
+int Rect::Height() const
 {
     return _height;
 }

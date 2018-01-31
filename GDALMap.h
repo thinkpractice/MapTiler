@@ -19,7 +19,13 @@ class GDALMap : public GeoMap
         int WidthInPixels();
         int HeightInPixels();
 
+        Area GetMapArea();
+
+    protected:
         GeoTile* GetTileForRect(const Rect& rectangle, const Area& area);
+
+        Rect RectForArea(const Area& area);
+        Area AreaForRect(const Rect& rect);
 
     private:
         GDALDataset* Dataset();
