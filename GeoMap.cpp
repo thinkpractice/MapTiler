@@ -1,13 +1,17 @@
 #include "GeoMap.h"
 
-GeoMap::GeoMap(const Area& mapArea)
-            :   _mapArea(mapArea)
+GeoMap::GeoMap()
 {
 }
 
 Area GeoMap::GetMapArea()
 {
     return _mapArea;
+}
+
+void GeoMap::SetTitle(string title)
+{
+    _title = title;
 }
 
 void GeoMap::GetTilesForArea(const Area& area)
@@ -21,14 +25,6 @@ void GeoMap::GetTilesForArea(const Area& area)
     }
 }
 
-Rect GeoMap::RectForArea(const Area& area)
-{
-    return Rect(0, 0, 0, 0);
-}
-
-Area GeoMap::AreaForRect(const Rect& rect)
-{
-}
 
 vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 {

@@ -4,15 +4,15 @@
 class Rect
 {
     public:
-        Rect(double x, double y, double width, double height);
+        Rect(int x, int y, int width, int height);
 
-        double X();
-        double Y();
-        double Width();
-        double Height();
+        int X() const;
+        int Y() const;
+        int Width() const;
+        int Height() const;
 
     private:
-        double _x, _y, _width, _height;
+        int _x, _y, _width, _height;
 
 };
 

@@ -15,6 +15,9 @@ class GeoMapProvider
         vector<GeoMap*> Maps();
 
     private:
+        vector<GeoMap*> RetrieveMaps();
+
+    private:
         string _filename;
         vector<GeoMap*> _maps;
 

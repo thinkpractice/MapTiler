@@ -1,7 +1,7 @@
 #include "Utils.h"
 #include <regex>
 
-vector<string> Utils::splitKeyValuePair(const char* keyValueString)
+vector<string> Utils::SplitKeyValuePair(const char* keyValueString)
 {
     vector <string> matchResults;
 
@@ -17,4 +17,15 @@ vector<string> Utils::splitKeyValuePair(const char* keyValueString)
     }
 
     return matchResults;
+}
+
+string Utils::GetKeyType(string key)
+{
+    regex re(R"((\w+_\d+_)(\w+))");
+    smatch matches;
+    if (regex_match(key, matches, re))
+    {
+        return matches[2];
+    }
+    return "";
 }

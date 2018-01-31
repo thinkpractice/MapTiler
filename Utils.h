@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -8,7 +9,8 @@ using namespace std;
 class Utils
 {
     public:
-        static vector<string> splitKeyValuePair(const char* keyValueString);
+        static vector<string> SplitKeyValuePair(const char* keyValueString);
+        static string GetKeyType(string key);
 };
 
 #endif

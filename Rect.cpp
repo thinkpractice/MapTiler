@@ -1,26 +1,26 @@
 #include "Rect.h"
 
-Rect::Rect(double x, double y, double width, double height)
+Rect::Rect(int x, int y, int width, int height)
         : _x(x), _y(y), _width(width), _height(height)
 {
 }
 
-double Rect::X()
+int Rect::X()
 {
     return _x;
 }
 
-double Rect::Y()
+int Rect::Y()
 {
     return _y;
 }
 
-double Rect::Width()
+int Rect::Width()
 {
     return _width;
 }
 
-double Rect::Height()
+int Rect::Height()
 {
     return _height;
 }

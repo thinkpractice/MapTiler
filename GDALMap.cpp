@@ -1,4 +1,5 @@
 #include "GDALMap.h"
+#include <iostream>
 
 GDALMap::GDALMap(string filename)
             :   _filename(filename),
@@ -35,12 +36,12 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
     int arrayLength = numberOfTilePixels * LayerCount();
 
     GByte *rasterData[LayerCount()];
-    for (int i = 0; i < LayerCount()); i++)
+    for (int i = 0; i < LayerCount(); i++)
     {
-        rasterData[i] = GetDataForBand(i, rectangle->X(), rectangle->Y());
+        rasterData[i] = GetDataForBand(i, rectangle.X(), rectangle.Y(), rectangle.Width(), rectangle.Height());
     }
 
-    GeoTile* geoTile = new GeoTile(rectange, area, LayerCount());
+    GeoTile* geoTile = new GeoTile(rectangle, area, LayerCount());
     geoTile->SetRasterData(rasterData);
 
     for (int i = 0; i < LayerCount();i++)
@@ -49,12 +50,21 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
     }
 
     return geoTile;
- }
+}
+
+Rect GDALMap::RectForArea(const Area& area)
+{
+    return Rect(0, 0, 0, 0);
+}
+
+Area GDALMap::AreaForRect(const Rect& rect)
+{
+}
 
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
-        _dataset = (GDALDataset*)GDALOpen(filename);
+        _dataset = (GDALDataset*)GDALOpen(_filename.c_str(), GA_ReadOnly);
     return _dataset;
 }
 
@@ -66,7 +76,7 @@ tuple<int, int> GDALMap::GetTileSize()
     return make_tuple(width, height);
 }
 
-GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y)
+GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int height)
 {
      
     GDALRasterBand* band = Dataset()->GetRasterBand(rasterIndex);

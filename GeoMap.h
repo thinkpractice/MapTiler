@@ -5,26 +5,31 @@
 #include "Rect.h"
 #include "GeoTile.h"
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class GeoMap
 {
     public:
-        GeoMap(const Area& mapArea);
+        GeoMap();
         
-        Area GetMapArea();
+        void SetTitle(string title);
         void GetTilesForArea(const Area& area);
 
-    private:
-        Rect RectForArea(const Area& area);
-        Area AreaForRect(const Rect& rect);
+        virtual Area GetMapArea() = 0;
+
+    protected:
+        virtual GeoTile* GetTileForRect(const Area& area, const Rect& rect) = 0;
+
+        virtual Rect RectForArea(const Area& area) = 0;
+        virtual Area AreaForRect(const Rect& rect) = 0;
 
         vector<Rect> GetTilesForRect(const Rect& rect);
-        GeoTile GetTileForRect(const Area& area, const Rect& rect);
 
     private:
         Area _mapArea;
+        string _title;
 
 };
 

@@ -45,18 +45,18 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
     
     for (int i = 0; metadata[i]; i++)
     {
-           vector<string> matches = Utils::splitKeyValuePair(metadata[i]);
+           vector<string> matches = Utils::SplitKeyValuePair(metadata[i]);
            string key = matches[1];
            string value = matches[2];
-           string keyType = getKeyType(key);
+           string keyType = GetKeyType(key);
            if (keyType == kNameFieldKey)
            {
-               datasets.push_back(new GeoMap(value));
+               maps.push_back(new GDALMap(value));
            }
            else if (keyType  == kDescriptionFieldKey)
            {
-               GeoMap* dataset = datasets.back();
-               dataset->setTitle(value);
+               GeoMap* map = maps.back();
+               map->SetTitle(value);
            }
     }
     return maps;

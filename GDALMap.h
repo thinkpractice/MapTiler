@@ -4,10 +4,12 @@
 #include <string>
 #include <tuple>
 #include "gdal_priv.h"
+#include "GeoTile.h"
+#include "GeoMap.h"
 
 using namespace std;
 
-class GDALMap
+class GDALMap : public GeoMap
 {
     public:
         GDALMap(string filename);
@@ -17,11 +19,11 @@ class GDALMap
         int WidthInPixels();
         int HeightInPixels();
 
-        GeoTile* GetTile(const Rect& rectangle, const Area& area);
+        GeoTile* GetTileForRect(const Rect& rectangle, const Area& area);
 
     private:
         GDALDataset* Dataset();
-        tuple<int, int> GDALMap::GetTileSize();
+        tuple<int, int> GetTileSize();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
 
     private:
