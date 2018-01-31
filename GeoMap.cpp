@@ -39,5 +39,6 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 
 GeoTile GeoMap::GetTileForRect(const Area& area, const Rect& rect)
 {
-    return GeoTile(area);
+//TODO
+//    return GeoTile(area);
 }

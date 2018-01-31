@@ -10,12 +10,13 @@ class GeoTile
         GeoTile(const Rect& rectangle, const Area& area, int numberOfLayers);
         virtual ~GeoTile();
 
+        int NumberOfBytes();
         int NumberOfLayers();
         Rect BoundingRect();
         Area BoundingArea();
 
         unsigned char* Data();
-        void SetRasterData(unsigned char* rasterData);
+        void SetRasterData(unsigned char** rasterData);
 
     private:
         Area _area;

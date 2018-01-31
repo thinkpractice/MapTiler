@@ -27,7 +27,7 @@ int GDALMap::HeightInPixels()
     return Dataset()->GetRasterYSize();
 }
 
-GeoTile* GDALMap::GetTile(const Rect& rectangle, const Area& area)
+GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
 {
     int width, height = 0;
     tie(width, height) = GetTileSize();
