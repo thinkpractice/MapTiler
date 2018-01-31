@@ -27,10 +27,29 @@ int GDALMap::HeightInPixels()
     return Dataset()->GetRasterYSize();
 }
 
-GByte* GDALMap::GetTile(int x, int y)
+GeoTile* GDALMap::GetTile(const Rect& rectangle, const Area& area)
 {
+    int width, height = 0;
+    tie(width, height) = GetTileSize();
+    int numberOfTilePixels = width*height;
+    int arrayLength = numberOfTilePixels * LayerCount();
 
-}
+    GByte *rasterData[LayerCount()];
+    for (int i = 0; i < LayerCount()); i++)
+    {
+        rasterData[i] = GetDataForBand(i, rectangle->X(), rectangle->Y());
+    }
+
+    GeoTile* geoTile = new GeoTile(rectange, area, LayerCount());
+    geoTile->SetRasterData(rasterData);
+
+    for (int i = 0; i < LayerCount();i++)
+    {
+        CPLFree(rasterData[i]);
+    }
+
+    return geoTile;
+ }
 
 GDALDataset* GDALMap::Dataset()
 {
@@ -39,10 +58,18 @@ GDALDataset* GDALMap::Dataset()
     return _dataset;
 }
 
-GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int height)
+tuple<int, int> GDALMap::GetTileSize()
 {
-    GDALRasterBand* band = Dataset()->GetRasterBand(rasterIndex);
+    int width, height = 0;
+    GDALRasterBand* band = Dataset()->GetRasterBand(0);
+    band->GetBlockSize(&width, & height);
+    return make_tuple(width, height);
+}
+
+GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y)
+{
      
+    GDALRasterBand* band = Dataset()->GetRasterBand(rasterIndex);
     printf( "Type=%s, ColorInterp=%s\n",
     GDALGetDataTypeName(band->GetRasterDataType()),
     GDALGetColorInterpretationName(
