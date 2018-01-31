@@ -24,12 +24,12 @@ class GDALMap : public GeoMap
     protected:
         GeoTile* GetTileForRect(const Rect& rectangle, const Area& area);
 
+        tuple<int, int> GetTileSize();
         Rect RectForArea(const Area& area);
         Area AreaForRect(const Rect& rect);
 
     private:
         GDALDataset* Dataset();
-        tuple<int, int> GetTileSize();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
 
     private:

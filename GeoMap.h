@@ -22,6 +22,7 @@ class GeoMap
     protected:
         virtual GeoTile* GetTileForRect(const Rect& rect, const Area& area) = 0;
 
+        virtual tuple<int, int> GetTileSize() = 0;
         virtual Rect RectForArea(const Area& area) = 0;
         virtual Area AreaForRect(const Rect& rect) = 0;
 
