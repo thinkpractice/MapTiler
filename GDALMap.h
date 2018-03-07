@@ -19,6 +19,7 @@ class GDALMap : public GeoMap
         int WidthInPixels();
         int HeightInPixels();
 
+        AffineTransform MapTransform();
         Area GetMapArea();
 
     protected:
@@ -31,6 +32,7 @@ class GDALMap : public GeoMap
     private:
         GDALDataset* Dataset();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
+        SpatialReference RasterToProjectionCoord(double x, double y);
 
     private:
         string _filename;

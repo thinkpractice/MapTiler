@@ -25,3 +25,12 @@ int Rect::Height() const
     return _height;
 }
 
+int Rect::Right() const
+{
+    return X() + Width();
+}
+
+int Rect::Bottom() const
+{
+    return Y() + Height();
+}

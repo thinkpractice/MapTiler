@@ -8,8 +8,11 @@ class Rect
 
         int X() const;
         int Y() const;
+        
         int Width() const;
         int Height() const;
+        int Right() const;
+        int Bottom() const;
 
     private:
         int _x, _y, _width, _height;

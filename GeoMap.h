@@ -4,6 +4,8 @@
 #include "Area.h"
 #include "Rect.h"
 #include "GeoTile.h"
+#include "AffineTransform.h"
+#include <tuple>
 #include <vector>
 #include <string>
 
@@ -17,6 +19,9 @@ class GeoMap
         void SetTitle(string title);
         void GetTilesForArea(const Area& area);
 
+        virtual int WidthInPixels() = 0;
+        virtual int HeightInPixels() = 0;
+        virtual AffineTransform MapTransform() = 0;
         virtual Area GetMapArea() = 0;
 
     protected:

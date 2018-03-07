@@ -167,7 +167,7 @@ int main()
     cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
     cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
-    
+    cout << "projection ref= " << poDataset->GetProjectionRef() << endl;
     if (!poBand)
     {
         cout << "poBand not initialized" << endl;

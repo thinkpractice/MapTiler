@@ -28,6 +28,14 @@ int GDALMap::HeightInPixels()
     return Dataset()->GetRasterYSize();
 }
 
+AffineTransform GDALMap::MapTransform()
+{
+    double transform[6];
+    if (Dataset()->GetGeoTransform(transform) != CPLErr::CE_None)
+        cout << "Error getting geotransform" << endl;
+    return AffineTransform(transform);
+}
+
 Area GDALMap::GetMapArea()
 {
 }
@@ -63,6 +71,9 @@ Rect GDALMap::RectForArea(const Area& area)
 
 Area GDALMap::AreaForRect(const Rect& rect)
 {
+    SpatialReference leftTop = RasterToProjectionCoord(rect.X(), rect.Y());
+    SpatialReference rightBottom = RasterToProjectionCoord(rect.Right(), rect.Bottom());
+    return Area(leftTop, rightBottom);
 }
 
 GDALDataset* GDALMap::Dataset()
@@ -101,3 +112,10 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
     }
     return data;
 }
+
+SpatialReference GDALMap::RasterToProjectionCoord(double x, double y)
+{
+    Point projectionCoord = MapTransform().Transform(Point(x,y));
+    //return SpatialReference(projectionCoord);
+}
+
