@@ -7,6 +7,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
+#include <ogr_spatialref.h>
+#include <ogrsf_frmts.h>
 
 using namespace std;
 
@@ -167,7 +169,11 @@ int main()
     cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
     cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
-    cout << "projection ref= " << poDataset->GetProjectionRef() << endl;
+    const char* projection = poDataset->GetProjectionRef();
+    cout << "projection ref= " << projection << endl;
+
+    OGRSpatialReference oSRS(projection);
+    oSRS.dumpReadable();
     if (!poBand)
     {
         cout << "poBand not initialized" << endl;
