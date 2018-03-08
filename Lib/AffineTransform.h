@@ -10,6 +10,7 @@ class AffineTransform
         virtual ~AffineTransform();
 
         Point Transform(const Point& point);
+        void GetTransformMatrix(double* transform);
 
     private:
         double _transform[6];

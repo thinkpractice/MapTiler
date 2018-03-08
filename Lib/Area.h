@@ -2,18 +2,20 @@
 #define AREA_H
 
 #include "SpatialReference.h"
+#include "Point.h"
 
 class Area
 {
     public:
-        Area(const SpatialReference& leftTop, const SpatialReference& bottomRight);
+        Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
 
-        SpatialReference LeftTop();
-        SpatialReference BottomRight();
+        Point LeftTop() const;
+        Point BottomRight() const;
 
     private:
-        SpatialReference _leftTop;
-        SpatialReference _bottomRight;
+        SpatialReference _spatialReference;
+        Point _leftTop;
+        Point _bottomRight;
 
 };
 

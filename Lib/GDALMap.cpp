@@ -38,6 +38,17 @@ AffineTransform GDALMap::MapTransform()
 
 Area GDALMap::GetMapArea()
 {
+    double transform[6];
+    MapTransform().GetTransformMatrix(transform);
+
+    double minX = transform[0];
+
+    Point topRight = MapTransform().Transform(Point(WidthInPixels(), HeightInPixels()));
+
+    double maxX = topRight.X;
+    double minY = topRight.Y;
+    double maxX = transform[3];
+    return Area( , Point(minX, minY), Point(maxX, maxY));
 }
 
 GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)

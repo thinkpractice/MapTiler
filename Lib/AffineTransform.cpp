@@ -16,3 +16,8 @@ Point AffineTransform::Transform(const Point& point)
     double Yp = _transform[3] + _transform[4] * point.X + _transform[5] * point.Y;
     return Point(Xp, Yp);
 }
+
+void AffineTransform::GetTransformMatrix(double* transform)
+{
+    std::memcpy(transform, _transform, 6 * sizeof(double))
+}

@@ -1,17 +1,23 @@
 #include "Area.h"
 
-Area::Area(const SpatialReference& leftTop, const SpatialReference& bottomRight)
-        :   _leftTop(leftTop),
+Area::Area(const SpatialReference& projectionReference, const Point& leftTop, const Point& bottomRight)
+        :   __spatialReference(projectionReference),
+            _leftTop(leftTop),
             _bottomRight(bottomRight)
 {
 }
 
-SpatialReference Area::LeftTop()
+SpatialReference SpatialReference() const
+{
+    return _spatialReference;
+}
+
+Point Area::LeftTop() const
 {
     return _leftTop;
 }
 
-SpatialReference Area::BottomRight()
+Point Area::BottomRight() const
 {
     return _bottomRight;
 }
