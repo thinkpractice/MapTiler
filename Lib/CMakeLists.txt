@@ -13,9 +13,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # Find the QtWidgets library
-find_package(Qt5 COMPONENTS Widgets Qml Quick Location Gui REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Location REQUIRED)
 
 add_executable(MapViewer ${SRC_FILES})
-target_link_libraries(MapViewer libgdal.so libGL.so libGLEW.so libglfw.so Qt5::Core Qt5::Widgets Qt5::Location)
+target_link_libraries(MapViewer libgdal.so libGL.so libGLEW.so libglfw.so)
 
-
+qt5_use_modules(MapViewer Core Widgets Location)
