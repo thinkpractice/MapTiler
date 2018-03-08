@@ -2,19 +2,29 @@
 #define SPATIAL_REFERENCE_H
 
 #include <string>
+#include <ogr_spatialref.h>
+#include "Point.h"
 
 using namespace std;
 
 class SpatialReference
 {
     public:
-        SpatialReference(string epsgCode);
+        SpatialReference(const char* geoCs);
+        SpatialReference(const Point& coordinate);
+        SpatialReference(const char* wktProjectionRef, const Point& coordinate);
 
-        string EpsgCode();
-        bool hasEpsgCode(string epsgCode);
+        void SetWellKnownGeogCS(const char* geoCs);
+        bool IsSame(SpatialReference& reference);
+        void SetCoordinate(const Point& coordinate);
+        Point Coordinate() const;
+
+        OGRSpatialReference InnerReference();
 
     private:
-        string _epsgCode;
+        OGRSpatialReference _spatialReference;
+        Point _coordinate;
+        
 };
 
 #endif
