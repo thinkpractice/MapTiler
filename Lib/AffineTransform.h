@@ -9,7 +9,8 @@ class AffineTransform
         AffineTransform(double* transform);
         virtual ~AffineTransform();
 
-        Point Transform(const Point& point);
+        Point Transform(const Point& rasterPoint);
+        Point ReverseTransform(const Point& geoPoint);
         void GetTransformMatrix(double* transform);
 
     private:

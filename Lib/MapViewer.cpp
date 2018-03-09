@@ -49,11 +49,8 @@ int main()
 {
     GDALAllRegister();
 
-    const char *pszFilename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
-
-    string filename = pszFilename;
+    string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
-
 
     int i = 0;
     for (auto& dataset : mapProvider.Maps())

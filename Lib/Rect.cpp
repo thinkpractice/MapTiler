@@ -1,7 +1,17 @@
 #include "Rect.h"
+#include <cmath>
 
 Rect::Rect(int x, int y, int width, int height)
         : _x(x), _y(y), _width(width), _height(height)
+{
+}
+
+Rect::Rect(Point leftTop, Point bottomRight)
+        : Rect( leftTop.X,
+                leftTop.Y,
+                abs(bottomRight.X - leftTop.X),
+                abs(bottomRight.Y - leftTop.Y)
+              )
 {
 }
 
@@ -50,7 +60,7 @@ Point Rect::LeftTop() const
     return Point(Left(), Top());
 }
 
-Point Rect::RightBottom() const
+Point Rect::BottomRight() const
 {
     return Point(Right(), Bottom());
 }

@@ -36,8 +36,9 @@ class GDALMap : public GeoMap
     private:
         GDALDataset* Dataset();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
-        Point RasterToProjectionCoord(Point rasterCoord);
 
+        Point RasterToProjectionCoord(Point rasterCoord);
+        Point ProjectionToRasterCoord(Point projectionCoord);
     private:
         GDALDataset* _dataset;
 };

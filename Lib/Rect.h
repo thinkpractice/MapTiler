@@ -7,6 +7,7 @@ class Rect
 {
     public:
         Rect(int x, int y, int width, int height);
+        Rect(Point leftTop, Point bottomRight);
 
         int Left() const;
         int Top() const;
@@ -20,7 +21,7 @@ class Rect
         void SetHeight(int height);
 
         Point LeftTop() const;
-        Point RightBottom() const;
+        Point BottomRight() const;
 
     private:
         int _x, _y, _width, _height;

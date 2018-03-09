@@ -86,17 +86,22 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
 
 Rect GDALMap::RectForArea(const Area& area)
 {
-    return Rect(0, 0, 0, 0);
+    Point areaLeftTop = area.LeftTop();
+    Point areaRightBottom = area.BottomRight();
+
+    Point leftTop = ProjectionToRasterCoord(areaLeftTop);
+    Point rightBottom = ProjectionToRasterCoord(areaRightBottom);
+    return Rect(leftTop, rightBottom);
 }
 
 Area GDALMap::AreaForRect(const Rect& rect)
 {
     Point rasterLeftTop = rect.LeftTop();
-    Point rasterRightBottom = rect.RightBottom();
+    Point rasterBottomRight = rect.BottomRight();
 
     Point leftTop = RasterToProjectionCoord(rasterLeftTop);
-    Point rightBottom = RasterToProjectionCoord(rasterRightBottom);
-    return Area(ProjectionReference(), leftTop, rightBottom);
+    Point bottomRight = RasterToProjectionCoord(rasterBottomRight);
+    return Area(ProjectionReference(), leftTop, bottomRight);
 }
 
 GDALDataset* GDALMap::Dataset()
@@ -141,3 +146,7 @@ Point GDALMap::RasterToProjectionCoord(Point rasterCoord)
     return MapTransform().Transform(rasterCoord);
 }
 
+Point GDALMap::ProjectionToRasterCoord(Point projectionCoord)
+{
+    return MapTransform().ReverseTransform(projectionCoord);
+}

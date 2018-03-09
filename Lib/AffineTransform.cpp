@@ -10,11 +10,18 @@ AffineTransform::~AffineTransform()
 {
 }
 
-Point AffineTransform::Transform(const Point& point)
+Point AffineTransform::Transform(const Point& rasterPoint)
 {
-    double Xp = _transform[0] + _transform[1] * point.X + _transform[2] * point.Y;
-    double Yp = _transform[3] + _transform[4] * point.X + _transform[5] * point.Y;
+    double Xp = _transform[0] + _transform[1] * rasterPoint.X + _transform[2] * rasterPoint.Y;
+    double Yp = _transform[3] + _transform[4] * rasterPoint.X + _transform[5] * rasterPoint.Y;
     return Point(Xp, Yp);
+}
+
+Point AffineTransform::ReverseTransform(const Point& geoPoint)
+{
+    double x = 0;
+    double y = 0;
+    return Point(x, y);
 }
 
 void AffineTransform::GetTransformMatrix(double* transform)
