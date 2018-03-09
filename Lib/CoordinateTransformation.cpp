@@ -1,31 +1,32 @@
 #include "CoordinateTransformation.h"
-#include "Point.h"
 #include <ogr_spatialref.h>
 
-SpatialReference CoordinateTransformation::MapCoordinate(SpatialReference other, string epsgCode)
+Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,
+        SpatialReference targetReference, 
+        Point sourceCoordinate)
 {
-    SpatialReference epsgReference(epsgCode.c_str());
-    if (other.IsSame(epsgReference))
-        return other;
+    if (sourceReference.IsSame(targetReference))
+        return sourceCoordinate;
 
-    OGRSpatialReference sourceReference = other.InnerReference();
-    OGRSpatialReference targetReference = epsgReference.InnerReference();
-    OGRCoordinateTransformation *transformation = OGRCreateCoordinateTransformation(&sourceReference, &targetReference);
+    OGRSpatialReference sourceInnerReference = sourceReference.InnerReference();
+    OGRSpatialReference targetInnerReference = targetReference.InnerReference();
+    OGRCoordinateTransformation *transformation = OGRCreateCoordinateTransformation(&sourceInnerReference, &targetInnerReference);
 
-    Point sourceCoordinate = other.Coordinate();
     double x = sourceCoordinate.X;
     double y = sourceCoordinate.Y;
     transformation->Transform(1, &x, &y);
 
-    epsgReference.SetCoordinate(Point(x, y));
-    return epsgReference;
+    return Point(x, y);
 }
 
 Area CoordinateTransformation::MapArea(Area other, string epsgCode)
 {
-    SpatialReference convertedLeftTop = CoordinateTransformation::MapCoordinate(other.LeftTop(), epsgCode);
-    SpatialReference convertedBottomRight = CoordinateTransformation::MapCoordinate(other.BottomRight(), epsgCode);
+    SpatialReference sourceReference = other.ProjectionReference();
+    SpatialReference targetReference(epsgCode.c_str());
 
-    return Area(convertedLeftTop, convertedBottomRight);
+    Point convertedLeftTop = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.LeftTop());
+    Point convertedBottomRight = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.BottomRight());
+
+    return Area(epsgReference, convertedLeftTop, convertedBottomRight);
 }
 

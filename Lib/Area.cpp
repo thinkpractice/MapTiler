@@ -1,13 +1,13 @@
 #include "Area.h"
 
 Area::Area(const SpatialReference& projectionReference, const Point& leftTop, const Point& bottomRight)
-        :   __spatialReference(projectionReference),
+        :   _spatialReference(projectionReference),
             _leftTop(leftTop),
             _bottomRight(bottomRight)
 {
 }
 
-SpatialReference SpatialReference() const
+SpatialReference Area::ProjectionReference() const
 {
     return _spatialReference;
 }

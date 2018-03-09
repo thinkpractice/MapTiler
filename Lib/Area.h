@@ -9,6 +9,7 @@ class Area
     public:
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
 
+        SpatialReference ProjectionReference() const;
         Point LeftTop() const;
         Point BottomRight() const;
 
