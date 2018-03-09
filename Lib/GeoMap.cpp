@@ -1,7 +1,24 @@
 #include "GeoMap.h"
 
-GeoMap::GeoMap()
+GeoMap::GeoMap(string filename)
+            :   _filename(filename),
+                _title(filename)
 {
+}
+
+string GeoMap::Filename()
+{
+    return _filename;
+}
+
+void GeoMap::SetFilename(string filename)
+{
+    _filename = filename;
+}
+
+string GeoMap::Title()
+{
+    return _title;
 }
 
 void GeoMap::SetTitle(string title)
@@ -11,13 +28,11 @@ void GeoMap::SetTitle(string title)
 
 void GeoMap::GetTilesForArea(const Area& area)
 {
-    //TODO convert area into rect, and get tiles for rect
     Rect fullAreaRect = RectForArea(area);
     for (auto& tileRect : GetTilesForRect(fullAreaRect))
     {
-        Area tileArea = AreaForRect(tileRect);
         //TODO store reference to geoTile somewhere and return them
-        GeoTile* geoTile = GetTileForRect(tileRect, tileArea);
+        GeoTile* geoTile = GetTileForRect(tileRect);
     }
 }
 
@@ -30,8 +45,17 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
     {
         for (int y = rect.Top(); y <= rect.Height() && y < HeightInPixels(); y += tileHeight)
         {
-            //TODO clip tileWidth and tileHeight? Now last tile is not returned?
-            tileRectangles.push_back(Rect(x, y, tileWidth, tileHeight));
+            Rect tileRect = Rect(x, y, tileWidth, tileHeight);
+
+            //clip tile width if tile goes over right border
+            if (tileRect.Right() > WidthInPixels())
+                tileRect.SetWidth(WidthInPixels()-x);
+
+            //clip tile height if tile goes over bottom border
+            if (tileRect.Height() > HeightInPixels())
+                tileRect.SetHeight(HeightInPixels()-y);
+
+            tileRectangles.push_back(tileRect);
         }
     }
 

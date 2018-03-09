@@ -18,6 +18,7 @@ class GDALMap : public GeoMap
         virtual ~GDALMap();
 
         int LayerCount();
+        int RasterCount();
         int WidthInPixels();
         int HeightInPixels();
 
@@ -26,7 +27,7 @@ class GDALMap : public GeoMap
         Area GetMapArea();
 
     protected:
-        GeoTile* GetTileForRect(const Rect& rectangle, const Area& area);
+        GeoTile* GetTileForRect(const Rect& rectangle);
 
         tuple<int, int> GetTileSize();
         Rect RectForArea(const Area& area);
@@ -38,7 +39,6 @@ class GDALMap : public GeoMap
         Point RasterToProjectionCoord(Point rasterCoord);
 
     private:
-        string _filename;
         GDALDataset* _dataset;
 };
 

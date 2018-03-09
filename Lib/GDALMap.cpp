@@ -2,7 +2,7 @@
 #include <iostream>
 
 GDALMap::GDALMap(string filename)
-            :   _filename(filename),
+            :   GeoMap(filename),
                 _dataset(nullptr)
 {
 }
@@ -15,7 +15,12 @@ GDALMap::~GDALMap()
 
 int GDALMap::LayerCount()
 {
-    Dataset()->GetLayerCount();
+    return Dataset()->GetLayerCount();
+}
+
+int GDALMap::RasterCount()
+{
+    return Dataset()->GetRasterCount();
 }
 
 int GDALMap::WidthInPixels()
@@ -54,23 +59,24 @@ Area GDALMap::GetMapArea()
     return Area(ProjectionReference(), Point(minX, minY), Point(maxX, maxY));
 }
 
-GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
+GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
 {
     int width, height = 0;
     tie(width, height) = GetTileSize();
     int numberOfTilePixels = width*height;
-    int arrayLength = numberOfTilePixels * LayerCount();
+    int arrayLength = numberOfTilePixels * RasterCount();
 
-    GByte *rasterData[LayerCount()];
-    for (int i = 0; i < LayerCount(); i++)
+    GByte *rasterData[RasterCount()];
+    for (int i = 0; i < RasterCount(); i++)
     {
         rasterData[i] = GetDataForBand(i, rectangle.Left(), rectangle.Top(), rectangle.Width(), rectangle.Height());
     }
 
-    GeoTile* geoTile = new GeoTile(rectangle, area, LayerCount());
+    Area tileArea = AreaForRect(rectangle);
+    GeoTile* geoTile = new GeoTile(rectangle, tileArea, RasterCount());
     geoTile->SetRasterData(rasterData);
 
-    for (int i = 0; i < LayerCount();i++)
+    for (int i = 0; i < RasterCount();i++)
     {
         CPLFree(rasterData[i]);
     }
@@ -96,7 +102,7 @@ Area GDALMap::AreaForRect(const Rect& rect)
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
-        _dataset = (GDALDataset*)GDALOpen(_filename.c_str(), GA_ReadOnly);
+        _dataset = (GDALDataset*)GDALOpen(Filename().c_str(), GA_ReadOnly);
     return _dataset;
 }
 

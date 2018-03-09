@@ -9,44 +9,9 @@
 #include <GL/gl.h>
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
+#include "GeoMapProvider.h"
 
 using namespace std;
-
-struct Dataset
-{
-    string title;
-    string url;
-};
-
-vector<string> splitKeyValuePair(const char* keyValueString)
-{
-    vector <string> matchResults;
-
-    regex re(R"((\w+)=(.+))");
-    cmatch matches;
-    
-    if (regex_match(keyValueString, matches, re))
-    {
-        for (const auto& matchResult : matches)
-        {
-            matchResults.push_back(string(matchResult));
-        }
-    }
-
-    return matchResults;
-}
-
-
-string getKeyType(string key)
-{
-    regex re(R"((\w+_\d+_)(\w+))");
-    smatch matches;
-    if (regex_match(key, matches, re))
-    {
-        return matches[2];
-    }
-    return "";
-}
 
 void printMetadataList(GDALDataset* dataset)
 {
@@ -85,73 +50,33 @@ int main()
     GDALAllRegister();
 
     const char *pszFilename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
-    GDALDataset  *wmtsDataset = (GDALDataset *) GDALOpen( pszFilename, GA_ReadOnly );
-    if( wmtsDataset == NULL )
+
+    string filename = pszFilename;
+    GeoMapProvider mapProvider(filename);
+
+
+    int i = 0;
+    for (auto& dataset : mapProvider.Maps())
     {
-        cout << "Error occurred" << endl;
-        return -1;
+        cout << i << ") title=" << dataset->Title() << ", url=" << dataset->Filename() << endl;
+        i++;
     }
 
-    printMetadataList(wmtsDataset);
-    char** metadata = wmtsDataset->GetMetadata("SUBDATASETS");
-
-    vector<Dataset> datasets;
-    if (metadata)
+    string input;
+    int datasetIndex = -1;
+    do
     {
-        for (int i = 0; metadata[i]; i++)
-        {
-               vector<string> matches = splitKeyValuePair(metadata[i]);
-               string key = matches[1];
-               string value = matches[2];
-               string keyType = getKeyType(key);
-               Dataset dataset;
-               if (keyType == "NAME")
-               {
-                   dataset.url = value;
-                   datasets.push_back(dataset);
-               }
-               else if (keyType  == "DESC")
-               {
-                   Dataset& dataset = datasets.back();
-                   dataset.title = value;
-               }
-        }
-
-        int i = 0;
-        for (auto& dataset : datasets)
-        {
-            cout << i << ") title=" << dataset.title << ", url=" << dataset.url << endl;
-            i++;
-        }
-
+        cout << "Choose a dataset" << endl;
+        getline(cin, input);
+        datasetIndex = stoi(input);
     }
+    while (datasetIndex < 0 || datasetIndex >= mapProvider.Maps().size());
 
-    GDALDataset *poDataset = wmtsDataset;
-    if (datasets.size() > 0)
-    {
-        string input;
-        int datasetIndex = -1;
-        do
-        {
-            cout << "Choose a dataset" << endl;
-            getline(cin, input);
-            datasetIndex = stoi(input);
-        }
-        while (datasetIndex < 0 || datasetIndex >= datasets.size());
-        poDataset = (GDALDataset*)GDALOpen(datasets[datasetIndex].url.c_str(), GA_ReadOnly);
-        GDALClose(wmtsDataset);
-    }
-
-    printMetadataList(poDataset);
-    char** metadata2 = poDataset->GetMetadata("IMAGE_STRUCTURE");
-    for (int i = 0; metadata2[i]; i++)
-    {
-        cout << metadata2[i] << endl;
-    }
+    GeoMap* chosenMap = mapProvider.Maps()[datasetIndex];
 
     cout << "===GeoTransform===" << endl;
     double geoTransform[6];
-    poDataset->GetGeoTransform(geoTransform);
+    chosenMap->MapTransform().GetTransformMatrix(geoTransform);
     for (int i = 0; i < 6; i++)
     {
         cout << geoTransform[i] << endl;
@@ -159,26 +84,16 @@ int main()
 
     cout << "===GeoTransform===" << endl;
 
+    cout << "layer count=" << chosenMap->LayerCount() << endl;
+    cout << "raster count=" << chosenMap->RasterCount() << endl;
+    cout << "raster X size=" << chosenMap->WidthInPixels() << endl;
+    cout << "raster Y size=" << chosenMap->HeightInPixels() << endl;
 
-    int rasterCount = poDataset->GetRasterCount();
-    cout << "raster count=" << rasterCount << endl;
-    cout << "raster X size=" << poDataset->GetRasterXSize() << endl;
-    cout << "raster Y size=" << poDataset->GetRasterYSize() << endl;
-    cout << "layer count=" << poDataset->GetLayerCount() << endl;
-    cout << "gcp count=" << poDataset->GetGCPCount() << endl;
-    cout << "Get first raster band" << endl;
+    /*cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
     cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
     const char* projection = poDataset->GetProjectionRef();
     cout << "projection ref= " << projection << endl;
-
-    OGRSpatialReference oSRS(projection);
-    oSRS.dumpReadable();
-    if (!poBand)
-    {
-        cout << "poBand not initialized" << endl;
-        return -1;
-    }
 
     cout << "Get BlockSize" << endl;
     int nXBlockSize, nYBlockSize;
@@ -313,5 +228,6 @@ int main()
     glfwWindowShouldClose(window) == 0 );
     
     GDALClose(poDataset);
+    */
     return 0;
 }

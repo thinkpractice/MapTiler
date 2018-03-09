@@ -10,11 +10,14 @@ class Rect
 
         int Left() const;
         int Top() const;
-        
-        int Width() const;
-        int Height() const;
         int Right() const;
         int Bottom() const;
+
+        int Width() const;
+        void SetWidth(int width);
+
+        int Height() const;
+        void SetHeight(int height);
 
         Point LeftTop() const;
         Point RightBottom() const;

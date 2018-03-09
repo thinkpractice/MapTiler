@@ -20,9 +20,19 @@ int Rect::Width() const
     return _width;
 }
 
+void Rect::SetWidth(int width)
+{
+    _width = width;
+}
+
 int Rect::Height() const
 {
     return _height;
+}
+
+void Rect::SetHeight(int height)
+{
+    _height = height;
 }
 
 int Rect::Right() const
