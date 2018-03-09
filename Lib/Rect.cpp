@@ -5,12 +5,12 @@ Rect::Rect(int x, int y, int width, int height)
 {
 }
 
-int Rect::X() const
+int Rect::Left() const
 {
     return _x;
 }
 
-int Rect::Y() const
+int Rect::Top() const
 {
     return _y;
 }
@@ -27,10 +27,20 @@ int Rect::Height() const
 
 int Rect::Right() const
 {
-    return X() + Width();
+    return Left() + Width();
 }
 
 int Rect::Bottom() const
 {
-    return Y() + Height();
+    return Top() + Height();
+}
+
+Point Rect::LeftTop() const
+{
+    return Point(Left(), Top());
+}
+
+Point Rect::RightBottom() const
+{
+    return Point(Right(), Bottom());
 }

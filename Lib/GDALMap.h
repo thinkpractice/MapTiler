@@ -6,6 +6,8 @@
 #include "gdal_priv.h"
 #include "GeoTile.h"
 #include "GeoMap.h"
+#include "SpatialReference.h"
+#include "Point.h"
 
 using namespace std;
 
@@ -19,6 +21,7 @@ class GDALMap : public GeoMap
         int WidthInPixels();
         int HeightInPixels();
 
+        SpatialReference ProjectionReference();
         AffineTransform MapTransform();
         Area GetMapArea();
 
@@ -32,7 +35,7 @@ class GDALMap : public GeoMap
     private:
         GDALDataset* Dataset();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
-        SpatialReference RasterToProjectionCoord(double x, double y);
+        Point RasterToProjectionCoord(Point rasterCoord);
 
     private:
         string _filename;

@@ -27,6 +27,6 @@ Area CoordinateTransformation::MapArea(Area other, string epsgCode)
     Point convertedLeftTop = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.LeftTop());
     Point convertedBottomRight = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.BottomRight());
 
-    return Area(epsgReference, convertedLeftTop, convertedBottomRight);
+    return Area(targetReference, convertedLeftTop, convertedBottomRight);
 }
 

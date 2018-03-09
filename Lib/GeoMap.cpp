@@ -25,10 +25,11 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
     vector<Rect> tileRectangles;
     int tileWidth, tileHeight = 0;
     tie(tileWidth, tileHeight) = GetTileSize();
-    for (int x = rect.X(); x <= rect.Width() && x < WidthInPixels() ; x += tileWidth)
+    for (int x = rect.Left(); x <= rect.Width() && x < WidthInPixels() ; x += tileWidth)
     {
-        for (int y = rect.Y(); y <= rect.Height() && y < HeightInPixels(); y += tileHeight)
+        for (int y = rect.Top(); y <= rect.Height() && y < HeightInPixels(); y += tileHeight)
         {
+            //TODO clip tileWidth and tileHeight
             tileRectangles.push_back(Rect(x, y, tileWidth, tileHeight));
         }
     }

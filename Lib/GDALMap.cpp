@@ -28,6 +28,11 @@ int GDALMap::HeightInPixels()
     return Dataset()->GetRasterYSize();
 }
 
+SpatialReference GDALMap::ProjectionReference()
+{
+    return SpatialReference(Dataset()->GetProjectionRef());
+}
+
 AffineTransform GDALMap::MapTransform()
 {
     double transform[6];
@@ -40,15 +45,13 @@ Area GDALMap::GetMapArea()
 {
     double transform[6];
     MapTransform().GetTransformMatrix(transform);
-
-    double minX = transform[0];
-
     Point topRight = MapTransform().Transform(Point(WidthInPixels(), HeightInPixels()));
 
+    double minX = transform[0];
     double maxX = topRight.X;
     double minY = topRight.Y;
-    double maxX = transform[3];
-    return Area( , Point(minX, minY), Point(maxX, maxY));
+    double maxY = transform[3];
+    return Area(ProjectionReference(), Point(minX, minY), Point(maxX, maxY));
 }
 
 GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
@@ -61,7 +64,7 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle, const Area& area)
     GByte *rasterData[LayerCount()];
     for (int i = 0; i < LayerCount(); i++)
     {
-        rasterData[i] = GetDataForBand(i, rectangle.X(), rectangle.Y(), rectangle.Width(), rectangle.Height());
+        rasterData[i] = GetDataForBand(i, rectangle.Left(), rectangle.Top(), rectangle.Width(), rectangle.Height());
     }
 
     GeoTile* geoTile = new GeoTile(rectangle, area, LayerCount());
@@ -82,9 +85,12 @@ Rect GDALMap::RectForArea(const Area& area)
 
 Area GDALMap::AreaForRect(const Rect& rect)
 {
-    SpatialReference leftTop = RasterToProjectionCoord(rect.X(), rect.Y());
-    SpatialReference rightBottom = RasterToProjectionCoord(rect.Right(), rect.Bottom());
-    return Area(leftTop, rightBottom);
+    Point rasterLeftTop = rect.LeftTop();
+    Point rasterRightBottom = rect.RightBottom();
+
+    Point leftTop = RasterToProjectionCoord(rasterLeftTop);
+    Point rightBottom = RasterToProjectionCoord(rasterRightBottom);
+    return Area(ProjectionReference(), leftTop, rightBottom);
 }
 
 GDALDataset* GDALMap::Dataset()
@@ -124,9 +130,8 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
     return data;
 }
 
-SpatialReference GDALMap::RasterToProjectionCoord(double x, double y)
+Point GDALMap::RasterToProjectionCoord(Point rasterCoord)
 {
-    Point projectionCoord = MapTransform().Transform(Point(x,y));
-    //return SpatialReference(projectionCoord);
+    return MapTransform().Transform(rasterCoord);
 }
 
