@@ -15,7 +15,7 @@ class AffineTransform
 
         Point Transform(const Point& rasterPoint);
         Point ReverseTransform(const Point& geoPoint);
-        void GetTransformMatrix(double* transform);
+        void GetTransformMatrix(double* transform) const;
         
         void ToGdal(double* gdalTransform);
 

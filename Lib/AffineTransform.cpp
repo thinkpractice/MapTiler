@@ -45,7 +45,7 @@ Point AffineTransform::ReverseTransform(const Point& geoPoint)
     return Invert() * geoPoint;
 }
 
-void AffineTransform::GetTransformMatrix(double* transform)
+void AffineTransform::GetTransformMatrix(double* transform) const
 {
     std::memcpy(transform, _transform, sizeof(double) * 9);
 }
