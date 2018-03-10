@@ -130,6 +130,7 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
 
     GByte* data = (GByte*)CPLMalloc(width * height);
 
+    //TODO Use ReadBlock for efficiency and create tile rects corresponding to the block positions
     //CPLErr error = band->ReadBlock(x, y, data);
     CPLErr error = band->RasterIO(GDALRWFlag::GF_Read, x, y, width, height, data, width, height, GDALDataType::GDT_Byte,0,0);
     if (error != CPLErr::CE_None)
