@@ -23,7 +23,7 @@ class GeoMap
         string Title();
         void SetTitle(string title);
 
-        void GetTilesForArea(const Area& area);
+        vector<GeoTile*> GetTilesForArea(const Area& area);
 
         virtual int LayerCount() = 0;
         virtual int RasterCount() = 0;

@@ -10,6 +10,9 @@
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 #include "GeoMapProvider.h"
+#include "Area.h"
+#include "SpatialReference.h"
+#include "Point.h"
 
 using namespace std;
 
@@ -86,6 +89,17 @@ int main()
     cout << "raster X size=" << chosenMap->WidthInPixels() << endl;
     cout << "raster Y size=" << chosenMap->HeightInPixels() << endl;
 
+    SpatialReference gpsReference;
+    gpsReference.SetWellKnownGeogCS("EPSG:4326");
+
+    Area area(gpsReference, Point(50.8903150, 6.0115700), Point(50.8901200, 6.0166710));
+    vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
+    cout << "Retrieved " << tiles.size() << " tiles" << endl;
+
+    for (auto* tile : tiles)
+    {
+        delete tile;
+    }
     /*cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
     cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;

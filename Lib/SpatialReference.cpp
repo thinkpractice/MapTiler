@@ -1,17 +1,10 @@
 #include "SpatialReference.h"
 
-SpatialReference::SpatialReference(const char* geoCs)
-{
-    SetWellKnownGeogCS(geoCs);
-}
-
-SpatialReference::SpatialReference(const Point& coordinate)
-                    :   _coordinate(coordinate)
+SpatialReference::SpatialReference()
 {
 }
 
-SpatialReference::SpatialReference(const char* wktProjectionRef, const Point& coordinate)
-                    :   _coordinate(coordinate)
+SpatialReference::SpatialReference(const char* wktProjectionRef)
 {
     _spatialReference = OGRSpatialReference(wktProjectionRef);
 }
@@ -25,16 +18,6 @@ bool SpatialReference::IsSame(SpatialReference& reference)
 {
     OGRSpatialReference otherReference = reference.InnerReference();
     return _spatialReference.IsSame(&otherReference);
-}
-
-void SpatialReference::SetCoordinate(const Point& coordinate)
-{
-    _coordinate = coordinate;
-}
-
-Point SpatialReference::Coordinate() const
-{
-    return _coordinate;
 }
 
 OGRSpatialReference SpatialReference::InnerReference()

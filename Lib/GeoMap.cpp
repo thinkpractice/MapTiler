@@ -26,14 +26,17 @@ void GeoMap::SetTitle(string title)
     _title = title;
 }
 
-void GeoMap::GetTilesForArea(const Area& area)
+vector<GeoTile*> GeoMap::GetTilesForArea(const Area& area)
 {
+    vector <GeoTile*> tiles;
     Rect fullAreaRect = RectForArea(area);
     for (auto& tileRect : GetTilesForRect(fullAreaRect))
     {
         //TODO store reference to geoTile somewhere and return them
         GeoTile* geoTile = GetTileForRect(tileRect);
+        tiles.push_back(geoTile);
     }
+    return tiles;
 }
 
 vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)

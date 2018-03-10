@@ -69,7 +69,7 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
     GByte *rasterData[RasterCount()];
     for (int i = 0; i < RasterCount(); i++)
     {
-        rasterData[i] = GetDataForBand(i, rectangle.Left(), rectangle.Top(), rectangle.Width(), rectangle.Height());
+        rasterData[i] = GetDataForBand(i+1, rectangle.Left(), rectangle.Top(), rectangle.Width(), rectangle.Height());
     }
 
     Area tileArea = AreaForRect(rectangle);
@@ -114,7 +114,7 @@ GDALDataset* GDALMap::Dataset()
 tuple<int, int> GDALMap::GetTileSize()
 {
     int width, height = 0;
-    GDALRasterBand* band = Dataset()->GetRasterBand(0);
+    GDALRasterBand* band = Dataset()->GetRasterBand(1);
     band->GetBlockSize(&width, & height);
     return make_tuple(width, height);
 }
