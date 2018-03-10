@@ -1,5 +1,8 @@
 #include "AffineTransform.h"
+#include <iostream>
 #include <cstring>
+
+using namespace std;
 
 AffineTransform::AffineTransform()
         :    _transform
@@ -25,12 +28,26 @@ double AffineTransform::Determinant()
     return _transform[0] * _transform[4] - _transform[1] * _transform[3];
 }
 
+bool AffineTransform::IsDegenerate()
+{
+    return Determinant() == 0;
+}
+
 AffineTransform AffineTransform::Invert()
 {
+    if (IsDegenerate())
+        cout << "Cannot invert degenerate transform" << endl;
+        return AffineTransform();
     double idet = 1.0 / Determinant();
+    double ra = _transform[4] * idet;
+    double rb = -1.0 * _transform[1] * idet;
+    double rd = -1.0 * _transform[3] * idet;
+    double re = _transform[0] * idet;
     double inverseTransform[9] =
     {
-
+        ra, rb, -1.0 * _transform[2] * ra - _transform[5] * rb,
+        rd, re, -1.0 * _transform[2] * rd - _transform[5] * re,
+        0.0, 0.0, 1.0
     };
     return AffineTransform(inverseTransform);
 }

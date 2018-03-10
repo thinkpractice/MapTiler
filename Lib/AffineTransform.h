@@ -11,7 +11,9 @@ class AffineTransform
         virtual ~AffineTransform();
 
         double Determinant();
+        bool IsDegenerate();
         AffineTransform Invert();
+
 
         Point Transform(const Point& rasterPoint);
         Point ReverseTransform(const Point& geoPoint);
