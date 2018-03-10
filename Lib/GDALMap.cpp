@@ -49,7 +49,7 @@ AffineTransform GDALMap::MapTransform()
 Area GDALMap::GetMapArea()
 {
     double transform[6];
-    MapTransform().GetTransformMatrix(transform);
+    MapTransform().ToGdal(transform);
     Point topRight = MapTransform().Transform(Point(WidthInPixels(), HeightInPixels()));
 
     double minX = transform[0];
