@@ -36,8 +36,10 @@ bool AffineTransform::IsDegenerate()
 AffineTransform AffineTransform::Invert()
 {
     if (IsDegenerate())
+    {
         cout << "Cannot invert degenerate transform" << endl;
         return AffineTransform();
+    }
     double idet = 1.0 / Determinant();
     double ra = _transform[4] * idet;
     double rb = -1.0 * _transform[1] * idet;
@@ -49,6 +51,16 @@ AffineTransform AffineTransform::Invert()
         rd, re, -1.0 * _transform[2] * rd - _transform[5] * re,
         0.0, 0.0, 1.0
     };
+
+    cout << "Inverse transform" << endl;
+
+    for (int i = 0; i < 9; i++)
+        cout << inverseTransform[i] << endl;
+
+cout << "Inverse transform" << endl;
+
+
+
     return AffineTransform(inverseTransform);
 }
 

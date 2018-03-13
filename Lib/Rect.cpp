@@ -1,7 +1,9 @@
 #include "Rect.h"
 #include <cmath>
 
-Rect::Rect(int x, int y, int width, int height)
+using namespace std;
+
+Rect::Rect(double x, double y, double width, double height)
         : _x(x), _y(y), _width(width), _height(height)
 {
 }
@@ -15,42 +17,42 @@ Rect::Rect(Point leftTop, Point bottomRight)
 {
 }
 
-int Rect::Left() const
+double Rect::Left() const
 {
     return _x;
 }
 
-int Rect::Top() const
+double Rect::Top() const
 {
     return _y;
 }
 
-int Rect::Width() const
+double Rect::Width() const
 {
     return _width;
 }
 
-void Rect::SetWidth(int width)
+void Rect::SetWidth(double width)
 {
     _width = width;
 }
 
-int Rect::Height() const
+double Rect::Height() const
 {
     return _height;
 }
 
-void Rect::SetHeight(int height)
+void Rect::SetHeight(double height)
 {
     _height = height;
 }
 
-int Rect::Right() const
+double Rect::Right() const
 {
     return Left() + Width();
 }
 
-int Rect::Bottom() const
+double Rect::Bottom() const
 {
     return Top() + Height();
 }

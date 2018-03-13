@@ -12,6 +12,7 @@ class CoordinateTransformation
                 SpatialReference targetReference,
                 Point sourceCoordinate);
         static Area MapArea(Area other, string epsgCode);
+        static Area MapArea(Area other, SpatialReference destinationReference);
 };
 
 #endif

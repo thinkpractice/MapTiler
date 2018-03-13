@@ -1,8 +1,16 @@
 #include "GeoMap.h"
+#include <iostream>
+#include "CoordinateTransformation.h"
+
+using namespace std;
 
 GeoMap::GeoMap(string filename)
             :   _filename(filename),
                 _title(filename)
+{
+}
+
+GeoMap::~GeoMap()
 {
 }
 
@@ -26,10 +34,19 @@ void GeoMap::SetTitle(string title)
     _title = title;
 }
 
+Area GeoMap::ConvertToMapProjection(const Area& area)
+{
+    return CoordinateTransformation::MapArea(area, ProjectionReference());
+}
+
 vector<GeoTile*> GeoMap::GetTilesForArea(const Area& area)
 {
+    Area projectedArea = ConvertToMapProjection(area);
+
     vector <GeoTile*> tiles;
-    Rect fullAreaRect = RectForArea(area);
+    Rect fullAreaRect = RectForArea(projectedArea);
+    cout << "fullAreaRect= " << fullAreaRect.Left() << "," << fullAreaRect.Top() << "," << fullAreaRect.Width() << "," << fullAreaRect.Height() << endl;
+
     for (auto& tileRect : GetTilesForRect(fullAreaRect))
     {
         //TODO store reference to geoTile somewhere and return them

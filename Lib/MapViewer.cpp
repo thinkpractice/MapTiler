@@ -88,6 +88,9 @@ int main()
     cout << "raster count=" << chosenMap->RasterCount() << endl;
     cout << "raster X size=" << chosenMap->WidthInPixels() << endl;
     cout << "raster Y size=" << chosenMap->HeightInPixels() << endl;
+    
+    Area mapArea = chosenMap->GetMapArea();
+    cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
     SpatialReference gpsReference;
     gpsReference.SetWellKnownGeogCS("EPSG:4326");
@@ -95,6 +98,8 @@ int main()
     Area area(gpsReference, Point(50.8903150, 6.0115700), Point(50.8901200, 6.0166710));
     vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
     cout << "Retrieved " << tiles.size() << " tiles" << endl;
+
+
 
     for (auto* tile : tiles)
     {

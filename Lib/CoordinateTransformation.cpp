@@ -1,5 +1,6 @@
 #include "CoordinateTransformation.h"
 #include <ogr_spatialref.h>
+#include <iostream>
 
 Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,
         SpatialReference targetReference, 
@@ -16,17 +17,24 @@ Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,
     double y = sourceCoordinate.Y;
     transformation->Transform(1, &x, &y);
 
+    cout << "SourceCoordinate("<< sourceCoordinate.X << "," << sourceCoordinate.Y << "), MapCoordinate(" << x << "," << y << ")";
     return Point(x, y);
 }
 
+
 Area CoordinateTransformation::MapArea(Area other, string epsgCode)
 {
+    SpatialReference destinationReference(epsgCode.c_str());
+    return MapArea(other, destinationReference);
+}
+
+Area CoordinateTransformation::MapArea(Area other, SpatialReference destinationReference)
+{
     SpatialReference sourceReference = other.ProjectionReference();
-    SpatialReference targetReference(epsgCode.c_str());
 
-    Point convertedLeftTop = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.LeftTop());
-    Point convertedBottomRight = CoordinateTransformation::MapCoordinate(sourceReference, targetReference, other.BottomRight());
+    Point convertedLeftTop = CoordinateTransformation::MapCoordinate(sourceReference, destinationReference, other.LeftTop());
+    Point convertedBottomRight = CoordinateTransformation::MapCoordinate(sourceReference, destinationReference, other.BottomRight());
 
-    return Area(targetReference, convertedLeftTop, convertedBottomRight);
+    return Area(destinationReference, convertedLeftTop, convertedBottomRight);
 }
 

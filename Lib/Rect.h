@@ -6,25 +6,25 @@
 class Rect
 {
     public:
-        Rect(int x, int y, int width, int height);
+        Rect(double x, double y, double width, double height);
         Rect(Point leftTop, Point bottomRight);
 
-        int Left() const;
-        int Top() const;
-        int Right() const;
-        int Bottom() const;
+        double Left() const;
+        double Top() const;
+        double Right() const;
+        double Bottom() const;
 
-        int Width() const;
-        void SetWidth(int width);
+        double Width() const;
+        void SetWidth(double width);
 
-        int Height() const;
-        void SetHeight(int height);
+        double Height() const;
+        void SetHeight(double height);
 
         Point LeftTop() const;
         Point BottomRight() const;
 
     private:
-        int _x, _y, _width, _height;
+        double _x, _y, _width, _height;
 
 };
 

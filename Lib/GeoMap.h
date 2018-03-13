@@ -16,6 +16,7 @@ class GeoMap
 {
     public:
         GeoMap(string filename);
+        virtual ~GeoMap();
         
         string Filename();
         void SetFilename(string filename);
@@ -23,6 +24,7 @@ class GeoMap
         string Title();
         void SetTitle(string title);
 
+        Area ConvertToMapProjection(const Area& area);
         vector<GeoTile*> GetTilesForArea(const Area& area);
 
         virtual int LayerCount() = 0;

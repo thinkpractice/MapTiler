@@ -14,7 +14,7 @@ GeoMapProvider::GeoMapProvider(string filename)
 
 GeoMapProvider::~GeoMapProvider()
 {
-    for (auto* map : _maps)
+    for (GeoMap* map : _maps)
     {
         delete map;
     }
@@ -63,6 +63,7 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
                map->SetTitle(value);
            }
     }
+    GDALClose(dataset);
     return maps;
 }
 
