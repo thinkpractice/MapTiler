@@ -61,9 +61,9 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
     vector<Rect> tileRectangles;
     int tileWidth, tileHeight = 0;
     tie(tileWidth, tileHeight) = GetTileSize();
-    for (int x = rect.Left(); x <= rect.Width() && x < WidthInPixels() ; x += tileWidth)
+    for (int x = rect.Left(); x <= rect.Right() && x < WidthInPixels() ; x += tileWidth)
     {
-        for (int y = rect.Top(); y <= rect.Height() && y < HeightInPixels(); y += tileHeight)
+        for (int y = rect.Top(); y <= rect.Bottom() && y < HeightInPixels(); y += tileHeight)
         {
             Rect tileRect = Rect(x, y, tileWidth, tileHeight);
 
@@ -79,6 +79,7 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
         }
     }
 
+    cout << "numberOfTileRectangles=" << tileRectangles.size() << endl;
     return tileRectangles;
 }
 

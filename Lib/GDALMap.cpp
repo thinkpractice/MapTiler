@@ -42,7 +42,10 @@ AffineTransform GDALMap::MapTransform()
 {
     double transform[6];
     if (Dataset()->GetGeoTransform(transform) != CPLErr::CE_None)
+    {
         cout << "Error getting geotransform" << endl;
+        return AffineTransform();
+    }
     return AffineTransform::FromGdal(transform);
 }
 
