@@ -13,6 +13,7 @@
 #include "Area.h"
 #include "SpatialReference.h"
 #include "Point.h"
+#include "TileWriter.h"
 
 using namespace std;
 
@@ -100,10 +101,15 @@ int main()
     cout << "Retrieved " << tiles.size() << " tiles" << endl;
 
 
+    TileWriter tileWriter;
 
+    string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
+    int tileIndex = 0;
     for (auto* tile : tiles)
     {
+        tileWriter.Save(tile, tileFilename + to_string(tileIndex) + ".png");
         delete tile;
+        tileIndex++;
     }
     /*cout << "Get first raster band" << endl;
     GDALRasterBand* poBand = poDataset->GetRasterBand(1);
