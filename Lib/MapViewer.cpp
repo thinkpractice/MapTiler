@@ -111,21 +111,8 @@ int main()
         delete tile;
         tileIndex++;
     }
-    /*cout << "Get first raster band" << endl;
-    GDALRasterBand* poBand = poDataset->GetRasterBand(1);
-    cout << "poDataset = " << poDataset << "poBand = " << poBand << endl;
-    const char* projection = poDataset->GetProjectionRef();
-    cout << "projection ref= " << projection << endl;
 
-    cout << "Get BlockSize" << endl;
-    int nXBlockSize, nYBlockSize;
-    poBand->GetBlockSize(&nXBlockSize, &nYBlockSize);
-
-    cout << "Blocksize (" << nXBlockSize << "," << nYBlockSize << ")" << endl;
-
-    cout << "Calculate number of blocks" << endl;
-    int nXBlocks = (poDataset->GetRasterXSize() + nXBlockSize - 1) / nXBlockSize;
-    int nYBlocks = (poDataset->GetRasterYSize() + nYBlockSize - 1) / nYBlockSize;
+    /*cout << "Calculate number of blocks" << endl;
     
     cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
     cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";

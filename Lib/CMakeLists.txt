@@ -8,5 +8,5 @@ include_directories(/usr/include/gdal)
 file(GLOB SRC_FILES *.cpp)
 
 add_executable(MapViewer ${SRC_FILES})
-target_link_libraries(MapViewer libgdal.so libGL.so libGLEW.so libglfw.so)
+target_link_libraries(MapViewer libgdal.so libGL.so libGLEW.so libglfw.so libpng.so)
 
