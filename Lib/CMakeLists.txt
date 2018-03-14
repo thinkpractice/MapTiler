@@ -4,6 +4,7 @@ project(MapViewer)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_PREFIX_PATH $ENV{HOME}/Qt/5.10.1/gcc_64)
+set(CMAKE_AUTOMOC ON)
 
 find_package(Qt5 COMPONENTS Widgets Location REQUIRED)
 
