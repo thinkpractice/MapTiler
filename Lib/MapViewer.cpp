@@ -96,7 +96,7 @@ int main()
     SpatialReference gpsReference;
     gpsReference.SetWellKnownGeogCS("EPSG:4326");
 
-    Area area(gpsReference, Point(6.0115700, 50.8903150), Point(6.0166710, 50.8901200));
+    Area area(gpsReference, Point(6.010840, 50.8903150), Point(6.0166710, 50.8901200));
     vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
     cout << "Retrieved " << tiles.size() << " tiles" << endl;
 
