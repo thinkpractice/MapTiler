@@ -3,18 +3,22 @@
 #include <QGeoAddress>
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include "Point.h"
 
 using namespace std;
 
 AreaLookup::AreaLookup()
+                :   _geoServiceProvider(nullptr),
+                    _geoCodingManager(nullptr)
 {
-    for (auto& providerString : QGeoServiceProvider::availableServiceProviders())
-    {
-        cout << providerString.toUtf8().constData() << endl;
-    }
+    SetGeoServiceProvider("osm");
 }
 
+AreaLookup::~AreaLookup()
+{
+    delete _geoServiceProvider;
+}
 
 vector<string> AreaLookup::ServiceProviders()
 {
@@ -31,6 +35,15 @@ vector<string> AreaLookup::ServiceProviders()
     return _serviceProviders;
 }
 
+void AreaLookup::SetGeoServiceProvider(string serviceProvider)
+{
+    if (std::find(ServiceProviders().begin(), ServiceProviders().end(), serviceProvider) == ServiceProviders().end())
+        return;
+
+    QString providerName(serviceProvider.c_str());
+    SetGeoServiceProvider(new QGeoServiceProvider(providerName));
+}
+
 void AreaLookup::SetGeoServiceProvider(QGeoServiceProvider* serviceProvider)
 {
     if (_geoServiceProvider)
@@ -43,6 +56,12 @@ void AreaLookup::SetGeoServiceProvider(QGeoServiceProvider* serviceProvider)
 
 Area AreaLookup::GetAreaForAddress(string address)
 {
+    SpatialReference gpsReference;
+    gpsReference.SetWellKnownGeogCS("EPSG:4326");
+
+    QString qAddress(address.c_str());
+    QGeoCodeReply* reply = _geoCodingManager->geocode(qAddress);
+    return Area(gpsReference, Point(6.010840, 50.8903150), Point(6.0166710, 50.8901200));
 }
 
 void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)

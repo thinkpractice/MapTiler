@@ -52,15 +52,6 @@ AffineTransform AffineTransform::Invert()
         0.0, 0.0, 1.0
     };
 
-    cout << "Inverse transform" << endl;
-
-    for (int i = 0; i < 9; i++)
-        cout << inverseTransform[i] << endl;
-
-cout << "Inverse transform" << endl;
-
-
-
     return AffineTransform(inverseTransform);
 }
 

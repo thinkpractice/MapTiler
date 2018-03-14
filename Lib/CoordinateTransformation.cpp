@@ -17,7 +17,6 @@ Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,
     double y = sourceCoordinate.Y;
     transformation->Transform(1, &x, &y);
 
-    cout << "SourceCoordinate("<< sourceCoordinate.X << "," << sourceCoordinate.Y << "), MapCoordinate(" << x << "," << y << ")";
     return Point(x, y);
 }
 

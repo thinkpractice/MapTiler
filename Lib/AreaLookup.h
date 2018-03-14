@@ -12,16 +12,21 @@
 
 class AreaLookup : public QObject
 {
+    Q_OBJECT
+
     public:
         AreaLookup();
+        virtual ~AreaLookup();
+
+        vector<string> ServiceProviders();
+        void SetGeoServiceProvider(string serviceProvider);
 
         Area GetAreaForAddress(string address);
-        vector<string> ServiceProviders();
 
     private:
         void SetGeoServiceProvider(QGeoServiceProvider* serviceProvider);
 
-    private slots:
+    public slots:
         void GeoLocationFound(QGeoCodeReply* reply);
         void Error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString);
 

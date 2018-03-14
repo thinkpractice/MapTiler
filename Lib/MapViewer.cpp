@@ -94,11 +94,13 @@ int main()
     Area mapArea = chosenMap->GetMapArea();
     cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
-    SpatialReference gpsReference;
-    gpsReference.SetWellKnownGeogCS("EPSG:4326");
 
     AreaLookup areaLookup;
-    Area area(gpsReference, Point(6.010840, 50.8903150), Point(6.0166710, 50.8901200));
+    for (auto& serviceProvider : areaLookup.ServiceProviders())
+    {
+        cout << serviceProvider << endl;
+    }
+    Area area = areaLookup.GetAreaForAddress("Landgraaf");
     vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
     cout << "Retrieved " << tiles.size() << " tiles" << endl;
 

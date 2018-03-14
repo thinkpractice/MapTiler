@@ -126,16 +126,16 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
 {
      
     GDALRasterBand* band = Dataset()->GetRasterBand(rasterIndex);
-    printf( "Type=%s, ColorInterp=%s\n",
+    /*printf( "Type=%s, ColorInterp=%s\n",
     GDALGetDataTypeName(band->GetRasterDataType()),
     GDALGetColorInterpretationName(
-            band->GetColorInterpretation()) );
+            band->GetColorInterpretation()) );*/
 
     GByte* data = (GByte*)CPLMalloc(width * height);
 
     //TODO Use ReadBlock for efficiency and create tile rects corresponding to the block positions
     //CPLErr error = band->ReadBlock(x, y, data);
-    cout << "Getting tile at x = " << x << ",y = " << y << ", width = " << width << ", height=" << height << endl;
+    //cout << "Getting tile at x = " << x << ",y = " << y << ", width = " << width << ", height=" << height << endl;
     CPLErr error = band->RasterIO(GDALRWFlag::GF_Read, x, y, width, height, data, width, height, GDALDataType::GDT_Byte,0,0);
     if (error != CPLErr::CE_None)
     {
