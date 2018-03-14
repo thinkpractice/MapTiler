@@ -13,6 +13,8 @@
 #include <QGeoCoordinate>
 #include <QGeoRectangle>
 
+typedef std::function<void(vector<Area>)> CallbackFunction;
+
 class AreaLookup : public QObject
 {
     Q_OBJECT
@@ -21,10 +23,12 @@ class AreaLookup : public QObject
         AreaLookup();
         virtual ~AreaLookup();
 
+        void AddListener(CallbackFunction callback);
+
         vector<string> ServiceProviders();
         void SetGeoServiceProvider(string serviceProvider);
 
-        Area GetAreaForAddress(string address);
+        void GetAreaForAddress(string address);
 
     private:
         void SetGeoServiceProvider(QGeoServiceProvider* serviceProvider);
@@ -39,6 +43,7 @@ class AreaLookup : public QObject
         vector<string> _serviceProviders;
         QGeoServiceProvider* _geoServiceProvider;
         QGeoCodingManager* _geoCodingManager;
+        vector<CallbackFunction> _callbackFunctions;
 };
 
 #endif

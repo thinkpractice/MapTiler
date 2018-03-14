@@ -18,6 +18,11 @@ AreaLookup::~AreaLookup()
     delete _geoServiceProvider;
 }
 
+void AreaLookup::AddListener(CallbackFunction callback)
+{
+    _callbackFunctions.push_back(callback);
+}
+
 vector<string> AreaLookup::ServiceProviders()
 {
     if (_serviceProviders.size() > 0)
@@ -52,19 +57,15 @@ void AreaLookup::SetGeoServiceProvider(QGeoServiceProvider* serviceProvider)
     connect(_geoCodingManager, SIGNAL(finished(QGeoCodeReply*)), this, SLOT(GeoLocationFound(QGeoCodeReply*)));
 }
 
-Area AreaLookup::GetAreaForAddress(string address)
+void AreaLookup::GetAreaForAddress(string address)
 {
-    SpatialReference gpsReference;
-    gpsReference.SetWellKnownGeogCS("EPSG:4326");
-
     QString qAddress(address.c_str());
     QGeoCodeReply* reply = _geoCodingManager->geocode(qAddress);
-    return Area(gpsReference, Point(6.010840, 50.8903150), Point(6.0166710, 50.8901200));
 }
 
 Point AreaLookup::PointForGeoCoordinate(const QGeoCoordinate& coordinate)
 {
-    return Point(coordinate.latitude(), coordinate.longitude());
+    return Point(coordinate.longitude(), coordinate.latitude());
 }
 
 Area AreaLookup::AreaForGeoRectangle(const QGeoRectangle& geoRectangle)
@@ -81,6 +82,7 @@ Area AreaLookup::AreaForGeoRectangle(const QGeoRectangle& geoRectangle)
 void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 {
     cout << reply->locations().size() << "error=" << reply->errorString().toStdString() << endl;
+    vector<Area> foundAreas;
     for (auto location : reply->locations())
     {
         QGeoRectangle boundingBox = location.boundingBox();
@@ -92,7 +94,13 @@ void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
         cout << "location found:" << locationString.toStdString().c_str() << endl;
         
         Area area = AreaForGeoRectangle(location.boundingBox());
+        foundAreas.push_back(area);
     }
+
+    for (auto& function : _callbackFunctions)
+        function(foundAreas);
+
+    reply->deleteLater();
 }
 
 void AreaLookup::Error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString)

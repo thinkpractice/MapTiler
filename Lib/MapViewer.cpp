@@ -19,6 +19,24 @@
 
 using namespace std;
 
+void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
+{
+    cout << area.LeftTop().X << endl;
+    vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
+    cout << "Retrieved " << tiles.size() << " tiles" << endl;
+
+    TileWriter tileWriter;
+
+    string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
+    int tileIndex = 0;
+    for (auto* tile : tiles)
+    {
+        tileWriter.Save(tile, tileFilename + to_string(tileIndex) + ".png");
+        delete tile;
+        tileIndex++;
+    }
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
@@ -66,25 +84,16 @@ int main(int argc, char** argv)
 
 
     AreaLookup areaLookup;
+    areaLookup.AddListener([&](vector<Area> areas){
+
+                if (areas.size() > 0)
+                    DownloadTilesForArea(chosenMap, areas[0]);
+            });
     for (auto& serviceProvider : areaLookup.ServiceProviders())
     {
-        cout << serviceProvider << endl;
+        std::cout << serviceProvider << std::endl;
     }
-    Area area = areaLookup.GetAreaForAddress("Landgraaf");
-    vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
-    cout << "Retrieved " << tiles.size() << " tiles" << endl;
-
-
-    TileWriter tileWriter;
-
-    string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
-    int tileIndex = 0;
-    for (auto* tile : tiles)
-    {
-        tileWriter.Save(tile, tileFilename + to_string(tileIndex) + ".png");
-        delete tile;
-        tileIndex++;
-    }
+    areaLookup.GetAreaForAddress("Landgraaf");
 
     /*cout << "Calculate number of blocks" << endl;
     
