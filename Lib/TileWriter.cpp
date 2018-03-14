@@ -60,7 +60,7 @@ void TileWriter::Save(GeoTile* tile, string filename)
     png_set_IHDR(png_ptr, info_ptr, 
             width,
             height,
-         8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+         8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
          PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
     // Set title
@@ -75,7 +75,7 @@ void TileWriter::Save(GeoTile* tile, string filename)
     png_write_info(png_ptr, info_ptr);
 
     // Allocate memory for one row (3 bytes per pixel - RGB)
-    row = (png_bytep) malloc(3 * width * sizeof(png_byte));
+    row = (png_bytep) malloc(4 * width * sizeof(png_byte));
 
 
     // Write image data
