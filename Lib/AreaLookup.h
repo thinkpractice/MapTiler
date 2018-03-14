@@ -4,6 +4,9 @@
 #include <string>
 #include "Area.h"
 
+#include <QGeoServiceProvider>
+#include <QGeoCodingManager>
+
 class AreaLookup
 {
     public:
@@ -11,6 +14,9 @@ class AreaLookup
 
         Area GetAreaForAddress(string address);
 
+    private:
+        QGeoServiceProvider* _geoServiceProvider;
+        QGeoCodingManager* _geoCodingManager;
 };
 
 #endif
