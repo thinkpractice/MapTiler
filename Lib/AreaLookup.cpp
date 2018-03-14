@@ -1,10 +1,8 @@
 #include "AreaLookup.h"
-#include <QGeoCoordinate>
 #include <QGeoAddress>
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "Point.h"
 
 using namespace std;
 
@@ -64,17 +62,36 @@ Area AreaLookup::GetAreaForAddress(string address)
     return Area(gpsReference, Point(6.010840, 50.8903150), Point(6.0166710, 50.8901200));
 }
 
+Point AreaLookup::PointForGeoCoordinate(const QGeoCoordinate& coordinate)
+{
+    return Point(coordinate.latitude(), coordinate.longitude());
+}
+
+Area AreaLookup::AreaForGeoRectangle(const QGeoRectangle& geoRectangle)
+{
+    SpatialReference gpsReference;
+    gpsReference.SetWellKnownGeogCS("EPSG:4326");
+
+    Point leftTop = PointForGeoCoordinate(geoRectangle.topLeft());
+    Point bottomRight = PointForGeoCoordinate(geoRectangle.bottomRight());
+
+    return Area(gpsReference, leftTop, bottomRight);
+}
+
 void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 {
     cout << reply->locations().size() << "error=" << reply->errorString().toStdString() << endl;
     for (auto location : reply->locations())
     {
-        QString locationString = QString("%1 - (%2, %3)").arg(location.address().text()).arg(location.coordinate().latitude()).arg(location.coordinate().longitude());
+        QGeoRectangle boundingBox = location.boundingBox();
+        QGeoCoordinate topLeft = boundingBox.topLeft();
+        QGeoCoordinate bottomRight = boundingBox.bottomRight();
+
+
+        QString locationString = QString("%1 - (%2, %3, %4, %5)").arg(location.address().text()).arg(topLeft.latitude()).arg(topLeft.longitude()).arg(bottomRight.latitude()).arg(bottomRight.longitude());
         cout << "location found:" << locationString.toStdString().c_str() << endl;
-
-        //QGeoCoordinate coordinate = location.coordinate();
-        //QPoint p (coordinate.latitude(), coordinate.longitude());
-
+        
+        Area area = AreaForGeoRectangle(location.boundingBox());
     }
 }
 

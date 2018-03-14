@@ -1,6 +1,7 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
 #include <iostream>
+#include <QApplication>
 #include <regex>
 #include <vector>
 #include <string>
@@ -18,40 +19,9 @@
 
 using namespace std;
 
-void printMetadataList(GDALDataset* dataset)
+int main(int argc, char** argv)
 {
-    char** metadataList = dataset->GetMetadataDomainList();
-    for (int i = 0; metadataList[i]; i++)
-    {
-        cout << metadataList[i] << endl;
-    }
-}
-
-
-GByte* getDataForBand(GDALDataset *poDataset, int rasterIndex, int x, int y, int width, int height)
-{
-    GDALRasterBand* band = poDataset->GetRasterBand(rasterIndex);
-     
-    printf( "Type=%s, ColorInterp=%s\n",
-    GDALGetDataTypeName(band->GetRasterDataType()),
-    GDALGetColorInterpretationName(
-            band->GetColorInterpretation()) );
-
-    GByte* data = (GByte*)CPLMalloc(width * height);
-
-    //CPLErr error = band->ReadBlock(x, y, data);
-    CPLErr error = band->RasterIO(GDALRWFlag::GF_Read, x, y, width, height, data, width, height, GDALDataType::GDT_Byte,0,0);
-    if (error != CPLErr::CE_None)
-    {
-        cout << "error=" << error << endl;
-        CPLFree(data);
-        return nullptr;
-    }
-    return data;
-}
-        
-int main()
-{
+    QApplication app(argc, argv);
     GDALAllRegister();
 
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
@@ -242,5 +212,7 @@ int main()
     
     GDALClose(poDataset);
     */
-    return 0;
+
+    //getline(cin, input);
+    return app.exec();
 }

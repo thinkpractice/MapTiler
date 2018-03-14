@@ -3,12 +3,15 @@
 
 #include <string>
 #include <vector>
+#include "Point.h"
 #include "Area.h"
 
 #include <QObject>
 #include <QGeoServiceProvider>
 #include <QGeoCodingManager>
 #include <QGeoCodeReply>
+#include <QGeoCoordinate>
+#include <QGeoRectangle>
 
 class AreaLookup : public QObject
 {
@@ -25,6 +28,8 @@ class AreaLookup : public QObject
 
     private:
         void SetGeoServiceProvider(QGeoServiceProvider* serviceProvider);
+        Point PointForGeoCoordinate(const QGeoCoordinate& coordinate);
+        Area AreaForGeoRectangle(const QGeoRectangle& geoRectangle);
 
     public slots:
         void GeoLocationFound(QGeoCodeReply* reply);
