@@ -23,10 +23,9 @@ using namespace std;
 
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
 {
-    cout << area.LeftTop().X << endl;
-
-    auto t1 = std::chrono::high_resolution_clock::now();
     double totalNumberOfBytes = 0;
+    auto t1 = std::chrono::high_resolution_clock::now();
+
     TileWriter tileWriter;
     chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
             {
@@ -46,6 +45,29 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
             });
 }
 
+template <class T> 
+T ShowMenu(vector<T> menuOptions, function<string(int, T)> convertToString)
+{
+    int i = 0;
+    for (auto& menuOption : menuOptions)
+    {
+        cout << i << convertToString(i, menuOption) << endl;
+        i++;
+    }
+
+    string input;
+    int chosenIndex = -1;
+    do
+    {
+        cout << "Choose an option" << endl;
+        getline(cin, input);
+        chosenIndex = stoi(input);
+    }
+    while (chosenIndex < 0 || chosenIndex >= menuOptions.size());
+
+    return menuOptions[chosenIndex];
+}
+
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
@@ -54,7 +76,7 @@ int main(int argc, char** argv)
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
 
-    int i = 0;
+    /*int i = 0;
     for (auto& dataset : mapProvider.Maps())
     {
         cout << i << ") title=" << dataset->Title() << ", url=" << dataset->Filename() << endl;
@@ -69,9 +91,11 @@ int main(int argc, char** argv)
         getline(cin, input);
         datasetIndex = stoi(input);
     }
-    while (datasetIndex < 0 || datasetIndex >= mapProvider.Maps().size());
+    while (datasetIndex < 0 || datasetIndex >= mapProvider.Maps().size());*/
 
-    GeoMap* chosenMap = mapProvider.Maps()[datasetIndex];
+    GeoMap* chosenMap = ShowMenu<GeoMap*>(mapProvider.Maps(), [&](int i, GeoMap* dataset){
+                cout << i << ") title=" << dataset->Title() << ", url=" << dataset->Filename() << endl;
+            });
 
     cout << "===GeoTransform===" << endl;
     double geoTransform[6];
