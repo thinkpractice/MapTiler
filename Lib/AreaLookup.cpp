@@ -94,6 +94,7 @@ void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
         cout << "location found:" << locationString.toStdString().c_str() << endl;
         
         Area area = AreaForGeoRectangle(location.boundingBox());
+        area.SetDescription(locationString.toStdString());
         foundAreas.push_back(area);
     }
 

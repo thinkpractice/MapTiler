@@ -107,7 +107,7 @@ int main(int argc, char** argv)
                 {
                     Area chosenArea = ShowMenu<Area>(areas, [](int i, Area area)
                             {
-                                return to_string(i) + ") coordinates=(" + ")";
+                                return to_string(i) + ") " + area.Description();
                             });
                     DownloadTilesForArea(chosenMap, chosenArea);
                 }
