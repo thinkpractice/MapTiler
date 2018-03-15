@@ -9,6 +9,7 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <functional>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ class GeoMap
         void SetTitle(string title);
 
         Area ConvertToMapProjection(const Area& area);
-        vector<GeoTile*> GetTilesForArea(const Area& area);
+        void GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)> callback);
 
         virtual int LayerCount() = 0;
         virtual int RasterCount() = 0;

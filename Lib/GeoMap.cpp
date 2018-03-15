@@ -39,7 +39,7 @@ Area GeoMap::ConvertToMapProjection(const Area& area)
     return CoordinateTransformation::MapArea(area, ProjectionReference());
 }
 
-vector<GeoTile*> GeoMap::GetTilesForArea(const Area& area)
+void GeoMap::GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)> callback)
 {
     Area projectedArea = ConvertToMapProjection(area);
 
@@ -47,13 +47,14 @@ vector<GeoTile*> GeoMap::GetTilesForArea(const Area& area)
     Rect fullAreaRect = RectForArea(projectedArea);
     cout << "fullAreaRect= " << fullAreaRect.Left() << "," << fullAreaRect.Top() << "," << fullAreaRect.Width() << "," << fullAreaRect.Height() << endl;
 
-    for (auto& tileRect : GetTilesForRect(fullAreaRect))
+    int i = 0;
+    vector<Rect> tilesForRect = GetTilesForRect(fullAreaRect);
+    for (auto& tileRect : tilesForRect)
     {
-        //TODO store reference to geoTile somewhere and return them
         GeoTile* geoTile = GetTileForRect(tileRect);
-        tiles.push_back(geoTile);
+        callback(geoTile, i, tilesForRect.size());
+        i++;
     }
-    return tiles;
 }
 
 vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)

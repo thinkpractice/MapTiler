@@ -22,19 +22,20 @@ using namespace std;
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
 {
     cout << area.LeftTop().X << endl;
-    vector<GeoTile*> tiles = chosenMap->GetTilesForArea(area);
-    cout << "Retrieved " << tiles.size() << " tiles" << endl;
-
     TileWriter tileWriter;
-
-    string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
-    int tileIndex = 0;
-    for (auto* tile : tiles)
-    {
-        tileWriter.Save(tile, tileFilename + to_string(tileIndex) + ".png");
-        delete tile;
-        tileIndex++;
-    }
+    chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
+            {
+                double onePercent = maxIndex / 100.0;
+                if (currentIndex % (int)onePercent == 0)
+                {
+                    int imagePercentage = (currentIndex / onePercent) + 1;
+                    cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images)" << endl;
+                    
+                }
+                string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
+                tileWriter.Save(tile, tileFilename + to_string(currentIndex) + ".png");
+                delete tile;
+            });
 }
 
 int main(int argc, char** argv)
