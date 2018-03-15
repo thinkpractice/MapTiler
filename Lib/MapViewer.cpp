@@ -94,7 +94,8 @@ int main(int argc, char** argv)
     while (datasetIndex < 0 || datasetIndex >= mapProvider.Maps().size());*/
 
     GeoMap* chosenMap = ShowMenu<GeoMap*>(mapProvider.Maps(), [&](int i, GeoMap* dataset){
-                cout << i << ") title=" << dataset->Title() << ", url=" << dataset->Filename() << endl;
+                string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
+                return menuItem;
             });
 
     cout << "===GeoTransform===" << endl;
