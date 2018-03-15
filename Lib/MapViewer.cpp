@@ -1,10 +1,12 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
 #include <iostream>
+#include <iomanip>
 #include <QApplication>
 #include <regex>
 #include <vector>
 #include <string>
+#include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
@@ -22,14 +24,20 @@ using namespace std;
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
 {
     cout << area.LeftTop().X << endl;
+
+    auto t1 = std::chrono::high_resolution_clock::now();
+    double totalNumberOfBytes = 0;
     TileWriter tileWriter;
     chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
             {
                 double onePercent = maxIndex / 100.0;
+                totalNumberOfBytes += tile->NumberOfBytes();
                 if (currentIndex % (int)onePercent == 0)
                 {
+                    auto t2 = std::chrono::high_resolution_clock::now();
+                    auto duration = std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count();
                     int imagePercentage = (currentIndex / onePercent) + 1;
-                    cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images)" << endl;
+                    cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images, " << fixed << setprecision(2) << (totalNumberOfBytes / 1024) << "KB in " << duration << " seconds)" << endl;
                     
                 }
                 string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
