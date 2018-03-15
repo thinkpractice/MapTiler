@@ -51,7 +51,7 @@ T ShowMenu(vector<T> menuOptions, function<string(int, T)> convertToString)
     int i = 0;
     for (auto& menuOption : menuOptions)
     {
-        cout << i << convertToString(i, menuOption) << endl;
+        cout << convertToString(i, menuOption) << endl;
         i++;
     }
 
@@ -75,23 +75,6 @@ int main(int argc, char** argv)
 
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
-
-    /*int i = 0;
-    for (auto& dataset : mapProvider.Maps())
-    {
-        cout << i << ") title=" << dataset->Title() << ", url=" << dataset->Filename() << endl;
-        i++;
-    }
-
-    string input;
-    int datasetIndex = -1;
-    do
-    {
-        cout << "Choose a dataset" << endl;
-        getline(cin, input);
-        datasetIndex = stoi(input);
-    }
-    while (datasetIndex < 0 || datasetIndex >= mapProvider.Maps().size());*/
 
     GeoMap* chosenMap = ShowMenu<GeoMap*>(mapProvider.Maps(), [&](int i, GeoMap* dataset){
                 string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
@@ -121,7 +104,13 @@ int main(int argc, char** argv)
     areaLookup.AddListener([&](vector<Area> areas){
 
                 if (areas.size() > 0)
-                    DownloadTilesForArea(chosenMap, areas[0]);
+                {
+                    Area chosenArea = ShowMenu<Area>(areas, [](int i, Area area)
+                            {
+                                return to_string(i) + ") coordinates=(" + ")";
+                            });
+                    DownloadTilesForArea(chosenMap, chosenArea);
+                }
             });
     for (auto& serviceProvider : areaLookup.ServiceProviders())
     {
