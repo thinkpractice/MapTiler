@@ -17,6 +17,7 @@ class GDALMap : public GeoMap
         GDALMap(string filename);
         virtual ~GDALMap();
 
+        GeoMap* Clone();
         int LayerCount();
         int RasterCount();
         int WidthInPixels();
@@ -25,8 +26,6 @@ class GDALMap : public GeoMap
         SpatialReference ProjectionReference();
         AffineTransform MapTransform();
         Area GetMapArea();
-
-    protected:
         GeoTile* GetTileForRect(const Rect& rectangle);
 
         tuple<int, int> GetTileSize();

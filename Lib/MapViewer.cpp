@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <atomic>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
@@ -40,20 +41,62 @@ void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxInd
     delete tile;
 }
 
+template <class T>
+vector<T> subVector(vector<T> originalVector, int startIndex, int numberOfItems)
+{
+    cout << "Copying from: " << startIndex << " to: " << startIndex + numberOfItems - 1 <<endl;
+        typename vector<T>::const_iterator first = originalVector.begin() + startIndex;
+        typename vector<T>::const_iterator last = originalVector.begin() + startIndex + numberOfItems - 1;
+        vector<T> newVec(first, last);
+        return newVec;
+}
+
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
 {
     auto t1 = std::chrono::high_resolution_clock::now();
 
     string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
-    ThreadPool threadPool(4);
-    chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
+
+    int numberOfThreads = 4;
+    ThreadPool threadPool(numberOfThreads);
+
+    Area projectedArea = chosenMap->ConvertToMapProjection(area);
+    Rect fullAreaRect = chosenMap->RectForArea(projectedArea);
+    vector<Rect> tileRects = chosenMap->GetTilesForRect(fullAreaRect);
+    
+    atomic<int> currentIndex (0);
+    int startIndex = 0;
+    int tilesPerThread = tileRects.size() / numberOfThreads;
+    for (int i = 0; i < numberOfThreads; i++)
+    {
+        /*if ((i+1) == numberOfThreads)
+            tilesPerThread = tileRects.size() - startIndex;*/
+
+        vector<Rect> rects = subVector<Rect>(tileRects, startIndex, tilesPerThread);
+
+        threadPool.enqueue([&]{
+                    GeoMap* map = chosenMap->Clone();
+                    for (auto& tileRect : rects)
+                    {
+                        GeoTile* tile = map->GetTileForRect(tileRect);
+                        WriteTile(tile, tileDirectory, currentIndex, tileRects.size());
+                        currentIndex += 1;
+
+                    }
+                    delete map;
+                });
+        startIndex += tilesPerThread;
+    }
+
+    //TODO download and write tile in same thread, copy geomaps.
+    /*chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
                {
                     auto result = threadPool.enqueue([&](GeoTile* tile, string tileDirectory, int currentIndex, int maxIndex)
                             {
                                 WriteTile(tile, tileDirectory, currentIndex, maxIndex);
                                 return currentIndex;
                             }, tile, string(tileDirectory), currentIndex, maxIndex);
-               });
+               });*/
 }
 
 template <class T> 

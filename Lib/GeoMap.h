@@ -28,6 +28,7 @@ class GeoMap
         Area ConvertToMapProjection(const Area& area);
         void GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)> callback);
 
+        virtual GeoMap* Clone() = 0;
         virtual int LayerCount() = 0;
         virtual int RasterCount() = 0;
         virtual int WidthInPixels() = 0;
@@ -35,15 +36,13 @@ class GeoMap
         virtual SpatialReference ProjectionReference() = 0;
         virtual AffineTransform MapTransform() = 0;
         virtual Area GetMapArea() = 0;
-
-    protected:
+        
+        vector<Rect> GetTilesForRect(const Rect& rect);
         virtual GeoTile* GetTileForRect(const Rect& rect) = 0;
 
         virtual tuple<int, int> GetTileSize() = 0;
         virtual Rect RectForArea(const Area& area) = 0;
         virtual Area AreaForRect(const Rect& rect) = 0;
-
-        vector<Rect> GetTilesForRect(const Rect& rect);
 
     private:
         string _title;

@@ -13,6 +13,11 @@ GDALMap::~GDALMap()
         GDALClose(_dataset);
 }
 
+GeoMap* GDALMap::Clone()
+{
+    return new GDALMap(Filename());
+}
+
 int GDALMap::LayerCount()
 {
     return Dataset()->GetLayerCount();
