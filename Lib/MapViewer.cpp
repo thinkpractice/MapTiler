@@ -18,31 +18,42 @@
 #include "Point.h"
 #include "TileWriter.h"
 #include "AreaLookup.h"
+#include "ThreadPool.h"
 
 using namespace std;
 
+void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxIndex)
+{
+    TileWriter tileWriter;
+    double onePercent = maxIndex / 100.0;
+    double totalNumberOfBytes = currentIndex * tile->NumberOfBytes();
+    if (currentIndex % (int)onePercent == 0)
+    {
+        //auto t2 = std::chrono::high_resolution_clock::now();
+        //auto duration = std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count();
+        int imagePercentage = (currentIndex / onePercent) + 1;
+        cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images, " << fixed << setprecision(2) << (totalNumberOfBytes / 1024) << "KB in " << endl; // duration << " seconds)" << endl;
+        
+    }
+    string tileFilename = tileDirectory + to_string(currentIndex) + ".png" ;
+    tileWriter.Save(tile, tileFilename);
+    delete tile;
+}
+
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
 {
-    double totalNumberOfBytes = 0;
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    TileWriter tileWriter;
+    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
+    ThreadPool threadPool(4);
     chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
-            {
-                double onePercent = maxIndex / 100.0;
-                totalNumberOfBytes += tile->NumberOfBytes();
-                if (currentIndex % (int)onePercent == 0)
-                {
-                    auto t2 = std::chrono::high_resolution_clock::now();
-                    auto duration = std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count();
-                    int imagePercentage = (currentIndex / onePercent) + 1;
-                    cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images, " << fixed << setprecision(2) << (totalNumberOfBytes / 1024) << "KB in " << duration << " seconds)" << endl;
-                    
-                }
-                string tileFilename = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/tile";
-                tileWriter.Save(tile, tileFilename + to_string(currentIndex) + ".png");
-                delete tile;
-            });
+               {
+                    auto result = threadPool.enqueue([&](GeoTile* tile, string tileDirectory, int currentIndex, int maxIndex)
+                            {
+                                WriteTile(tile, tileDirectory, currentIndex, maxIndex);
+                                return currentIndex;
+                            }, tile, string(tileDirectory), currentIndex, maxIndex);
+               });
 }
 
 template <class T> 
@@ -116,7 +127,8 @@ int main(int argc, char** argv)
     {
         std::cout << serviceProvider << std::endl;
     }
-    areaLookup.GetAreaForAddress("Landgraaf");
+    //areaLookup.GetAreaForAddress("Landgraaf");
+    areaLookup.GetAreaForAddress("Heerlen");
 
     /*cout << "Calculate number of blocks" << endl;
     
