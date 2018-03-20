@@ -20,6 +20,7 @@
 #include "TileWriter.h"
 #include "AreaLookup.h"
 #include "ThreadPool.h"
+#include "SafeQueue.h"
 
 using namespace std;
 
@@ -51,11 +52,9 @@ vector<T> subVector(vector<T> originalVector, int startIndex, int numberOfItems)
         return newVec;
 }
 
-void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
+void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory)
 {
     auto t1 = std::chrono::high_resolution_clock::now();
-
-    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
 
     int numberOfThreads = 4;
     ThreadPool threadPool(numberOfThreads);
@@ -64,39 +63,38 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area)
     Rect fullAreaRect = chosenMap->RectForArea(projectedArea);
     vector<Rect> tileRects = chosenMap->GetTilesForRect(fullAreaRect);
     
-    atomic<int> currentIndex (0);
-    int startIndex = 0;
-    int tilesPerThread = tileRects.size() / numberOfThreads;
-    for (int i = 0; i < numberOfThreads; i++)
+    SafeQueue<GeoMap*> mapsPerThread;
+    mapsPerThread.enqueue(chosenMap);
+
+    for (int i = 0; i < numberOfThreads-1; i++)
     {
-        /*if ((i+1) == numberOfThreads)
-            tilesPerThread = tileRects.size() - startIndex;*/
+        mapsPerThread.enqueue(chosenMap->Clone());
+    }
 
-        vector<Rect> rects = subVector<Rect>(tileRects, startIndex, tilesPerThread);
-
+    atomic<int> currentIndex (0);
+    for (auto& tileRect : tileRects)
+    {
         threadPool.enqueue([&]{
-                    GeoMap* map = chosenMap->Clone();
-                    for (auto& tileRect : rects)
+                    GeoMap* map = mapsPerThread.dequeue();
+                    try
                     {
                         GeoTile* tile = map->GetTileForRect(tileRect);
                         WriteTile(tile, tileDirectory, currentIndex, tileRects.size());
-                        currentIndex += 1;
 
+                        currentIndex += 1;
                     }
-                    delete map;
+                    catch (...)
+                    {
+                    }
+                    mapsPerThread.enqueue(map);
                 });
-        startIndex += tilesPerThread;
     }
 
-    //TODO download and write tile in same thread, copy geomaps.
-    /*chosenMap->GetTilesForArea(area, [&](GeoTile* tile, int currentIndex, int maxIndex)
-               {
-                    auto result = threadPool.enqueue([&](GeoTile* tile, string tileDirectory, int currentIndex, int maxIndex)
-                            {
-                                WriteTile(tile, tileDirectory, currentIndex, maxIndex);
-                                return currentIndex;
-                            }, tile, string(tileDirectory), currentIndex, maxIndex);
-               });*/
+    /*while (!mapsPerThread.Empty())
+    {
+        GeoMap* map = mapsPerThread.dequeue();
+        delete map;
+    }*/
 }
 
 template <class T> 
@@ -126,6 +124,13 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     GDALAllRegister();
+
+    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
+    if (argc > 1)
+    {
+        tileDirectory = string(argv[1]);
+        cout << "output directory: " << tileDirectory << endl;
+    }
 
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
@@ -163,7 +168,7 @@ int main(int argc, char** argv)
                             {
                                 return to_string(i) + ") " + area.Description();
                             });
-                    DownloadTilesForArea(chosenMap, chosenArea);
+                    DownloadTilesForArea(chosenMap, chosenArea, tileDirectory);
                 }
             });
     for (auto& serviceProvider : areaLookup.ServiceProviders())

@@ -21,6 +21,12 @@ class SafeQueue
         {
         }
 
+        bool Empty() const
+        {
+            return _queue.empty();
+        }
+
+
         // Add an element to the queue.
         void enqueue(T t)
         {
