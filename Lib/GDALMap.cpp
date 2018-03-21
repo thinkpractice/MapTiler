@@ -140,11 +140,11 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
 
     //TODO Use ReadBlock for efficiency and create tile rects corresponding to the block positions
     //CPLErr error = band->ReadBlock(x, y, data);
-    //cout << "Getting tile at x = " << x << ",y = " << y << ", width = " << width << ", height=" << height << endl;
+//    cout << "Getting tile at x = " << x << ",y = " << y << ", width = " << width << ", height=" << height << endl;
     CPLErr error = band->RasterIO(GDALRWFlag::GF_Read, x, y, width, height, data, width, height, GDALDataType::GDT_Byte,0,0);
     if (error != CPLErr::CE_None)
     {
-        cout << "error=" << error << endl;
+        cout << "error=" << error << " requesting a tile of " << (width * height) << " bytes" << endl;
         CPLFree(data);
         return nullptr;
     }
