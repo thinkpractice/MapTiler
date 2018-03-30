@@ -1,5 +1,6 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
+#include "GLWindow.h"
 #include <iostream>
 #include <iomanip>
 #include <QApplication>
@@ -8,9 +9,6 @@
 #include <string>
 #include <chrono>
 #include <atomic>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <GL/gl.h>
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
 #include "GeoMapProvider.h"
@@ -75,10 +73,6 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirect
         atomic<int> currentIndex (0);
         for (auto& tileRect : tileRects)
         {
-            if (tileRect.Width() == 0 || tileRect.Height() == 0)
-            {
-                cout << "tileRect with width or height zero!!" << endl;
-            }
             auto result = threadPool.enqueue([&]{
                         GeoMap* map = mapsPerThread.dequeue();
                         try
@@ -185,6 +179,54 @@ int main(int argc, char** argv)
     //areaLookup.GetAreaForAddress("Landgraaf");
     areaLookup.GetAreaForAddress("Heerlen");
 
+    /*GLWindow window(1024, 768);
+    window.StartRendering([&](GLFWwindow* window)
+    {
+        glClearStencil(0);
+        do
+        {
+            glClearDepth(1.0);
+            
+            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            //Draw mask into the stencil buffer
+            glLoadIdentity();
+            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+            glEnable(GL_STENCIL_TEST);
+            glStencilFunc(GL_ALWAYS, 1, 1);
+            glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+            
+            glBegin(GL_TRIANGLES);
+                glVertex2f(0.25, 0.0);
+                glVertex2f(0.75, 0.0);
+                glVertex2f(0.5, 0.5);
+            glEnd();
+
+            //Draw texture
+            glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+            glStencilFunc(GL_EQUAL, 1, 1);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+            glEnable(GL_TEXTURE_2D);
+            //glColor3f(1.0, 1.0, 1.0);
+            //glBindTexture( GL_TEXTURE_2D, textureID);
+            glBegin(GL_POLYGON);
+                glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
+                glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
+                glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
+                glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
+            glEnd();
+
+            glDisable(GL_STENCIL_TEST);
+            // Swap buffers
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+
+    } // Check if the ESC key was pressed or the window was closed
+    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+    glfwWindowShouldClose(window) == 0 );
+    });*/
+
     /*cout << "Calculate number of blocks" << endl;
     
     cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
@@ -220,37 +262,6 @@ int main(int argc, char** argv)
     CPLFree(blueData);
     CPLFree(greenData);
     
-    // Initialise GLFW
-    if( !glfwInit() )
-    {
-        fprintf( stderr, "Failed to initialize GLFW\n" );
-        return -1;
-    }
-
-    glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2); // We want OpenGL 3.3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-
-    // Open a window and create its OpenGL context
-    GLFWwindow* window; // (In the accompanying source code, this variable is global for simplicity)
-    window = glfwCreateWindow( 1024, 768, "Tutorial 01", NULL, NULL);
-    if( window == NULL )
-    {
-        fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window); // Initialize GLEW
-    glewExperimental=true; // Needed in core profile
-    if (glewInit() != GLEW_OK) 
-    {
-        fprintf(stderr, "Failed to initialize GLEW\n");
-        return -1;
-    }
-
-    // Ensure we can capture the escape key being pressed below
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
     glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
     // Create one OpenGL texture
     GLuint textureID;
@@ -264,52 +275,7 @@ int main(int argc, char** argv)
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glClearStencil(0);
-    do
-    {
-        glClearDepth(1.0);
-        
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        //Draw mask into the stencil buffer
-        glLoadIdentity();
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glEnable(GL_STENCIL_TEST);
-        glStencilFunc(GL_ALWAYS, 1, 1);
-        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-        
-        glBegin(GL_TRIANGLES);
-            glVertex2f(0.25, 0.0);
-            glVertex2f(0.75, 0.0);
-            glVertex2f(0.5, 0.5);
-        glEnd();
-
-        //Draw texture
-        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
-        glStencilFunc(GL_EQUAL, 1, 1);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-        glEnable(GL_TEXTURE_2D);
-        //glColor3f(1.0, 1.0, 1.0);
-        glBindTexture( GL_TEXTURE_2D, textureID);
-        glBegin(GL_POLYGON);
-            glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
-            glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
-            glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
-            glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
-        glEnd();
-
-        glDisable(GL_STENCIL_TEST);
-        // Swap buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-
-    } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-    glfwWindowShouldClose(window) == 0 );
     
-    GDALClose(poDataset);
     */
 
     //getline(cin, input);
