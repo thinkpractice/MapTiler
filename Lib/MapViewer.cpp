@@ -59,9 +59,7 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirect
         int numberOfThreads = 4;
         ThreadPool threadPool(numberOfThreads);
 
-        Area projectedArea = chosenMap->ConvertToMapProjection(area);
-        Rect fullAreaRect = chosenMap->RectForArea(projectedArea);
-        vector<Rect> tileRects = chosenMap->GetTilesForRect(fullAreaRect);
+        vector<Rect> tileRects = chosenMap->GetTileRectsForArea(area);
         
         mapsPerThread.enqueue(chosenMap);
 

@@ -37,6 +37,7 @@ class GeoMap
         virtual AffineTransform MapTransform() = 0;
         virtual Area GetMapArea() = 0;
         
+        vector<Rect> GetTileRectsForArea(const Area& area);
         vector<Rect> GetTilesForRect(const Rect& rect);
         virtual GeoTile* GetTileForRect(const Rect& rect) = 0;
 

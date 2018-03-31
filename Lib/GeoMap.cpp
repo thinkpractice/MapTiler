@@ -57,6 +57,14 @@ void GeoMap::GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)
     }
 }
 
+vector<Rect> GeoMap::GetTileRectsForArea(const Area& area)
+{
+    Area projectedArea = ConvertToMapProjection(area);
+
+    Rect fullAreaRect = RectForArea(projectedArea);
+    return GetTilesForRect(fullAreaRect);
+}
+
 vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 {
     vector<Rect> tileRectangles;
