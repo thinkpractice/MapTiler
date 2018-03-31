@@ -73,11 +73,11 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirect
         atomic<int> currentIndex (0);
         for (auto& tileRect : tileRects)
         {
-            auto result = threadPool.enqueue([&]{
+            auto result = threadPool.enqueue([&, tileRect]{
                         GeoMap* map = mapsPerThread.dequeue();
                         try
                         {
-                            GeoTile* tile = map->GetTileForRect(Rect(tileRect));
+                            GeoTile* tile = map->GetTileForRect(tileRect);
                             WriteTile(tile, tileDirectory, currentIndex, tileRects.size());
 
                             currentIndex += 1;
