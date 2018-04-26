@@ -1,15 +1,11 @@
-#include "gdal_priv.h"
-#include "cpl_conv.h" // for CPLMalloc()
+#include <QApplication>
 #include <iostream>
 #include <iomanip>
-#include <QApplication>
 #include <regex>
 #include <vector>
 #include <string>
 #include <chrono>
 #include <atomic>
-#include <ogr_spatialref.h>
-#include <ogrsf_frmts.h>
 #include "Lib/GLWindow.h"
 #include "Lib/GeoMapProvider.h"
 #include "Lib/Area.h"
@@ -122,7 +118,6 @@ T ShowMenu(vector<T> menuOptions, function<string(int, T)> convertToString)
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    GDALAllRegister();
 
     string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
     if (argc > 1)

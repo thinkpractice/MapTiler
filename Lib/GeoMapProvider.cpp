@@ -10,6 +10,7 @@
 GeoMapProvider::GeoMapProvider(string filename)
                    :   _filename(filename)
 {
+    GDALAllRegister();
 }
 
 GeoMapProvider::~GeoMapProvider()
@@ -31,7 +32,6 @@ vector<GeoMap*> GeoMapProvider::Maps()
 
 vector<GeoMap*> GeoMapProvider::RetrieveMaps()
 {
-    //TODO GDALAllRegister(); ???
     vector<GeoMap*> maps;
 
     GDALDataset  *dataset = (GDALDataset *) GDALOpen(_filename.c_str(), GA_ReadOnly );
