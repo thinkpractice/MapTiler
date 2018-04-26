@@ -1,6 +1,5 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
-#include "Lib/GLWindow.h"
 #include <iostream>
 #include <iomanip>
 #include <QApplication>
@@ -11,6 +10,7 @@
 #include <atomic>
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
+#include "Lib/GLWindow.h"
 #include "Lib/GeoMapProvider.h"
 #include "Lib/Area.h"
 #include "Lib/SpatialReference.h"
