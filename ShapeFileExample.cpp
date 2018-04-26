@@ -1,5 +1,7 @@
 #include "ogrsf_frmts.h"
 #include <iostream>
+#include "Lib/GeoMapProvider.h"
+#include "Lib/GeoMap.h"
 
 using namespace std;
 
@@ -11,16 +13,30 @@ int main(int argc, char** argv)
 
     cout << "Opening " << filename << endl;
 
+    GeoMapProvider provider(filename);
+    for (auto* map : provider.Maps())
+    {
+        cout << map->Title() << " : " << map->Filename() << endl;
+    }
+
+
     GDALAllRegister();
     GDALDataset       *poDS;
     //poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
+    filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0"
     poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
     if( poDS == NULL )
     {
         printf( "Open failed.\n" );
         exit( 1 );
     }
-    OGRLayer  *poLayer;
+    
+    for (auto feature : poDS->Features())
+    {
+
+    }
+
+    /*OGRLayer  *poLayer;
     cout << "# layers=" << poDS->GetLayerCount() << endl;
     poLayer = poDS->GetLayer( 0 );
 
@@ -64,10 +80,10 @@ int main(int argc, char** argv)
             cout << "polygon" << endl;
             OGRPolygon* polygon = (OGRPolygon*)poGeometry;
             OGRLinearRing* ring = polygon->getExteriorRing();
-            /*for (auto* point : polygon)
+            for (auto* point : polygon)
             {
                 printf( "%.3f,%3.f\n", point->getX(), point->getY());
-            }*/
+            }
 
         }
         else
@@ -76,7 +92,7 @@ int main(int argc, char** argv)
         }
         OGRFeature::DestroyFeature( poFeature );
         break;
-    }
+    }*/
     GDALClose( poDS );
 }
 
