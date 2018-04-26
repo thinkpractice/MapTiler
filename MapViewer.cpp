@@ -1,6 +1,6 @@
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
-#include "GLWindow.h"
+#include "Lib/GLWindow.h"
 #include <iostream>
 #include <iomanip>
 #include <QApplication>
@@ -11,14 +11,14 @@
 #include <atomic>
 #include <ogr_spatialref.h>
 #include <ogrsf_frmts.h>
-#include "GeoMapProvider.h"
-#include "Area.h"
-#include "SpatialReference.h"
-#include "Point.h"
-#include "TileWriter.h"
-#include "AreaLookup.h"
-#include "ThreadPool.h"
-#include "SafeQueue.h"
+#include "Lib/GeoMapProvider.h"
+#include "Lib/Area.h"
+#include "Lib/SpatialReference.h"
+#include "Lib/Point.h"
+#include "Lib/TileWriter.h"
+#include "Lib/AreaLookup.h"
+#include "Lib/ThreadPool.h"
+#include "Lib/SafeQueue.h"
 
 using namespace std;
 
