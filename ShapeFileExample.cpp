@@ -22,7 +22,8 @@ int main(int argc, char** argv)
 
     GDALAllRegister();
     GDALDataset       *poDS;
-    filename = "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs";
+    filename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
+    //filename = "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs";
     poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
     //filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0";
     //poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
@@ -34,7 +35,15 @@ int main(int argc, char** argv)
     
     OGRLayer  *poLayer;
     cout << "# layers=" << poDS->GetLayerCount() << endl;
-    poLayer = poDS->GetLayer( 0 );
+    poLayer = poDS->GetLayer( 1 );
+
+
+    for (int i = 0; i < poDS->GetLayerCount(); i++)
+    {
+        OGRLayer* layer = poDS->GetLayer(i);
+        OGRFeatureDefn *poFDefn = layer->GetLayerDefn();
+        cout << poFDefn->GetName() << endl;
+    }
 
     cout << poDS->GetDescription() << endl;
     
@@ -79,7 +88,9 @@ int main(int argc, char** argv)
                 printf( "%s=%s,", fieldName, poFeature->GetFieldAsString(iField) );
         }
 
+
         OGRGeometry *poGeometry = poFeature->GetGeometryRef();
+        cout << "geometry type = " << wkbFlatten(poGeometry->getGeometryType()) << endl;
         if( poGeometry != NULL
                 && wkbFlatten(poGeometry->getGeometryType()) == wkbPoint )
         {
@@ -98,6 +109,10 @@ int main(int argc, char** argv)
                 printf( "%.6f,%.6f\n", point.getX(), point.getY());
             }
 
+        }
+        else if (poGeometry != NULL && wkbFlatten(poGeometry->getGeometryType()) == wkbMultiPolygon)
+        {
+            cout << "multipolygon" << endl;
         }
         else
         {

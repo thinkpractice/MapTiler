@@ -12,6 +12,7 @@ class SpatialReference
     public:
         SpatialReference();
         SpatialReference(const char* wktProjectionRef);
+        SpatialReference(const OGRSpatialReference* reference);
 
         void SetWellKnownGeogCS(const char* geoCs);
         bool IsSame(SpatialReference& reference);
