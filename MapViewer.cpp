@@ -7,6 +7,7 @@
 #include <chrono>
 #include <atomic>
 #include "Lib/GLWindow.h"
+#include "Lib/Menu.h"
 #include "Lib/GeoMapProvider.h"
 #include "Lib/Area.h"
 #include "Lib/SpatialReference.h"
@@ -48,14 +49,14 @@ vector<T> subVector(vector<T> originalVector, int startIndex, int numberOfItems)
 
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory)
 {
+    vector<Rect> tileRects = chosenMap->GetTileRectsForArea(area);
+
     SafeQueue<GeoMap*> mapsPerThread;
     {
         auto t1 = std::chrono::high_resolution_clock::now();
 
         int numberOfThreads = 4;
         ThreadPool threadPool(numberOfThreads);
-
-        vector<Rect> tileRects = chosenMap->GetTileRectsForArea(area);
         
         mapsPerThread.enqueue(chosenMap);
 
@@ -92,28 +93,7 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirect
     }
 }
 
-template <class T> 
-T ShowMenu(vector<T> menuOptions, function<string(int, T)> convertToString)
-{
-    int i = 0;
-    for (auto& menuOption : menuOptions)
-    {
-        cout << convertToString(i, menuOption) << endl;
-        i++;
-    }
 
-    string input;
-    int chosenIndex = -1;
-    do
-    {
-        cout << "Choose an option" << endl;
-        getline(cin, input);
-        chosenIndex = stoi(input);
-    }
-    while (chosenIndex < 0 || chosenIndex >= menuOptions.size());
-
-    return menuOptions[chosenIndex];
-}
 
 int main(int argc, char** argv)
 {
@@ -129,7 +109,7 @@ int main(int argc, char** argv)
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
 
-    GeoMap* chosenMap = ShowMenu<GeoMap*>(mapProvider.Maps(), [&](int i, GeoMap* dataset){
+    GeoMap* chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
                 string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
                 return menuItem;
             });
@@ -158,7 +138,7 @@ int main(int argc, char** argv)
 
                 if (areas.size() > 0)
                 {
-                    Area chosenArea = ShowMenu<Area>(areas, [](int i, Area area)
+                    Area chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
                             {
                                 return to_string(i) + ") " + area.Description();
                             });

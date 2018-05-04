@@ -22,21 +22,16 @@ int main(int argc, char** argv)
 
     GDALAllRegister();
     GDALDataset       *poDS;
-    //poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
-    filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0"
+    poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
+    /*filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0"
     poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
     if( poDS == NULL )
     {
         printf( "Open failed.\n" );
         exit( 1 );
-    }
+    }*/
     
-    for (auto feature : poDS->Features())
-    {
-
-    }
-
-    /*OGRLayer  *poLayer;
+    OGRLayer  *poLayer;
     cout << "# layers=" << poDS->GetLayerCount() << endl;
     poLayer = poDS->GetLayer( 0 );
 
@@ -80,9 +75,11 @@ int main(int argc, char** argv)
             cout << "polygon" << endl;
             OGRPolygon* polygon = (OGRPolygon*)poGeometry;
             OGRLinearRing* ring = polygon->getExteriorRing();
-            for (auto* point : polygon)
+            for (int i = 0; i < ring->getNumPoints(); i++)
             {
-                printf( "%.3f,%3.f\n", point->getX(), point->getY());
+                OGRPoint point;
+                ring->getPoint(i, &point);
+                printf( "%.6f,%.6f\n", point.getX(), point.getY());
             }
 
         }
@@ -92,7 +89,7 @@ int main(int argc, char** argv)
         }
         OGRFeature::DestroyFeature( poFeature );
         break;
-    }*/
+    }
     GDALClose( poDS );
 }
 
