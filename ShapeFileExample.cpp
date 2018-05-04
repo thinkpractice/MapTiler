@@ -13,27 +13,42 @@ int main(int argc, char** argv)
 
     cout << "Opening " << filename << endl;
 
-    GeoMapProvider provider(filename);
+    /*GeoMapProvider provider(filename);
     for (auto* map : provider.Maps())
     {
         cout << map->Title() << " : " << map->Filename() << endl;
-    }
+    }*/
 
 
     GDALAllRegister();
     GDALDataset       *poDS;
+    filename = "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs";
     poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
-    /*filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0"
-    poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
+    //filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0";
+    //poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
     if( poDS == NULL )
     {
         printf( "Open failed.\n" );
         exit( 1 );
-    }*/
+    }
     
     OGRLayer  *poLayer;
     cout << "# layers=" << poDS->GetLayerCount() << endl;
     poLayer = poDS->GetLayer( 0 );
+
+    cout << poDS->GetDescription() << endl;
+    
+    char **metadataList = poDS->GetMetadataDomainList();
+    for (int i = 0; char* metadata = metadataList[i]; i++)
+    {
+        cout << metadata << endl;
+    }
+
+    /*char **metadataInfo = poDS->GetMetadata("SUBDATASETS");
+    for (int i = 0; char* metadata = metadataInfo[i]; i++)
+    {
+        cout << metadata << endl;
+    }*/
 
     OGRSpatialReference* spatialRef = poLayer->GetSpatialRef();
     spatialRef->dumpReadable();
@@ -63,6 +78,7 @@ int main(int argc, char** argv)
             else
                 printf( "%s=%s,", fieldName, poFeature->GetFieldAsString(iField) );
         }
+
         OGRGeometry *poGeometry = poFeature->GetGeometryRef();
         if( poGeometry != NULL
                 && wkbFlatten(poGeometry->getGeometryType()) == wkbPoint )

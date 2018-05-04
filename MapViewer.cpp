@@ -132,7 +132,6 @@ int main(int argc, char** argv)
     Area mapArea = chosenMap->GetMapArea();
     cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
-
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
 
