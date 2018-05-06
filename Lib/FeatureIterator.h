@@ -2,6 +2,7 @@
 #define FEATURE_ITERATOR_H
 
 #include <iterator>
+#include <memory>
 #include "Layer.h"
 #include "Feature.h"
 
@@ -13,7 +14,7 @@ class FeatureIterator
         using value_type = Feature;
         using difference_type = ptrdiff_t;
         using pointer = Feature*;
-        using reference = Feature&;
+        using reference = unique_ptr<Feature*>&;
         using iterator_category = input_iterator_tag;
 
         FeatureIterator(Layer* layer, bool start);
@@ -21,7 +22,7 @@ class FeatureIterator
         virtual ~FeatureIterator();
 
         //Copy assignable
-        FeatureIterator operator= (const FeatureIterator& iterator);
+        FeatureIterator& operator= (const FeatureIterator& iterator);
 
         // Dereferencable.
         reference operator*() const;
@@ -33,6 +34,13 @@ class FeatureIterator
         // Equality / inequality.
         bool operator==(const FeatureIterator& rhs);
         bool operator!=(const FeatureIterator& rhs);
+
+    private:
+        void NextFeature();
+
+    private:
+        Layer* _layer;
+        reference _currentFeature;
 };
 
 #endif
