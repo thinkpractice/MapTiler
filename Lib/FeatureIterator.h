@@ -3,8 +3,9 @@
 
 #include <iterator>
 #include <memory>
-#include "Layer.h"
 #include "Feature.h"
+
+class Layer;
 
 using namespace std;
 

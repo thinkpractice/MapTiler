@@ -1,11 +1,12 @@
 #include "FeatureIterator.h"
-
+#include "Layer.h"
 
 FeatureIterator::FeatureIterator(Layer* layer, bool start)
                     :   _layer(layer)
 {
     if (start)
     {
+        _layer->ResetReading();
         NextFeature();
     }
 }

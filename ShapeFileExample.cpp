@@ -1,7 +1,7 @@
 #include "ogrsf_frmts.h"
 #include <iostream>
-#include "Lib/GeoMapProvider.h"
-#include "Lib/GeoMap.h"
+#include "Lib/VectorFile.h"
+#include "Lib/Layer.h"
 
 using namespace std;
 
@@ -9,57 +9,33 @@ int main(int argc, char** argv)
 {
     if (argc < 2)
         return -1;
-    const char* filename = argv[1];
 
-    cout << "Opening " << filename << endl;
-
-    /*GeoMapProvider provider(filename);
-    for (auto* map : provider.Maps())
-    {
-        cout << map->Title() << " : " << map->Filename() << endl;
-    }*/
-
+    string filename(argv[1]);
 
     GDALAllRegister();
-    GDALDataset       *poDS;
+
     filename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
     //filename = "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs";
-    poDS = (GDALDataset*) GDALOpenEx( filename, GDAL_OF_VECTOR, NULL, NULL, NULL );
     //filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0";
-    //poDS = (GDALDataset*) GDALOpen( filename, GA_ReadOnly);
-    if( poDS == NULL )
-    {
-        printf( "Open failed.\n" );
-        exit( 1 );
-    }
+
+    VectorFile vectorFile(filename);
     
-    OGRLayer  *poLayer;
-    cout << "# layers=" << poDS->GetLayerCount() << endl;
-    poLayer = poDS->GetLayer( 1 );
+    cout << "# layers=" << vectorFile.LayerCount() << endl;
+    Layer* layer = vectorFile[1];
 
-
-    for (int i = 0; i < poDS->GetLayerCount(); i++)
+    for (auto* layer : vectorFile.Layers())
     {
-        OGRLayer* layer = poDS->GetLayer(i);
-        OGRFeatureDefn *poFDefn = layer->GetLayerDefn();
-        cout << poFDefn->GetName() << endl;
+        cout << "layer : " << layer->Name() << endl;
     }
 
-    cout << poDS->GetDescription() << endl;
-    
-    char **metadataList = poDS->GetMetadataDomainList();
-    for (int i = 0; char* metadata = metadataList[i]; i++)
+    int numberOfFeatures = 0;
+    for (auto feature : layer)
     {
-        cout << metadata << endl;
+        numberOfFeatures++;
     }
+    cout << "Number of features: " << numberOfFeatures << endl;
 
-    /*char **metadataInfo = poDS->GetMetadata("SUBDATASETS");
-    for (int i = 0; char* metadata = metadataInfo[i]; i++)
-    {
-        cout << metadata << endl;
-    }*/
-
-    OGRSpatialReference* spatialRef = poLayer->GetSpatialRef();
+    /*OGRSpatialReference* spatialRef = poLayer->GetSpatialRef();
     spatialRef->dumpReadable();
 
     cout << "Here poLayer =" << poLayer << endl;
@@ -120,7 +96,8 @@ int main(int argc, char** argv)
         }
         OGRFeature::DestroyFeature( poFeature );
         break;
-    }
-    GDALClose( poDS );
+    }*/
+
+    delete layer;
 }
 
