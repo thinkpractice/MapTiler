@@ -2,7 +2,8 @@
 #include "Layer.h"
 
 FeatureIterator::FeatureIterator(Layer* layer, bool start)
-                    :   _layer(layer)
+                    :   _layer(layer),
+                        _currentFeature(nullptr)
 {
     if (start)
     {

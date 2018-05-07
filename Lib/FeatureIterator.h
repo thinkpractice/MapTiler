@@ -15,7 +15,7 @@ class FeatureIterator
         using value_type = Feature;
         using difference_type = ptrdiff_t;
         using pointer = Feature*;
-        using reference = unique_ptr<Feature*>&;
+        using reference = shared_ptr<Feature*>&;
         using iterator_category = input_iterator_tag;
 
         FeatureIterator(Layer* layer, bool start);

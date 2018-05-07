@@ -35,11 +35,13 @@ int VectorFile::LayerCount()
 
 Layer* operator[](const int index)
 {
+    //TODO: convert to unique or shared ptr?
     return new Layer(Dataset()->GetLayer(index));
 }
 
 Layer* operator[](const char* layerName)
 {
+    //TODO: convert to unique or shared ptr?
     return new Layer(Dataset())->GetLayerByName(layerName));
 }
 

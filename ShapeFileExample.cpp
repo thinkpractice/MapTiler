@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     }
 
     int numberOfFeatures = 0;
-    for (auto feature : layer)
+    for (auto feature : (*layer))
     {
         numberOfFeatures++;
     }
