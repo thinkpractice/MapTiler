@@ -19,12 +19,12 @@ SpatialReference Layer::ProjectionReference()
     return SpatialReference(_layer->GetSpatialRef());
 }
 
-void Layer::ResetReading()
+void Layer::ResetReading() const
 {
     _layer->ResetReading();
 }
 
-Feature* Layer::NextFeature()
+Feature* Layer::NextFeature() const
 {
     OGRFeature* feature = _layer->GetNextFeature();
     if (feature)
@@ -34,12 +34,12 @@ Feature* Layer::NextFeature()
 
 Layer::iterator Layer::begin() const
 {
-    return FeatureIterator(this, true);
+    return {this, true};
 }
 
 Layer::iterator Layer::end() const
 {
-    return FeatureIterator(this, false);
+    return {this, false};
 }
 
 OGRFeatureDefn* Layer::FeatureDefinition()
@@ -47,3 +47,61 @@ OGRFeatureDefn* Layer::FeatureDefinition()
     return _layer->GetLayerDefn();
 }
 
+Layer::FeatureIterator::FeatureIterator(const Layer* layer, bool start)
+                    :   _layer(layer)
+{
+    if (start)
+    {
+        _layer->ResetReading();
+        NextFeature();
+    }
+}
+
+Layer::FeatureIterator::FeatureIterator(const FeatureIterator& iterator)
+                    :   _layer(iterator._layer),
+                        _currentFeature(iterator._currentFeature)
+{
+}
+
+Layer::FeatureIterator::~FeatureIterator()
+{
+}
+
+Layer::FeatureIterator& Layer::FeatureIterator::operator=(const FeatureIterator& iterator)
+{
+    _layer = iterator._layer;
+    return *this;
+}
+
+Layer::FeatureIterator::reference Layer::FeatureIterator::operator*() const
+{
+    return *_currentFeature.get();
+}
+
+Layer::FeatureIterator& Layer::FeatureIterator::operator++()
+{
+    NextFeature();
+    return *this;
+}
+
+Layer::FeatureIterator Layer::FeatureIterator::operator++(int)
+{
+    FeatureIterator temp = *this;
+    ++(*this);
+    return temp;
+}
+
+bool Layer::FeatureIterator::operator==(const FeatureIterator& rhs)
+{
+    return _currentFeature.get() == rhs._currentFeature.get();
+}
+
+bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
+{
+    return !(*this == rhs);
+}
+
+void Layer::FeatureIterator::NextFeature()
+{
+    _currentFeature.reset(_layer->NextFeature());
+}

@@ -23,7 +23,7 @@ string VectorFile::Filename()
 GDALDataset* VectorFile::Dataset()
 {
     if (!_dataset)
-        _dataset = (GDALDataset*) GDALOpenEx( Filename(), GDAL_OF_VECTOR, NULL, NULL, NULL );
+        _dataset = (GDALDataset*) GDALOpenEx( Filename().c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL );
     return _dataset;
 }
 
@@ -33,16 +33,16 @@ int VectorFile::LayerCount()
 }
 
 
-Layer* operator[](const int index)
+Layer* VectorFile::operator[](const int index)
 {
     //TODO: convert to unique or shared ptr?
     return new Layer(Dataset()->GetLayer(index));
 }
 
-Layer* operator[](const char* layerName)
+Layer* VectorFile::operator[](const char* layerName)
 {
     //TODO: convert to unique or shared ptr?
-    return new Layer(Dataset())->GetLayerByName(layerName));
+    return new Layer(Dataset()->GetLayerByName(layerName));
 }
 
 vector<Layer*> VectorFile::Layers()
@@ -51,7 +51,7 @@ vector<Layer*> VectorFile::Layers()
     {
         for (int i = 0; i < LayerCount(); i++)
         {
-            _layers.push_back(this[i]);
+            _layers.push_back((*this)[i]);
         }
     }
     return _layers;

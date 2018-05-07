@@ -2,10 +2,10 @@
 #define LAYER_H
 
 #include <string>
+#include <memory>
 #include "ogrsf_frmts.h"
 #include "SpatialReference.h"
 #include "Feature.h"
-#include "FeatureIterator.h"
 
 using namespace std;
 
@@ -18,24 +18,16 @@ class Layer
         string Name();
         SpatialReference ProjectionReference();
 
-        void ResetReading();
-        Feature* NextFeature();
-
-        using iterator = FeatureIterator;
-
-        iterator begin() const;
-        iterator end() const;
-
         class FeatureIterator
         {
             public:
                 using value_type = Feature;
                 using difference_type = ptrdiff_t;
-                using pointer = Feature*;
-                using reference = shared_ptr<Feature*>&;
+                using pointer = shared_ptr<Feature>;
+                using reference = Feature&;
                 using iterator_category = input_iterator_tag;
 
-                FeatureIterator(Layer* layer, bool start);
+                FeatureIterator(const Layer* layer, bool start);
                 FeatureIterator(const FeatureIterator& iterator);
                 virtual ~FeatureIterator();
 
@@ -57,13 +49,20 @@ class Layer
                 void NextFeature();
 
             private:
-                Layer* _layer;
-                reference _currentFeature;
+                const Layer* _layer;
+                shared_ptr<Feature> _currentFeature;
         };
 
+        using iterator = FeatureIterator;
+
+        iterator begin() const;
+        iterator end() const;
 
     protected:
         OGRFeatureDefn* FeatureDefinition();
+
+        void ResetReading() const;
+        Feature* NextFeature() const;
 
     private:
         OGRLayer* _layer;
