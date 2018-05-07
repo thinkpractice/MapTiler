@@ -32,6 +32,8 @@ int main(int argc, char** argv)
     for (auto feature : (*layer))
     {
         numberOfFeatures++;
+        if (numberOfFeatures > 100)
+            break;
     }
     cout << "Number of features: " << numberOfFeatures << endl;
 

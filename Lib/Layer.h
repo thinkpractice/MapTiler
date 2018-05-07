@@ -24,7 +24,7 @@ class Layer
                 using value_type = Feature;
                 using difference_type = ptrdiff_t;
                 using pointer = shared_ptr<Feature>;
-                using reference = Feature&;
+                using reference = const shared_ptr<Feature>&;
                 using iterator_category = input_iterator_tag;
 
                 FeatureIterator(const Layer* layer, bool start);
