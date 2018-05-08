@@ -9,3 +9,13 @@ Feature::~Feature()
 {
     OGRFeature::DestroyFeature(_feature);
 }
+
+string Feature::Name()
+{
+    return string(FeatureDefinition()->GetName());
+}
+
+OGRFeatureDefn* Feature::FeatureDefinition()
+{
+    return _feature->GetDefnRef();
+}
