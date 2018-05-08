@@ -75,7 +75,7 @@ Layer::FeatureIterator& Layer::FeatureIterator::operator=(const FeatureIterator&
 
 Layer::FeatureIterator::reference Layer::FeatureIterator::operator*() const
 {
-    return _currentFeature;
+    return *_currentFeature.get();
 }
 
 Layer::FeatureIterator& Layer::FeatureIterator::operator++()

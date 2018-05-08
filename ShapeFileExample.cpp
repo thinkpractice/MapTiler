@@ -34,7 +34,7 @@ int main(int argc, char** argv)
         numberOfFeatures++;
         if (numberOfFeatures > 10)
             break;
-        for (auto field : (*feature))
+        for (auto field : feature)
         {
             cout << field.Name() << "=" << field.Value() << ",";
         }
