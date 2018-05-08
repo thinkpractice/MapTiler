@@ -1,7 +1,8 @@
 #include "Field.h"
 
-Field::Field(OGRFieldDefn* fieldDefinition)
-        :   _fieldDefinition(fieldDefinition)
+Field::Field(OGRFieldDefn* fieldDefinition, string value)
+        :   _fieldDefinition(fieldDefinition),
+            _value(value)
 {
 }
 
@@ -14,4 +15,7 @@ string Field::Name()
     return string(_fieldDefinition->GetNameRef());
 }
 
-
+string Field::Value()
+{
+    return _value;
+}

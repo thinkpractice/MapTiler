@@ -32,8 +32,13 @@ int main(int argc, char** argv)
     for (auto feature : (*layer))
     {
         numberOfFeatures++;
-        if (numberOfFeatures > 100)
+        if (numberOfFeatures > 10)
             break;
+        for (auto field : (*feature))
+        {
+            cout << field.Name() << "=" << field.Value() << ",";
+        }
+        cout << endl;
     }
     cout << "Number of features: " << numberOfFeatures << endl;
 

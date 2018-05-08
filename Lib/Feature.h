@@ -15,7 +15,7 @@ class Feature
         virtual ~Feature();
 
         string Name() const;
-        int NumberOfFields() const;
+        size_t NumberOfFields() const;
 
         Field operator[](size_t index);
         const Field operator[](size_t index) const;
@@ -58,6 +58,7 @@ class Feature
         iterator end() const;
         
     private:
+        Field GetFieldAtIndex(size_t index) const;
         OGRFeatureDefn *FeatureDefinition() const;
 
     private:

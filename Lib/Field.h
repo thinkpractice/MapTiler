@@ -9,13 +9,15 @@ using namespace std;
 class Field
 {
     public:
-        Field(OGRFieldDefn* fieldDefinition);
+        Field(OGRFieldDefn* fieldDefinition,string value);
         virtual ~Field();
 
         string Name();
+        string Value();
 
     private:
         OGRFieldDefn* _fieldDefinition;
+        string _value;
 };
 
 #endif
