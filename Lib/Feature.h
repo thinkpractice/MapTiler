@@ -5,6 +5,9 @@
 #include <string>
 #include <iterator>
 #include "Field.h"
+#include "Point.h"
+#include "Polygon.h"
+#include "MultiPolygon.h"
 
 using namespace std;
 
@@ -19,6 +22,45 @@ class Feature
 
         Field operator[](size_t index);
         const Field operator[](size_t index) const;
+
+        class FeatureGeometry
+        {
+            public:
+                enum GeometryType {PointType, PolygonType, MultiPolygonType, Other};
+
+            public:
+                FeatureGeometry(OGRGeometry* geometry);
+                virtual ~FeatureGeometry();
+
+                GeometryType Type();
+
+                bool HasPoint() const;
+                Point GetPoint() const;
+
+                bool HasPolygon() const;
+                Polygon GetPolygon() const;
+
+                bool HasMultiPolygon() const;
+                MultiPolygon GetMultiPolygon() const;
+
+
+            private:
+                void ParseGeometry(OGRGeometry* geometry);
+                Polygon ParsePolygon(OGRPolygon* polygon);
+
+            private:
+                OGRGeometry* _geometry;
+
+                bool _parsedGeometry;
+                bool _hasPoint;
+                Point _point;
+
+                Polygon _polygon;
+                bool _hasPolygon;
+
+                MultiPolygon _multiPolygon;
+                bool _hasMultiPolygon;
+        };
 
         class FieldIterator
         {
@@ -57,13 +99,15 @@ class Feature
         iterator begin() const;
         iterator end() const;
         
+        FeatureGeometry Geometry();
+
     private:
         Field GetFieldAtIndex(size_t index) const;
         OGRFeatureDefn *FeatureDefinition() const;
 
     private:
         OGRFeature* _feature;
-
+        
 };
 
 #endif

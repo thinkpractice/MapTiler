@@ -30,6 +30,108 @@ const Field Feature::operator[](size_t index) const
     return GetFieldAtIndex(index);
 }
 
+Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
+                            :   _geometry(geometry)
+{
+}
+
+Feature::FeatureGeometry::~FeatureGeometry()
+{
+}
+
+Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::Type()
+{
+    switch(wkbFlatten(_geometry->getGeometryType()))
+    {
+        case wkbPoint:
+            return  GeometryType::PointType;
+        case wkbPolygon:
+            return GeometryType::PolygonType;
+        case wkbMultiPolygon:
+            return GeometryType::MultiPolygonType;
+    }
+    return GeometryType::Other;
+}
+
+void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
+{
+    _parsedGeometry = true;
+    if (geometry == nullptr || Type() == GeometryType::Other)
+        return;
+    
+    if (Type() == PointType)
+    {
+        OGRPoint *poPoint = (OGRPoint*)geometry;
+        _point = Point(poPoint->getX(), poPoint->getY());
+    }
+    else if (Type() == PolygonType)
+    {
+        OGRPolygon* polygon = (OGRPolygon*)geometry;
+        _polygon = ParsePolygon(polygon);
+    }
+    else if (Type() == MultiPolygonType)
+    {
+    }
+}
+
+Polygon Feature::FeatureGeometry::ParsePolygon(OGRPolygon* ogrPolygon)
+{
+    Polygon polygon;
+
+    OGRLinearRing* ring = ogrPolygon->getExteriorRing();
+    for (int i = 0; i < ring->getNumPoints(); i++)
+    {
+        OGRPoint point;
+        ring->getPoint(i, &point);
+
+        polygon.ExternalRing().AddPoint(Point(point.getX(), point.getY()));
+    }
+
+    for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
+    {
+        OGRLinearRing* internalRing = ogrPolygon->getInteriorRing(i);
+        Polygon::Ring newInternalRing;
+        for (int i = 0; i < internalRing->getNumPoints(); i++)
+        {
+            OGRPoint point;
+            ring->getPoint(i, &point);
+            newInternalRing.AddPoint(Point(point.getX(), point.getY()));
+        }
+        polygon.InternalRings().push_back(newInternalRing);
+    }
+    return polygon;
+}
+
+bool Feature::FeatureGeometry::HasPoint() const
+{
+    return _hasPoint;
+}
+
+Point Feature::FeatureGeometry::GetPoint() const
+{
+    return _point;
+}
+
+bool Feature::FeatureGeometry::HasPolygon() const
+{
+    return _hasPolygon;
+}
+
+Polygon Feature::FeatureGeometry::GetPolygon() const
+{
+    return _polygon;
+}
+
+bool Feature::FeatureGeometry::HasMultiPolygon() const
+{
+    return _hasMultiPolygon;
+}
+
+MultiPolygon Feature::FeatureGeometry::GetMultiPolygon() const
+{
+    return _multiPolygon;
+}
+
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
                                 _currentField(nullptr, ""),
@@ -108,6 +210,12 @@ Feature::iterator Feature::begin() const
 Feature::iterator Feature::end() const
 {
     return {this, false};
+}
+
+Feature::FeatureGeometry Feature::Geometry()
+{
+    OGRGeometry *geometry = _feature->GetGeometryRef();
+    return FeatureGeometry(geometry);
 }
 
 OGRFeatureDefn* Feature::FeatureDefinition() const

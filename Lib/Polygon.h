@@ -36,12 +36,12 @@ class Polygon
                 vector<Point> _points;
         };
 
-        const Ring& ExternalRing() const;
-        const Ring& InternalRing() const;
+        Ring& ExternalRing();
+        vector<Ring>& InternalRings();
 
     private:
-        Ring _internalRing;
         Ring _externalRing;
+        vector<Ring> _internalRings;
 };
 
 #endif

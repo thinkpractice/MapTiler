@@ -16,19 +16,19 @@ Polygon::Ring::~Ring()
 {
 }
 
-void Polygon::Ring::AddPoint(Point point)
+void Polygon::Ring::AddPoint(const Point point)
 {
     _points.push_back(point);
 }
 
-const Polygon::Ring& Polygon::ExternalRing() const
+Polygon::Ring& Polygon::ExternalRing()
 {
     return _externalRing;
 }
 
-const Polygon::Ring& Polygon::InternalRing() const
+vector<Polygon::Ring>& Polygon::InternalRings()
 {
-    return _internalRing;
+    return _internalRings;
 }
 
 
