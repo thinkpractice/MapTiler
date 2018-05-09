@@ -71,11 +71,19 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
     }
     else if (Type() == MultiPolygonType)
     {
+        OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;
+        for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
+        {
+            OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
+            Polygon polygon = ParsePolygon(ogrPolygon);
+            _multiPolygon.AddPolygon(polygon);
+        }
     }
 }
 
 Polygon Feature::FeatureGeometry::ParsePolygon(OGRPolygon* ogrPolygon)
 {
+    //TODO Refactor to prevent code duplication
     Polygon polygon;
 
     OGRLinearRing* ring = ogrPolygon->getExteriorRing();
