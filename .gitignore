@@ -10,6 +10,18 @@
 *.dll
 *.dylib
 
+#Vim files
+*.swp
+
+#CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+#Binaries
+MapViewer
+ShapeFileExample
+
 # Qt-es
 
 /.qmake.cache
