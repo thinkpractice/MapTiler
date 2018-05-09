@@ -21,6 +21,7 @@
 *.moc
 moc_*.cpp
 moc_*.h
+*_automoc.cpp
 qrc_*.cpp
 ui_*.h
 Makefile*
