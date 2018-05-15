@@ -23,6 +23,8 @@ class Feature
         Field operator[](size_t index);
         const Field operator[](size_t index) const;
 
+        bool operator==(const Feature& other) const;
+
         class FeatureGeometry
         {
             public:

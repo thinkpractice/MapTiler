@@ -7,7 +7,8 @@ Feature::Feature(OGRFeature* feature)
 
 Feature::~Feature()
 {
-    OGRFeature::DestroyFeature(_feature);
+    //SEGFault caused here
+    //OGRFeature::DestroyFeature(_feature);
 }
 
 string Feature::Name() const
@@ -30,9 +31,18 @@ const Field Feature::operator[](size_t index) const
     return GetFieldAtIndex(index);
 }
 
-Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
-                            :   _geometry(geometry)
+bool Feature::operator==(const Feature& other) const
 {
+    _feature == other._feature;
+}
+
+Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
+                            :   _geometry(geometry),
+                                _hasPoint(false),
+                                _hasPolygon(false),
+                                _hasMultiPolygon(false)
+{
+    ParseGeometry(geometry);
 }
 
 Feature::FeatureGeometry::~FeatureGeometry()
@@ -74,7 +84,7 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
         OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;
         for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
         {
-            OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
+            OGRPolygon* ogrPolygon = (OGRPolygon*)multiPolygon->getGeometryRef(i);
             Polygon polygon = ParsePolygon(ogrPolygon);
             _multiPolygon.AddPolygon(polygon);
         }

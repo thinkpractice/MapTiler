@@ -23,7 +23,7 @@ class Layer
             public:
                 using value_type = Feature;
                 using difference_type = ptrdiff_t;
-                using pointer = shared_ptr<Feature>;
+                using pointer = Feature*;
                 using reference = const Feature&;
                 using iterator_category = input_iterator_tag;
 
@@ -50,7 +50,7 @@ class Layer
 
             private:
                 const Layer* _layer;
-                shared_ptr<Feature> _currentFeature;
+                Feature _currentFeature;
         };
 
         using iterator = FeatureIterator;
@@ -62,7 +62,7 @@ class Layer
         OGRFeatureDefn* FeatureDefinition();
 
         void ResetReading() const;
-        Feature* NextFeature() const;
+        Feature NextFeature() const;
 
     private:
         OGRLayer* _layer;

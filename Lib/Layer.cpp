@@ -24,12 +24,10 @@ void Layer::ResetReading() const
     _layer->ResetReading();
 }
 
-Feature* Layer::NextFeature() const
+Feature Layer::NextFeature() const
 {
     OGRFeature* feature = _layer->GetNextFeature();
-    if (feature)
-        return new Feature(feature);
-    return nullptr;
+    return Feature(feature);
 }
 
 Layer::iterator Layer::begin() const
@@ -48,7 +46,8 @@ OGRFeatureDefn* Layer::FeatureDefinition()
 }
 
 Layer::FeatureIterator::FeatureIterator(const Layer* layer, bool start)
-                    :   _layer(layer)
+                    :   _layer(layer),
+                        _currentFeature(nullptr)
 {
     if (start)
     {
@@ -75,7 +74,7 @@ Layer::FeatureIterator& Layer::FeatureIterator::operator=(const FeatureIterator&
 
 Layer::FeatureIterator::reference Layer::FeatureIterator::operator*() const
 {
-    return *_currentFeature.get();
+    return _currentFeature;
 }
 
 Layer::FeatureIterator& Layer::FeatureIterator::operator++()
@@ -93,7 +92,7 @@ Layer::FeatureIterator Layer::FeatureIterator::operator++(int)
 
 bool Layer::FeatureIterator::operator==(const FeatureIterator& rhs)
 {
-    return _currentFeature.get() == rhs._currentFeature.get();
+    return _currentFeature == rhs._currentFeature;
 }
 
 bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
@@ -103,5 +102,5 @@ bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
 
 void Layer::FeatureIterator::NextFeature()
 {
-    _currentFeature.reset(_layer->NextFeature());
+    _currentFeature = _layer->NextFeature();
 }
