@@ -6,6 +6,39 @@
 
 using namespace std;
 
+/*void printFeatures(vector<Feature> features, int maxFeatures = 10)
+{
+    int fi = 0;
+    for (auto feature : features)
+    {
+        if (fi > maxFeatures)
+            break;
+        for (auto field : feature)
+        {
+            cout << field.Name() << "=" << field.Value() << ",";
+        }
+        fi++;
+        cout << endl;
+    }
+}*/
+
+template<class InputIterator>
+void printFeatures(const InputIterator& begin, const InputIterator& end, int maxFeatures = 10)
+{
+    int fi = 0;
+    for (auto feature = begin; feature != end; ++feature)
+    {
+        if (fi > maxFeatures)
+            break;
+        for (auto field : *feature)
+        {
+            cout << field.Name() << "=" << field.Value() << ",";
+        }
+        fi++;
+        cout << endl;
+    }
+}
+
 int main(int argc, char** argv)
 {
     if (argc < 2)
@@ -15,28 +48,20 @@ int main(int argc, char** argv)
 
     GDALAllRegister();
 
-    filename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
     //filename = "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs";
     //filename = "WMS:https://geodata.nationaalgeoregister.nl/inspireadressen/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=inspireadressen&SRS=EPSG:28992&BBOX=0.0,0.0,277922.729,613046.0";
 
-    VectorFile addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
-    cout << "LayerCount addresses = " << addresses.LayerCount() << endl;
+    VectorFile addresses("WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs");
+    Layer addressLayer = addresses[0];
+    printFeatures(addressLayer.begin(), addressLayer.end());
 
-    vector<Feature> filteredAddresses = addresses.ExecuteSql("select * from addresses where postcode='6372KV'");
+    VectorFile solarpanel_addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
+    cout << "LayerCount solar_panel addresses = " << solarpanel_addresses.LayerCount() << endl;
 
-    int fi = 0;
-    for (auto feature : filteredAddresses)
-    {
-        if (fi > 10)
-            break;
-        for (auto field : feature)
-        {
-            cout << field.Name() << "=" << field.Value() << ",";
-        }
-        fi++;
-        cout << endl;
-    }
+    vector<Feature> filteredAddresses = solarpanel_addresses.ExecuteSql("select * from addresses where postcode='6372KV'");
+    printFeatures(filteredAddresses.begin(), filteredAddresses.end());
 
+    filename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
     VectorFile vectorFile(filename);
     
     cout << "# layers=" << vectorFile.LayerCount() << endl;
