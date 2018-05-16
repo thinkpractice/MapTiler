@@ -6,6 +6,7 @@
 #include "ogrsf_frmts.h"
 #include "SpatialReference.h"
 #include "Feature.h"
+#include "Area.h"
 
 using namespace std;
 
@@ -17,6 +18,9 @@ class Layer
 
         string Name();
         SpatialReference ProjectionReference();
+
+        void ClearSpatialFilter();
+        void SetSpatialFilter(const Area& area);
 
         class FeatureIterator
         {

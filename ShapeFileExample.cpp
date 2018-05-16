@@ -6,22 +6,6 @@
 
 using namespace std;
 
-/*void printFeatures(vector<Feature> features, int maxFeatures = 10)
-{
-    int fi = 0;
-    for (auto feature : features)
-    {
-        if (fi > maxFeatures)
-            break;
-        for (auto field : feature)
-        {
-            cout << field.Name() << "=" << field.Value() << ",";
-        }
-        fi++;
-        cout << endl;
-    }
-}*/
-
 template<class InputIterator>
 void printFeatures(const InputIterator& begin, const InputIterator& end, int maxFeatures = 10)
 {
@@ -54,6 +38,11 @@ int main(int argc, char** argv)
     VectorFile addresses("WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs");
     Layer addressLayer = addresses[0];
     printFeatures(addressLayer.begin(), addressLayer.end());
+
+    cout << "address layer name: " << addressLayer.Name() << endl;
+
+    vector<Feature> coupledAddresses = addresses.ExecuteSql("select inspireadressen.*, addresses.* from inspireadressen left join '/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses'.addresses on inspireadressen.postcode = addresses.postcode");
+    printFeatures(coupledAddresses.begin(), coupledAddresses.end());
 
     VectorFile solarpanel_addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
     cout << "LayerCount solar_panel addresses = " << solarpanel_addresses.LayerCount() << endl;

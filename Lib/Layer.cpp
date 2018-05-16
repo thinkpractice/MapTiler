@@ -1,4 +1,5 @@
 #include "Layer.h"
+#include "CoordinateTransformation.h"
 
 Layer::Layer(OGRLayer* layer)
             :   _layer(layer)
@@ -17,6 +18,18 @@ string Layer::Name()
 SpatialReference Layer::ProjectionReference()
 {
     return SpatialReference(_layer->GetSpatialRef());
+}
+
+void Layer::ClearSpatialFilter()
+{
+    _layer->SetSpatialFilter(nullptr);
+}
+
+void Layer::SetSpatialFilter(const Area& area)
+{
+
+    Area filterArea = CoordinateTransformation::MapArea(area, ProjectionReference());
+    _layer->SetSpatialFilterRect(filterArea.LeftTop().X, filterArea.LeftTop().Y, filterArea.BottomRight().X, filterArea.BottomRight().Y);
 }
 
 void Layer::ResetReading() const
