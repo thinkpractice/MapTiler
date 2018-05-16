@@ -86,11 +86,13 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
     {
         OGRPoint *poPoint = (OGRPoint*)geometry;
         _point = Point(poPoint->getX(), poPoint->getY());
+        _hasPoint = true;
     }
     else if (Type() == PolygonType)
     {
         OGRPolygon* polygon = (OGRPolygon*)geometry;
         _polygon = ParsePolygon(polygon);
+        _hasPolygon = true;
     }
     else if (Type() == MultiPolygonType)
     {
@@ -101,6 +103,7 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
             Polygon polygon = ParsePolygon(ogrPolygon);
             _multiPolygon.AddPolygon(polygon);
         }
+        _hasMultiPolygon = true;
     }
 }
 
