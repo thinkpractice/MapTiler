@@ -3,8 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <gdal_priv.h>
 #include "Layer.h"
+#include "Feature.h"
 
 using namespace std;
 
@@ -20,6 +22,8 @@ class VectorFile
         Layer& operator[](const int index);
         Layer operator[](const char* layerName);
         vector<Layer>& Layers();
+
+        vector<Feature> ExecuteSql(const char* sqlStatement);
 
     protected:
         GDALDataset* Dataset();

@@ -1,4 +1,5 @@
 #include "VectorFile.h"
+#include <iostream>
 
 VectorFile::VectorFile(string filename)
                 :   _filename(filename),
@@ -50,4 +51,19 @@ vector<Layer>& VectorFile::Layers()
         }
     }
     return _layers;
+}
+
+
+vector<Feature> VectorFile::ExecuteSql(const char* sqlStatement)
+{
+    OGRLayer* layer = Dataset()->ExecuteSQL(sqlStatement, nullptr, nullptr);
+    
+    vector<Feature> resultSetFeatures;
+    Layer resultSet(layer);
+    for (auto feature : resultSet)
+    {
+        resultSetFeatures.push_back(feature);
+    }
+    Dataset()->ReleaseResultSet(layer);
+    return resultSetFeatures;
 }

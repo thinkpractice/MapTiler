@@ -7,8 +7,10 @@ Feature::Feature(OGRFeature* feature)
 }
 
 Feature::Feature(const Feature& other)
+            :   _feature(nullptr)
 {
-    _feature = other._feature->Clone();
+    if (other._feature)
+        _feature = other._feature->Clone();
 }
 
 Feature::~Feature()
@@ -28,7 +30,9 @@ size_t Feature::NumberOfFields() const
 
 Feature& Feature::operator=(const Feature& other)
 {
-    _feature = other._feature->Clone();
+    _feature = nullptr;
+    if (other._feature)
+        _feature = other._feature->Clone();
     return *this;
 }
 
@@ -44,6 +48,8 @@ const Field Feature::operator[](size_t index) const
 
 bool Feature::operator==(const Feature& other) const
 {
+    if (_feature == nullptr && other._feature == nullptr)
+        return true;
     _feature == other._feature;
 }
 
