@@ -78,9 +78,7 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
 {
     _parsedGeometry = true;
     if (geometry == nullptr || Type() == GeometryType::Other)
-    {
         return;
-    }
     
     if (Type() == PointType)
     {

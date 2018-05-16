@@ -17,9 +17,9 @@ class VectorFile
         string Filename();
 
         int LayerCount();
-        Layer* operator[](const int index);
-        Layer* operator[](const char* layerName);
-        vector<Layer*> Layers();
+        Layer& operator[](const int index);
+        Layer operator[](const char* layerName);
+        vector<Layer>& Layers();
 
     protected:
         GDALDataset* Dataset();
@@ -27,7 +27,7 @@ class VectorFile
     private:
         string _filename;
         GDALDataset* _dataset;
-        vector<Layer*> _layers;
+        vector<Layer> _layers;
 };
 
 #endif
