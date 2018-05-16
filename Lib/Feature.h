@@ -15,11 +15,13 @@ class Feature
 {
     public:
         Feature(OGRFeature *feature);
+        Feature(const Feature& other);
         virtual ~Feature();
 
         string Name() const;
         size_t NumberOfFields() const;
 
+        Feature& operator=(const Feature& feature);
         Field operator[](size_t index);
         const Field operator[](size_t index) const;
 

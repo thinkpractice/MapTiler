@@ -5,10 +5,14 @@ Feature::Feature(OGRFeature* feature)
 {
 }
 
+Feature::Feature(const Feature& other)
+{
+    _feature = other._feature->Clone();
+}
+
 Feature::~Feature()
 {
-    //SEGFault caused here
-    //OGRFeature::DestroyFeature(_feature);
+    OGRFeature::DestroyFeature(_feature);
 }
 
 string Feature::Name() const
@@ -19,6 +23,12 @@ string Feature::Name() const
 size_t Feature::NumberOfFields() const
 {
     return FeatureDefinition()->GetFieldCount();
+}
+
+Feature& Feature::operator=(const Feature& other)
+{
+    _feature = other._feature->Clone();
+    return *this;
 }
 
 Field Feature::operator[](size_t index)
