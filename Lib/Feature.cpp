@@ -1,4 +1,5 @@
 #include "Feature.h"
+#include <iostream>
 
 Feature::Feature(OGRFeature* feature)
             :   _feature(feature)
@@ -64,7 +65,7 @@ Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::Type()
     switch(wkbFlatten(_geometry->getGeometryType()))
     {
         case wkbPoint:
-            return  GeometryType::PointType;
+            return GeometryType::PointType;
         case wkbPolygon:
             return GeometryType::PolygonType;
         case wkbMultiPolygon:
@@ -77,7 +78,9 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
 {
     _parsedGeometry = true;
     if (geometry == nullptr || Type() == GeometryType::Other)
+    {
         return;
+    }
     
     if (Type() == PointType)
     {
