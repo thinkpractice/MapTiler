@@ -40,7 +40,8 @@ int main(int argc, char** argv)
     //printFeatures(addressLayer.begin(), addressLayer.end());
 
     cout << "address layer name: " << addressLayer.Name() << endl;
-    addressLayer.SetSpatialFilter(Area(addressLayer.ProjectionReference(), Point(196272.036571, 323090.567587), Point(197456.875125,320015.575080)));
+//addressLayer.SetSpatialFilter(Area(addressLayer.ProjectionReference(), Point(196272.036571, 323090.567587), Point(197456.875125,320015.575080)));
+    addressLayer.SetSpatialFilter(Area(6.009787,50.89009,6.01117,50.8892935));
 
     printFeatures(addressLayer.begin(), addressLayer.end());
 

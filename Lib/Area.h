@@ -9,6 +9,7 @@ class Area
     public:
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight, string description);
+        Area(double minX, double minY, double maxX, double maxY, string wellKnownGeogCS = "EPSG:4326", string description="");
 
         SpatialReference ProjectionReference() const;
         Point LeftTop() const;

@@ -34,3 +34,9 @@ OGRSpatialReference SpatialReference::InnerReference()
     return _spatialReference;
 }
 
+SpatialReference SpatialReference::FromEPSG(string epsgCode)
+{
+    SpatialReference reference;
+    reference.SetWellKnownGeogCS(epsgCode.c_str());
+    return reference;
+}

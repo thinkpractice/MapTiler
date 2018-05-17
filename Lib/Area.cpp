@@ -15,6 +15,11 @@ Area::Area(const SpatialReference& projectionReference,
 {
 }
 
+Area::Area(double minX, double minY, double maxX, double maxY, string epsgCode, string description)
+        :   Area(SpatialReference::FromEPSG(epsgCode), Point(minX, minY), Point(maxX, maxY), description)
+{
+}
+
 SpatialReference Area::ProjectionReference() const
 {
     return _spatialReference;

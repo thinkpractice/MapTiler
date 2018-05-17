@@ -18,6 +18,9 @@ class SpatialReference
         bool IsSame(SpatialReference& reference);
 
         OGRSpatialReference InnerReference();
+    
+    public:
+        static SpatialReference FromEPSG(string epsgCode);
 
     private:
         OGRSpatialReference _spatialReference;
