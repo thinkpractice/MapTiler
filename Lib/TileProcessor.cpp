@@ -46,7 +46,8 @@ void TileProcessor::StartProcessing()
                             GeoTile* tile = map->GetTileForRect(tileRect);
                             tile->SetUniqueId(to_string(currentIndex));
                             //TODO progress messages
-                            //TODO possible issue here with multiple threads accessing the same vector
+                            //TODO possible issue here with multiple threads accessing the same vector, move outside of threading code?
+                            //TODO implement ProcessingState object with common variables? like the GeoTile being processed?
                             for (auto step : _preProcessingSteps)
                                 step->ProcessTile(tile, tileRect);
 
