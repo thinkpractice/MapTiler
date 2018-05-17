@@ -5,10 +5,10 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QListView>
-#include <QtLocation/QGeoServiceProvider>
-#include <QtLocation/QGeoCodingManager>
-#include <QtLocation/QGeoCodeReply>
-#include <QtPositioning/QGeoCoordinate>
+#include <QGeoServiceProvider>
+#include <QGeoCodingManager>
+#include <QGeoCodeReply>
+#include <QGeoCoordinate>
 #include <QStandardItemModel>
 
 namespace Ui {
