@@ -1,5 +1,6 @@
 #include "GDALMap.h"
 #include <iostream>
+#include "CoordinateTransformation.h"
 
 GDALMap::GDALMap(string filename)
             :   GeoMap(filename),
@@ -94,8 +95,10 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
 
 Rect GDALMap::RectForArea(const Area& area)
 {
-    Point areaLeftTop = area.LeftTop();
-    Point areaRightBottom = area.BottomRight();
+    Area mappedArea = CoordinateTransformation::MapArea(area, ProjectionReference());
+
+    Point areaLeftTop = mappedArea.LeftTop();
+    Point areaRightBottom = mappedArea.BottomRight();
 
     Point leftTop = ProjectionToRasterCoord(areaLeftTop);
     Point rightBottom = ProjectionToRasterCoord(areaRightBottom);

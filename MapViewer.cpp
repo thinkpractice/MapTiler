@@ -82,7 +82,6 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirect
                         }
                         mapsPerThread.enqueue(map);
                     });
-            //result.get();
         }
     }
 

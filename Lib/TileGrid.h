@@ -2,19 +2,34 @@
 #define TILE_GRID_H
 
 #include "GeoTile.h"
+#include "Rect.h"
+#include "Area.h"
 
 class TileGrid
 {
     public:
-        TileGrid();
+        TileGrid(const Rect& pixelDimensions, const Area& area, int tileWidth, int tileHeight);
         virtual ~TileGrid();
 
-        int Width();
-        int Height();
+        Rect PixelDimensions();
+        Area GridArea();
 
-        void AddTile(GeoTile* geoTile);
-        GeoTile* GetTile(int x, int y);
+        int TileWidth();
+        int TileHeight();
 
+        int WidthInTiles();
+        int HeightInTiles();
+
+        Rect operator()(int row, int column);
+
+    private:
+        Rect ClipTileDimensions(Rect tileRect);
+
+    private:
+        Rect _pixelDimensions;
+        Area _area;
+        int _tileWidth;
+        int _tileHeight;
 
 };
 

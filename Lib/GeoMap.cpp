@@ -86,8 +86,6 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
             tileRectangles.push_back(tileRect);
         }
     }
-
-    cout << "numberOfTileRectangles=" << tileRectangles.size() << endl;
     return tileRectangles;
 }
 
