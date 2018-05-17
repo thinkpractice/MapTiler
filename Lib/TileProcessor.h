@@ -1,8 +1,13 @@
 #ifndef TILEPROCESSOR_H
 #define TILEPROCESSOR_H
 
+#include <vector>
+#include <memory>
 #include "GeoMap.h"
 #include "TileGrid.h"
+#include "ProcessingStep.h"
+
+using namespace std;
 
 class TileProcessor
 {
@@ -12,12 +17,14 @@ class TileProcessor
         virtual ~TileProcessor();
 
         void StartProcessing();
-        void AddProcessingStep();
+        void AddProcessingStep(ProcessingStep* step);
 
     private:
         GeoMap* _mainRasterMap;
         Area _areaToProcess;
         TileGrid _tileGrid;
+
+        vector< shared_ptr<ProcessingStep> > _processingSteps;
 };
 
 #endif /* TILEPROCESSOR_H */

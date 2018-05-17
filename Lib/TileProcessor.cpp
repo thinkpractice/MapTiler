@@ -61,6 +61,8 @@ void TileProcessor::StartProcessing()
     }
 }
 
-void TileProcessor::AddProcessingStep()
+void TileProcessor::AddProcessingStep(ProcessingStep* step)
 {
+    _processingSteps.push_back(shared_ptr<ProcessingStep>(step));
 }
+
