@@ -37,12 +37,15 @@ int main(int argc, char** argv)
 
     VectorFile addresses("WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs");
     Layer addressLayer = addresses[0];
-    printFeatures(addressLayer.begin(), addressLayer.end());
+    //printFeatures(addressLayer.begin(), addressLayer.end());
 
     cout << "address layer name: " << addressLayer.Name() << endl;
+    addressLayer.SetSpatialFilter(Area(addressLayer.ProjectionReference(), Point(196272.036571, 323090.567587), Point(197456.875125,320015.575080)));
 
-    vector<Feature> coupledAddresses = addresses.ExecuteSql("select inspireadressen.*, addresses.* from inspireadressen left join '/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses'.addresses on inspireadressen.postcode = addresses.postcode");
-    printFeatures(coupledAddresses.begin(), coupledAddresses.end());
+    printFeatures(addressLayer.begin(), addressLayer.end());
+
+    //vector<Feature> coupledAddresses = addresses.ExecuteSql("select * from inspireadressen left join '../ZonnePanelen/solarpanel_addresses'.addresses on inspireadressen.postcode = addresses.postcode");
+    //printFeatures(coupledAddresses.begin(), coupledAddresses.end());
 
     VectorFile solarpanel_addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
     cout << "LayerCount solar_panel addresses = " << solarpanel_addresses.LayerCount() << endl;

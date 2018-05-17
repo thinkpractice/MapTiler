@@ -1,5 +1,6 @@
 #include "Layer.h"
 #include "CoordinateTransformation.h"
+#include <iostream>
 
 Layer::Layer(OGRLayer* layer)
             :   _layer(layer)
@@ -17,6 +18,7 @@ string Layer::Name()
 
 SpatialReference Layer::ProjectionReference()
 {
+    cout << "spatial ref=" << _layer->GetSpatialRef() << endl;
     return SpatialReference(_layer->GetSpatialRef());
 }
 
