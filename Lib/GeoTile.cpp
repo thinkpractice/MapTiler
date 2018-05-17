@@ -13,6 +13,16 @@ GeoTile::~GeoTile()
     delete[] _data;
 }
 
+string GeoTile::UniqueId()
+{
+    return _uniqueId;
+}
+
+void GeoTile::SetUniqueId(string uniqueId)
+{
+    _uniqueId = uniqueId;
+}
+
 int GeoTile::NumberOfBytes()
 {
     return _rect.Width() * _rect.Height() * _numberOfLayers;

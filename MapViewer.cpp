@@ -37,16 +37,6 @@ void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxInd
     delete tile;
 }
 
-template <class T>
-vector<T> subVector(vector<T> originalVector, int startIndex, int numberOfItems)
-{
-    cout << "Copying from: " << startIndex << " to: " << startIndex + numberOfItems - 1 <<endl;
-        typename vector<T>::const_iterator first = originalVector.begin() + startIndex;
-        typename vector<T>::const_iterator last = originalVector.begin() + startIndex + numberOfItems - 1;
-        vector<T> newVec(first, last);
-        return newVec;
-}
-
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory)
 {
     vector<Rect> tileRects = chosenMap->GetTileRectsForArea(area);

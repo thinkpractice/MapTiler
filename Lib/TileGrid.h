@@ -22,6 +22,8 @@ class TileGrid
 
         Rect operator()(int row, int column);
 
+        //TODO add iterator here
+
     private:
         Rect ClipTileDimensions(Rect tileRect);
 

@@ -2,6 +2,7 @@
 #include "SafeQueue.h"
 #include "ThreadPool.h"
 #include <atomic>
+#include <string>
 
 TileProcessor::TileProcessor(GeoMap* mainRasterMap, int tileWidth, int tileHeight)
                 :   TileProcessor(mainRasterMap, mainRasterMap->GetMapArea(), tileWidth, tileHeight)
@@ -43,6 +44,11 @@ void TileProcessor::StartProcessing()
                         try
                         {
                             GeoTile* tile = map->GetTileForRect(tileRect);
+                            tile->SetUniqueId(to_string(currentIndex));
+                            //TODO progress messages
+                            //TODO possible issue here with multiple threads accessing the same vector
+                            for (auto step : _preProcessingSteps)
+                                step->ProcessTile(tile, tileRect);
 
                             currentIndex += 1;
                         }
@@ -63,6 +69,9 @@ void TileProcessor::StartProcessing()
 
 void TileProcessor::AddProcessingStep(ProcessingStep* step)
 {
-    _processingSteps.push_back(shared_ptr<ProcessingStep>(step));
+    if (step->Type() == ProcessingStep::PreProcessing)
+        _preProcessingSteps.push_back(shared_ptr<ProcessingStep>(step));
+    if (step->Type() == ProcessingStep::PostProcessing)
+        _postProcessingSteps.push_back(shared_ptr<ProcessingStep>(step));
 }
 
