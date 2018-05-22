@@ -24,8 +24,8 @@ class TileProcessor
         Area _areaToProcess;
         TileGrid _tileGrid;
 
-        vector< shared_ptr<ProcessingStep> > _preProcessingSteps;
-        vector< shared_ptr<ProcessingStep> > _postProcessingSteps;
+        vector< shared_ptr<SafeQueue<GeoTile*>> > _queues;
+        vector< shared_ptr<ProcessingStep> > _processingSteps;
 };
 
 #endif /* TILEPROCESSOR_H */

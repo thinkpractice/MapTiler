@@ -11,7 +11,13 @@ TileWriterStep::~TileWriterStep()
 {
 }
 
-void TileWriterStep::ProcessTile(GeoTile* tile, Rect tileRect)
+void TileWriterStep::Run()
+{
+     GeoTile* tileToProcess = InQueue()->dequeue();
+     SaveTile(tileToProcess);
+}
+
+void TileWriterStep::SaveTile(GeoTile* tile)
 {
     TileWriter tileWriter;
     string tileFilename = _tileDirectory + tile->UniqueId() + ".png";

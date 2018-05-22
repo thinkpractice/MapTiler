@@ -37,28 +37,7 @@ void TileProcessor::StartProcessing()
         }
 
         atomic<int> currentIndex (0);
-        for (auto& tileRect : _tileGrid)
-        {
-            auto result = threadPool.enqueue([&, tileRect]{
-                        GeoMap* map = mapsPerThread.dequeue();
-                        try
-                        {
-                            GeoTile* tile = map->GetTileForRect(tileRect);
-                            tile->SetUniqueId(to_string(currentIndex));
-                            //TODO progress messages
-                            //TODO possible issue here with multiple threads accessing the same vector, move outside of threading code?
-                            //TODO implement ProcessingState object with common variables? like the GeoTile being processed?
-                            for (auto step : _preProcessingSteps)
-                                step->ProcessTile(tile, tileRect);
-
-                            currentIndex += 1;
-                        }
-                        catch (...)
-                        {
-                        }
-                        mapsPerThread.enqueue(map);
-                    });
-        }
+        
     }
 
     while (!mapsPerThread.Empty())
@@ -70,9 +49,19 @@ void TileProcessor::StartProcessing()
 
 void TileProcessor::AddProcessingStep(ProcessingStep* step)
 {
-    if (step->Type() == ProcessingStep::PreProcessing)
-        _preProcessingSteps.push_back(shared_ptr<ProcessingStep>(step));
-    if (step->Type() == ProcessingStep::PostProcessing)
-        _postProcessingSteps.push_back(shared_ptr<ProcessingStep>(step));
+    _processingSteps.push_back(shared_ptr<ProcessingStep>(step));
+
+    int stepIndex = (int)_processingSteps.size() - 1;
+    if (stepIndex < 0)
+    {
+        shared_ptr<SafeQueue<GeoTile*>> inQueue(new SafeQueue<GeoTile*>());
+        _queues.push_back(inQueue);
+    }
+
+    shared_ptr<SafeQueue<GeoTile*>> outQueue(new SafeQueue<GeoTile*>());
+    _queues.push_back(outQueue);
+
+    shared_ptr<SafeQueue<GeoTile*>> inQueue = _queues[stepIndex + 1];
+    step->InitQueues(inQueue, outQueue);
 }
 

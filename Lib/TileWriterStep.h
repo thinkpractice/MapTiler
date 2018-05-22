@@ -2,6 +2,7 @@
 #define TILEWRITERSTEP_H
 
 #include "ProcessingStep.h"
+#include "GeoTile.h"
 
 class TileWriterStep : public ProcessingStep
 {
@@ -9,7 +10,8 @@ class TileWriterStep : public ProcessingStep
         TileWriterStep(string tileDirectory);
         virtual ~TileWriterStep();
 
-        void ProcessTile(GeoTile* tile, Rect tileRect);
+        void Run();
+        void SaveTile(GeoTile* tile);
 
     private:
         string _tileDirectory;
