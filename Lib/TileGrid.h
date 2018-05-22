@@ -11,16 +11,16 @@ class TileGrid
         TileGrid(const Rect& pixelDimensions, const Area& area, int tileWidth, int tileHeight);
         virtual ~TileGrid();
 
-        Rect PixelDimensions();
+        Rect PixelDimensions() const;
         Area GridArea();
 
-        int TileWidth();
-        int TileHeight();
+        int TileWidth() const;
+        int TileHeight() const;
 
-        int WidthInTiles();
-        int HeightInTiles();
+        int WidthInTiles() const;
+        int HeightInTiles() const;
 
-        Rect operator()(int row, int column);
+        Rect operator()(int row, int column) const;
 
         template <typename T>
         class TileGridIterator
@@ -32,10 +32,10 @@ class TileGrid
                 using reference = T&;
                 using iterator_category = input_iterator_tag;
 
-                TileGridIterator(TileGrid* owner, bool start);
+                TileGridIterator(const TileGrid* owner, bool start);
                 virtual ~TileGridIterator();
 
-                reference operator*() const { return _currentRect; };
+                reference operator*() { return _currentRect; };
 
                 TileGridIterator& operator++();
                 TileGridIterator operator++(int);
@@ -47,7 +47,7 @@ class TileGrid
                 void NextField();
 
             private:
-                TileGrid* _owner;
+                const TileGrid* _owner;
                 Rect _currentRect;
                 int _currentRow;
                 int _currentColumn;
@@ -62,7 +62,7 @@ class TileGrid
         const_iterator cend() const;
 
     private:
-        Rect ClipTileDimensions(Rect tileRect);
+        Rect ClipTileDimensions(Rect tileRect) const;
 
     private:
         Rect _pixelDimensions;

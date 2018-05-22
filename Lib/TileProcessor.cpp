@@ -15,11 +15,7 @@ TileProcessor::TileProcessor(GeoMap* mainRasterMap, const Area& areaToProcess, i
 
 void TileProcessor::StartProcessing(string outputDirectory)
 {
-    TileProducerStep producerStep(_mainRasterMap, _tileGrid);
-    _pipeline.AddProcessingStep(producerStep);
-
-    TileWriterStep writerStep(outputDirectory);
-    _pipeline.AddProcessingStep(writerStep);
-
+    _pipeline.AddProcessingStep(new TileProducerStep(_mainRasterMap, _tileGrid));
+    _pipeline.AddProcessingStep(new TileWriterStep(outputDirectory));
     _pipeline.StartProcessing();
 }

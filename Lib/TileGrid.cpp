@@ -14,7 +14,7 @@ TileGrid::~TileGrid()
 {
 }
 
-Rect TileGrid::PixelDimensions()
+Rect TileGrid::PixelDimensions() const
 {
     return _pixelDimensions;
 }
@@ -24,27 +24,27 @@ Area TileGrid::GridArea()
     return _area;
 }
 
-int TileGrid::TileWidth()
+int TileGrid::TileWidth() const
 {
     return _tileWidth;
 }
 
-int TileGrid::TileHeight()
+int TileGrid::TileHeight() const
 {
     return _tileHeight;
 }
 
-int TileGrid::WidthInTiles()
+int TileGrid::WidthInTiles() const
 {
     return (int)ceil(_pixelDimensions.Width() / (1.0 * TileWidth()));
 }
 
-int TileGrid::HeightInTiles()
+int TileGrid::HeightInTiles() const
 {
     return (int)ceil(_pixelDimensions.Height() / (1.0 * TileHeight()));
 }
 
-Rect TileGrid::operator()(int row, int column)
+Rect TileGrid::operator()(int row, int column) const
 {
     //TODO: exception if row or column are out of bounds
     if (row > HeightInTiles() || column > WidthInTiles())
@@ -57,7 +57,7 @@ Rect TileGrid::operator()(int row, int column)
 }
 
 template<typename T>
-TileGrid::TileGridIterator<T>::TileGridIterator(TileGrid* owner, bool start)
+TileGrid::TileGridIterator<T>::TileGridIterator(const TileGrid* owner, bool start)
                                     :   _owner(owner),
                                         _currentRow(-1),
                                         _currentColumn(-1)
@@ -105,13 +105,13 @@ template<typename T>
 void TileGrid::TileGridIterator<T>::NextField()
 {
     _currentColumn++;
-    if (_currentColumn >= _owner->TileWidth())
+    if (_currentColumn >= _owner->WidthInTiles())
     {
         _currentRow++;
         _currentColumn = 0;
     }
 
-    if (_currentRow >= _owner->TileHeight())
+    if (_currentRow >= _owner->HeightInTiles())
     {
         _currentRow = -1;
         _currentColumn = -1;
@@ -120,7 +120,27 @@ void TileGrid::TileGridIterator<T>::NextField()
     _currentRect = (*_owner)(_currentRow,_currentColumn);
 }
 
-Rect TileGrid::ClipTileDimensions(Rect tileRect)
+TileGrid::iterator TileGrid::begin() const
+{
+    return {this, true};
+}
+
+TileGrid::iterator TileGrid::end() const
+{
+    return {this, false};
+}
+
+TileGrid::const_iterator TileGrid::cbegin() const
+{
+    return {this, true};
+}
+
+TileGrid::const_iterator TileGrid::cend() const
+{
+    return {this, false};
+}
+
+Rect TileGrid::ClipTileDimensions(Rect tileRect) const
 {
     double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Right() : PixelDimensions().Right();
     tileRect.SetWidth(width);

@@ -17,11 +17,11 @@ public:
     virtual ~ProcessingPipeline();
 
     void StartProcessing();
-    void AddProcessingStep(ProcessingStep& step);
+    void AddProcessingStep(ProcessingStep* step);
 
 private:
         vector< shared_ptr<SafeQueue<GeoTile*>> > _queues;
-        vector< ProcessingStep > _processingSteps;
+        vector< shared_ptr<ProcessingStep> > _processingSteps;
         vector<thread> _threads;
 };
 

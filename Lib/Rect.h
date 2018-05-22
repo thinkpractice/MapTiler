@@ -6,6 +6,7 @@
 class Rect
 {
     public:
+        Rect();
         Rect(double x, double y, double width, double height);
         Rect(Point leftTop, Point bottomRight);
 
