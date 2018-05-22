@@ -56,6 +56,70 @@ Rect TileGrid::operator()(int row, int column)
     return ClipTileDimensions(tileRect);
 }
 
+template<typename T>
+TileGrid::TileGridIterator<T>::TileGridIterator(TileGrid* owner, bool start)
+                                    :   _owner(owner),
+                                        _currentRow(-1),
+                                        _currentColumn(-1)
+{
+    if (start)
+    {
+        _currentRow = 0;
+        NextField();
+    }
+}
+
+template<typename T>
+TileGrid::TileGridIterator<T>::~TileGridIterator()
+{
+}
+
+template<typename T>
+TileGrid::TileGridIterator<T>& TileGrid::TileGridIterator<T>::operator++()
+{
+    NextField();
+    return *this;
+}
+
+template<typename T>
+TileGrid::TileGridIterator<T> TileGrid::TileGridIterator<T>::operator++(int)
+{
+    TileGrid::TileGridIterator<T> temp = *this;
+    ++(*this);
+    return temp;
+}
+
+template<typename T>
+bool TileGrid::TileGridIterator<T>::operator==(const TileGridIterator& rhs)
+{
+    return (_currentRow = rhs._currentRow) && (_currentColumn == rhs._currentColumn);
+}
+
+template<typename T>
+bool TileGrid::TileGridIterator<T>::operator!=(const TileGridIterator& rhs)
+{
+    return !(*this == rhs);
+}
+
+template<typename T>
+void TileGrid::TileGridIterator<T>::NextField()
+{
+    _currentColumn++;
+    if (_currentColumn >= _owner->TileWidth())
+    {
+        _currentRow++;
+        _currentColumn = 0;
+    }
+
+    if (_currentRow >= _owner->TileHeight())
+    {
+        _currentRow = -1;
+        _currentColumn = -1;
+        return;
+    }
+    _currentRect = (*_owner)(_currentRow,_currentColumn);
+}
+
 Rect TileGrid::ClipTileDimensions(Rect tileRect)
 {
     double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Right() : PixelDimensions().Right();

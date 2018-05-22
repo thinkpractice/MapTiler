@@ -16,9 +16,9 @@ void ProcessingPipeline::StartProcessing()
         _threads.push_back(step->Run());
 }
 
-void ProcessingPipeline::AddProcessingStep(ProcessingStep* step)
+void ProcessingPipeline::AddProcessingStep(ProcessingStep& step)
 {
-    _processingSteps.push_back(shared_ptr<ProcessingStep>(step));
+    _processingSteps.push_back(step);
 
     int stepIndex = (int)_processingSteps.size() - 1;
     if (stepIndex < 0)
@@ -31,6 +31,6 @@ void ProcessingPipeline::AddProcessingStep(ProcessingStep* step)
     _queues.push_back(outQueue);
 
     shared_ptr<SafeQueue<GeoTile*>> inQueue = _queues[stepIndex + 1];
-    step->InitQueues(inQueue, outQueue);
+    step.InitQueues(inQueue, outQueue);
 }
 
