@@ -3,9 +3,11 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
+#include <string>
 #include "GeoMap.h"
 #include "TileGrid.h"
-#include "ProcessingStep.h"
+#include "ProcessingPipeline.h"
 
 using namespace std;
 
@@ -16,16 +18,12 @@ class TileProcessor
         TileProcessor(GeoMap* mainRasterMap, const Area& areaToProcess, int tileWidth = 1024, int tileHeight = 1024);
         virtual ~TileProcessor();
 
-        void StartProcessing();
-        void AddProcessingStep(ProcessingStep* step);
+        void StartProcessing(string outputDirectory);
 
     private:
         GeoMap* _mainRasterMap;
-        Area _areaToProcess;
         TileGrid _tileGrid;
-
-        vector< shared_ptr<SafeQueue<GeoTile*>> > _queues;
-        vector< shared_ptr<ProcessingStep> > _processingSteps;
+        ProcessingPipeline _pipeline;
 };
 
 #endif /* TILEPROCESSOR_H */
