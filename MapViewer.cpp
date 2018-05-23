@@ -98,8 +98,10 @@ int main(int argc, char** argv)
     {
         std::cout << serviceProvider << std::endl;
     }
-    areaLookup.GetAreaForAddress("Heerlen");
-
+    //areaLookup.GetAreaForAddress("Heerlen");
+    //areaLookup.GetAreaForAddress("Landgraaf");
+    Area area(6.009787,50.89009,6.01117,50.8892935);
+    DownloadTilesForArea(chosenMap, area, tileDirectory);
     /*GLWindow window(1024, 768);
     window.StartRendering([&](GLFWwindow* window)
     {

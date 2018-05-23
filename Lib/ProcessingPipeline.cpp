@@ -22,10 +22,11 @@ void ProcessingPipeline::StartProcessing()
 
 void ProcessingPipeline::AddProcessingStep(ProcessingStep* step)
 {
+    int previousStepIndex = (int)_processingSteps.size() - 1;
+
     _processingSteps.push_back(shared_ptr<ProcessingStep>(step));
 
-    int stepIndex = (int)_processingSteps.size() - 1;
-    if (stepIndex < 0)
+    if (previousStepIndex < 0)
     {
         shared_ptr<SafeQueue<GeoTile*>> inQueue(new SafeQueue<GeoTile*>());
         _queues.push_back(inQueue);
@@ -34,7 +35,7 @@ void ProcessingPipeline::AddProcessingStep(ProcessingStep* step)
     shared_ptr<SafeQueue<GeoTile*>> outQueue(new SafeQueue<GeoTile*>());
     _queues.push_back(outQueue);
 
-    shared_ptr<SafeQueue<GeoTile*>> inQueue = _queues[stepIndex + 1];
+    shared_ptr<SafeQueue<GeoTile*>> inQueue = _queues[previousStepIndex + 1];
     step->InitQueues(inQueue, outQueue);
 }
 
