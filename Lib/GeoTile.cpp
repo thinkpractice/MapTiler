@@ -1,5 +1,8 @@
 #include "GeoTile.h"
 #include "Utils.h"
+#include <iostream>
+
+using namespace std;
 
 GeoTile::GeoTile(const Rect& rect, const Area& area, int numberOfLayers)
             :   _rect(rect),
@@ -27,7 +30,7 @@ void GeoTile::SetUniqueId(string uniqueId)
 
 int GeoTile::NumberOfBytes()
 {
-    return _rect.Width() * _rect.Height() * _numberOfLayers;
+    return int(_rect.Width()) * int(_rect.Height()) * _numberOfLayers;
 }
 
 int GeoTile::NumberOfLayers()
@@ -52,6 +55,8 @@ unsigned char* GeoTile::Data()
 
 void GeoTile::SetRasterData(unsigned char** rasterData)
 {
+    cout << "width=" << _rect.Width() << ", height=" << _rect.Height() << endl;
+    cout << "number of bytes " << NumberOfBytes() << endl;
     unsigned char* data = Data();
     for (int arrayIndex = 0, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
     {
