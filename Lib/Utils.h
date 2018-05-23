@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ class Utils
         static vector<string> SplitKeyValuePair(const char* keyValueString);
         static string GetKeyType(string key);
         static string UUID();
+        static void TimeIt(function<void()> function);
 };
 
 #endif

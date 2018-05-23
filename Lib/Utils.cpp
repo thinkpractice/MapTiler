@@ -1,6 +1,8 @@
 #include "Utils.h"
 #include <regex>
 #include <uuid/uuid.h>
+#include <chrono>
+#include <iostream>
 
 vector<string> Utils::SplitKeyValuePair(const char* keyValueString)
 {
@@ -41,3 +43,12 @@ string Utils::UUID()
     return string(uuid_str);
 }
 
+void Utils::TimeIt(function<void()> function)
+{
+    auto start = chrono::system_clock::now();
+    function();
+    auto end = chrono::system_clock::now();
+    
+    chrono::duration<double> elapsed_seconds = end-start;
+    cout << "Elapsed seconds " << elapsed_seconds.count() <<endl;
+}
