@@ -1,6 +1,9 @@
 #include "TileGpuTransferStep.h"
 #include "GeoTile.h"
 #include "GLWindow.h"
+#include <iostream>
+
+using namespace std;
 
 TileGpuTransferStep::TileGpuTransferStep()
                         :   ProcessingStep(PreProcessing)
@@ -18,6 +21,9 @@ void TileGpuTransferStep::Run()
     window.StartRendering([&](GLFWwindow* window)
     {
         glEnable(GL_TEXTURE_2D);
+        GLint maxSize;
+        glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxSize );
+        cout << "max texture size=" << maxSize << endl;
         while(GeoTile* geoTile = InQueue()->dequeue())
         {
             glClearDepth(1.0);
@@ -37,16 +43,17 @@ void TileGpuTransferStep::Run()
             int textureWidth = geoTile->BoundingRect().Width();
             int textureHeight = geoTile->BoundingRect().Height();
 
+            cout << "texture size = (" << textureWidth << "," << textureHeight << ")" << endl;
             glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
             glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
             glBegin(GL_POLYGON);
-                glTexCoord2f(-1.0, 1.0); glVertex3f(-1.0, 1.0, 0.0);
-                glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
-                glTexCoord2f(1.0, -1.0); glVertex3f(1.0, -1.0, 0.0);
-                glTexCoord2f(-1.0, -1.0); glVertex3f(-1.0, -1.0, 0.0);
+                glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, 1.0, 0.0);
+                glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 1.0, 0.0);
+                glTexCoord2f(1.0, 1.0); glVertex3f(1.0, -1.0, 0.0);
+                glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, 0.0);
             glEnd();
              
             // Swap buffers
@@ -54,11 +61,12 @@ void TileGpuTransferStep::Run()
             
             //TODO: For now pass tile on to next step
             //OutQueue()->enqueue(geoTile);
+            //return;
         }
 
-        glfwPollEvents();
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-            glfwWindowShouldClose(window) == 0);
+            glfwWindowShouldClose(window) == 0)
+            glfwPollEvents();
     });
     OutQueue()->enqueue(nullptr);
 }
