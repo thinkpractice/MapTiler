@@ -100,7 +100,7 @@ int main(int argc, char** argv)
     }
     //areaLookup.GetAreaForAddress("Heerlen");
     //areaLookup.GetAreaForAddress("Landgraaf");
-    Area area(6.009787,50.89009,6.01117,50.8892935);
+    Area area(6.00,50.89,6.01,50.88);
     DownloadTilesForArea(chosenMap, area, tileDirectory);
     /*GLWindow window(1024, 768);
     window.StartRendering([&](GLFWwindow* window)

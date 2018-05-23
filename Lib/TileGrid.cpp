@@ -83,10 +83,10 @@ TileGrid::const_iterator TileGrid::cend() const
 
 Rect TileGrid::ClipTileDimensions(Rect tileRect) const
 {
-    double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Width() : PixelDimensions().Width();
+    double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Width() : (PixelDimensions().Right() - tileRect.Left());
     tileRect.SetWidth(width);
 
-    double height = tileRect.Bottom() < PixelDimensions().Bottom() ? tileRect.Height() : PixelDimensions().Height();
+    double height = tileRect.Bottom() < PixelDimensions().Bottom() ? tileRect.Height() : (PixelDimensions().Bottom() - tileRect.Top());
     tileRect.SetHeight(height);
 
     return tileRect;

@@ -15,8 +15,8 @@ TileWriterStep::~TileWriterStep()
 
 void TileWriterStep::Run()
 {
-     GeoTile* tileToProcess = InQueue()->dequeue();
-     SaveTile(tileToProcess);
+     while (GeoTile* tileToProcess = InQueue()->dequeue())
+         SaveTile(tileToProcess);
 }
 
 void TileWriterStep::SaveTile(GeoTile* tile)
