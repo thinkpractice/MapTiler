@@ -35,7 +35,9 @@ string Utils::UUID()
 {
     uuid_t uuidObj;
     uuid_generate(uuidObj);
-    std::string uuid{ std::begin(uuidObj), std::end(uuidObj) };
-    return uuid;
+    
+    char uuid_str[37];
+    uuid_unparse_lower(uuidObj, uuid_str);
+    return string(uuid_str);
 }
 
