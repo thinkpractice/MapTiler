@@ -5,8 +5,8 @@
 using namespace std;
 
 GeoMap::GeoMap(string filename)
-            :   _filename(filename),
-                _title(filename)
+            :  _title(filename),
+               _filename(filename)
 {
 }
 

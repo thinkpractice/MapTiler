@@ -45,7 +45,7 @@ class TileGrid
                 bool operator!=(const TileGridIterator<T>& rhs);
 
             private:
-                void NextField();
+                void NextRect();
 
             private:
                 const TileGrid* _owner;
@@ -82,7 +82,7 @@ TileGrid::TileGridIterator<T>::TileGridIterator(const TileGrid* owner, bool star
     if (start)
     {
         _currentRow = 0;
-        NextField();
+        NextRect();
     }
 }
 
@@ -94,7 +94,7 @@ TileGrid::TileGridIterator<T>::~TileGridIterator()
 template<typename T>
 TileGrid::TileGridIterator<T>& TileGrid::TileGridIterator<T>::operator++()
 {
-    NextField();
+    NextRect();
     return *this;
 }
 
@@ -109,7 +109,7 @@ TileGrid::TileGridIterator<T> TileGrid::TileGridIterator<T>::operator++(int)
 template<typename T>
 bool TileGrid::TileGridIterator<T>::operator==(const TileGridIterator<T>& rhs)
 {
-    return (_currentRow = rhs._currentRow) && (_currentColumn == rhs._currentColumn);
+    return (_currentRow == rhs._currentRow) && (_currentColumn == rhs._currentColumn);
 }
 
 template<typename T>
@@ -119,7 +119,7 @@ bool TileGrid::TileGridIterator<T>::operator!=(const TileGridIterator<T>& rhs)
 }
 
 template<typename T>
-void TileGrid::TileGridIterator<T>::NextField()
+void TileGrid::TileGridIterator<T>::NextRect()
 {
     _currentColumn++;
     if (_currentColumn >= _owner->WidthInTiles())

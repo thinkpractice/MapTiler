@@ -54,9 +54,9 @@ Rect TileGrid::operator()(int row, int column) const
     //TODO: exception if row or column are out of bounds
     if (row > HeightInTiles() || column > WidthInTiles())
         cout << "row or column index out of bounds" << endl;
-    int startX = PixelDimensions().Left() + column * TileWidth();
-    int startY = PixelDimensions().Top() + row * TileHeight();
-    
+    double startX = PixelDimensions().Left() + (column * TileWidth());
+    double startY = PixelDimensions().Top() + (row * TileHeight());
+
     Rect tileRect = Rect(startX, startY, TileWidth(), TileHeight());
     return ClipTileDimensions(tileRect);
 }
@@ -83,10 +83,10 @@ TileGrid::const_iterator TileGrid::cend() const
 
 Rect TileGrid::ClipTileDimensions(Rect tileRect) const
 {
-    double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Right() : PixelDimensions().Right();
+    double width = tileRect.Right() < PixelDimensions().Right() ? tileRect.Width() : PixelDimensions().Width();
     tileRect.SetWidth(width);
 
-    double height = tileRect.Bottom() < PixelDimensions().Bottom() ? tileRect.Bottom() : PixelDimensions().Bottom();
+    double height = tileRect.Bottom() < PixelDimensions().Bottom() ? tileRect.Height() : PixelDimensions().Height();
     tileRect.SetHeight(height);
 
     return tileRect;
