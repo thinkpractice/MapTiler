@@ -22,7 +22,7 @@ void TileGpuTransferStep::Run()
         {
             glClearDepth(1.0);
             
-            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             //Draw mask into the stencil buffer
             glLoadIdentity();
@@ -38,23 +38,25 @@ void TileGpuTransferStep::Run()
             int textureHeight = geoTile->BoundingRect().Height();
 
             glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
-            
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
             glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
             glBegin(GL_POLYGON);
-                glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 0.0, 0.0);
-                glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
+                glTexCoord2f(-1.0, 1.0); glVertex3f(-1.0, 1.0, 0.0);
                 glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
-                glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
+                glTexCoord2f(1.0, -1.0); glVertex3f(1.0, -1.0, 0.0);
+                glTexCoord2f(-1.0, -1.0); glVertex3f(-1.0, -1.0, 0.0);
             glEnd();
              
             // Swap buffers
             glfwSwapBuffers(window);
-            glfwPollEvents();
             
             //TODO: For now pass tile on to next step
-            OutQueue()->enqueue(geoTile);
+            //OutQueue()->enqueue(geoTile);
         }
 
+        glfwPollEvents();
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(window) == 0);
     });
