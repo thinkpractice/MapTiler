@@ -16,6 +16,7 @@
 #include "Lib/AreaLookup.h"
 #include "Lib/ThreadPool.h"
 #include "Lib/SafeQueue.h"
+#include "Lib/TileProcessor.h"
 
 using namespace std;
 
@@ -39,56 +40,16 @@ void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxInd
 
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory)
 {
-    vector<Rect> tileRects = chosenMap->GetTileRectsForArea(area);
-
-    SafeQueue<GeoMap*> mapsPerThread;
-    {
-        auto t1 = std::chrono::high_resolution_clock::now();
-
-        int numberOfThreads = 4;
-        ThreadPool threadPool(numberOfThreads);
-        
-        mapsPerThread.enqueue(chosenMap);
-
-        for (int i = 0; i < numberOfThreads-1; i++)
-        {
-            mapsPerThread.enqueue(chosenMap->Clone());
-        }
-
-        atomic<int> currentIndex (0);
-        for (auto& tileRect : tileRects)
-        {
-            auto result = threadPool.enqueue([&, tileRect]{
-                        GeoMap* map = mapsPerThread.dequeue();
-                        try
-                        {
-                            GeoTile* tile = map->GetTileForRect(tileRect);
-                            WriteTile(tile, tileDirectory, currentIndex, tileRects.size());
-
-                            currentIndex += 1;
-                        }
-                        catch (...)
-                        {
-                        }
-                        mapsPerThread.enqueue(map);
-                    });
-        }
-    }
-
-    while (!mapsPerThread.Empty())
-    {
-        GeoMap* map = mapsPerThread.dequeue();
-        delete map;
-    }
+    TileProcessor processor(chosenMap, area);
+    processor.StartProcessing(tileDirectory);
 }
-
-
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
+//string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/tile";
+    string tileDirectory = "~/Documents/CBS/ZonnePanelen/Tiles/";
     if (argc > 1)
     {
         tileDirectory = string(argv[1]);
@@ -137,7 +98,6 @@ int main(int argc, char** argv)
     {
         std::cout << serviceProvider << std::endl;
     }
-    //areaLookup.GetAreaForAddress("Landgraaf");
     areaLookup.GetAreaForAddress("Heerlen");
 
     /*GLWindow window(1024, 768);

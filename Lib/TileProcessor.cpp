@@ -13,6 +13,10 @@ TileProcessor::TileProcessor(GeoMap* mainRasterMap, const Area& areaToProcess, i
 {
 }
 
+TileProcessor::~TileProcessor()
+{
+}
+
 void TileProcessor::StartProcessing(string outputDirectory)
 {
     _pipeline.AddProcessingStep(new TileProducerStep(_mainRasterMap, _tileGrid));

@@ -21,7 +21,6 @@ void TileProducerStep::Run()
         try
         {
             GeoTile* tile = _map->GetTileForRect(tileRect);
-            //tile->SetUniqueId(to_string(currentIndex));
             //TODO implement ProcessingState object with common variables? like the GeoTile being processed?
 
             OutQueue()->enqueue(tile);
