@@ -15,6 +15,7 @@ class TileWriterStep : public ProcessingStep
 
     private:
         string _tileDirectory;
+        int _numberOfTilesWritten;
 };
 
 #endif /* TILEWRITERSTEP_H */

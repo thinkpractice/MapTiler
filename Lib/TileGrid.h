@@ -17,6 +17,7 @@ class TileGrid
         int TileWidth() const;
         int TileHeight() const;
 
+        int NumberOfTiles() const;
         int WidthInTiles() const;
         int HeightInTiles() const;
 

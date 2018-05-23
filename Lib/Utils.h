@@ -11,6 +11,7 @@ class Utils
     public:
         static vector<string> SplitKeyValuePair(const char* keyValueString);
         static string GetKeyType(string key);
+        static string UUID();
 };
 
 #endif

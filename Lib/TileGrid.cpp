@@ -34,6 +34,11 @@ int TileGrid::TileHeight() const
     return _tileHeight;
 }
 
+int TileGrid::NumberOfTiles() const
+{
+    return WidthInTiles() * HeightInTiles();
+}
+
 int TileGrid::WidthInTiles() const
 {
     return (int)ceil(_pixelDimensions.Width() / (1.0 * TileWidth()));

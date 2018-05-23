@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include <regex>
+#include <uuid/uuid.h>
 
 vector<string> Utils::SplitKeyValuePair(const char* keyValueString)
 {
@@ -29,3 +30,12 @@ string Utils::GetKeyType(string key)
     }
     return "";
 }
+
+string Utils::UUID()
+{
+    uuid_t uuidObj;
+    uuid_generate(uuidObj);
+    std::string uuid{ std::begin(uuidObj), std::end(uuidObj) };
+    return uuid;
+}
+
