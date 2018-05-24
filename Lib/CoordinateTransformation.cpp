@@ -73,6 +73,12 @@ Polygon CoordinateTransformation::MapPolygon(Polygon polygon)
 
 MultiPolygon CoordinateTransformation::MapMultiPolygon(MultiPolygon multiPolygon)
 {
+    vector<Polygon> mappedPolygons;
+    for (auto& polygon : multiPolygon)
+    {
+        mappedPolygons.push_back(MapPolygon(polygon));
+    }
+    return MultiPolygon(mappedPolygons);
 }
 
 Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,

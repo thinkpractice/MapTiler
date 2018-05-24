@@ -10,9 +10,11 @@ class MultiPolygon
 {
     public:
         MultiPolygon();
+        MultiPolygon(vector<Polygon> polygons);
         virtual ~MultiPolygon();
 
         void AddPolygon(Polygon polygon);
+        vector<Polygon>& Polygons() { return _polygons; };
 
         using iterator = vector<Polygon>::iterator;
         using const_iterator = vector<Polygon>::const_iterator;

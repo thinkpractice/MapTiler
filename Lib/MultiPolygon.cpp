@@ -4,6 +4,12 @@ MultiPolygon::MultiPolygon()
 {
 }
 
+
+MultiPolygon::MultiPolygon(vector<Polygon> polygons)
+                :   _polygons(polygons)
+{
+}
+
 MultiPolygon::~MultiPolygon()
 {
 }
