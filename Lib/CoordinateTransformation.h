@@ -4,6 +4,9 @@
 #include "Point.h"
 #include "SpatialReference.h"
 #include "Area.h"
+#include <vector>
+
+using namespace std;
 
 class CoordinateTransformation
 {
@@ -11,6 +14,7 @@ class CoordinateTransformation
         static Point MapCoordinate(SpatialReference sourceReference, 
                 SpatialReference targetReference,
                 Point sourceCoordinate);
+        static vector<Point> MapCoordinates(SpatialReference sourceReference, SpatialReference targetReference, vector<Point> coordinates);
         static Area MapArea(Area other, string epsgCode);
         static Area MapArea(Area other, SpatialReference destinationReference);
 };
