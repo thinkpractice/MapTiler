@@ -66,7 +66,7 @@ class Layer
         OGRFeatureDefn* FeatureDefinition();
 
         void ResetReading() const;
-        Feature NextFeature() const;
+        virtual Feature NextFeature() const;
 
     private:
         OGRLayer* _layer;

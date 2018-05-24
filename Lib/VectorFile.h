@@ -19,19 +19,20 @@ class VectorFile
         string Filename();
 
         int LayerCount();
-        Layer& operator[](const int index);
-        Layer operator[](const char* layerName);
-        vector<Layer>& Layers();
+        shared_ptr<Layer> operator[](const int index);
+        shared_ptr<Layer> operator[](const char* layerName);
+        vector<shared_ptr<Layer>>& Layers();
 
         vector<Feature> ExecuteSql(const char* sqlStatement);
 
     protected:
         GDALDataset* Dataset();
+        virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);
 
     private:
         string _filename;
         GDALDataset* _dataset;
-        vector<Layer> _layers;
+        vector<shared_ptr<Layer>> _layers;
 };
 
 #endif

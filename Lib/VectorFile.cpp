@@ -30,23 +30,23 @@ int VectorFile::LayerCount()
     return Dataset()->GetLayerCount();
 }
 
-Layer& VectorFile::operator[](const int index)
+shared_ptr<Layer> VectorFile::operator[](const int index)
 {
     return Layers()[index];
 }
 
-Layer VectorFile::operator[](const char* layerName)
+shared_ptr<Layer> VectorFile::operator[](const char* layerName)
 {
-    return Layer(Dataset()->GetLayerByName(layerName));
+    return LayerFor(Dataset()->GetLayerByName(layerName));
 }
 
-vector<Layer>& VectorFile::Layers()
+vector<shared_ptr<Layer>>& VectorFile::Layers()
 {
     if (_layers.size() == 0)
     {
         for (int i = 0; i < LayerCount(); i++)
         {
-            Layer layer(Dataset()->GetLayer(i));
+             auto layer = LayerFor(Dataset()->GetLayer(i));
             _layers.push_back(layer);
         }
     }
@@ -59,11 +59,16 @@ vector<Feature> VectorFile::ExecuteSql(const char* sqlStatement)
     OGRLayer* layer = Dataset()->ExecuteSQL(sqlStatement, nullptr, nullptr);
     
     vector<Feature> resultSetFeatures;
-    Layer resultSet(layer);
-    for (auto feature : resultSet)
+    auto resultSet = LayerFor(layer);
+    for (auto feature : (*resultSet))
     {
         resultSetFeatures.push_back(feature);
     }
     Dataset()->ReleaseResultSet(layer);
     return resultSetFeatures;
+}
+
+shared_ptr<Layer> VectorFile::LayerFor(OGRLayer* layer)
+{
+    return make_shared<Layer>(layer);
 }
