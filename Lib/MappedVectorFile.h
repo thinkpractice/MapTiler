@@ -11,13 +11,9 @@ public:
     MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform);
     virtual ~MappedVectorFile();
 
-    virtual Layer operator[](const char* layerName);
-    virtual vector<Layer>& Layers();
-
-    virtual vector<Feature> ExecuteSql(const char* sqlStatement);
+    virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);
 
 private:
-    VectorFile _vectorFile;
     SpatialReference _destinationReference;
     AffineTransform _rasterCoordinateTransform;
 
@@ -33,8 +29,11 @@ class MappedLayer : public Layer
         virtual Feature NextFeature() const;
 
     private:
+        Feature MapFeature(Feature feature) const;
+
+    private:
         SpatialReference _destinationReference;
         AffineTransform _rasterCoordinateTransform;
-}
+};
 
 #endif /* MAPPEDVECTORFILE_H */

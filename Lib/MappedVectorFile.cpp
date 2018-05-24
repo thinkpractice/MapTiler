@@ -13,7 +13,7 @@ MappedVectorFile::~MappedVectorFile()
 
 shared_ptr<Layer> MappedVectorFile::LayerFor(OGRLayer* layer)
 {
-    return make_shared(layer, _destinationReference, _rasterCoordinateTransform);
+    return make_shared<MappedLayer>(layer, _destinationReference, _rasterCoordinateTransform);
 }
 
 MappedLayer::MappedLayer(OGRLayer* layer, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform)
@@ -27,4 +27,11 @@ MappedLayer::~MappedLayer()
 
 Feature MappedLayer::NextFeature() const
 {
+    Feature feature = Layer::NextFeature();
+    return MapFeature(feature);
+}
+
+Feature MappedLayer::MapFeature(Feature feature) const
+{
+
 }
