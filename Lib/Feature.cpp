@@ -55,6 +55,7 @@ bool Feature::operator==(const Feature& other) const
 
 Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
                             :   _geometry(geometry),
+                                _geometryType(Other),
                                 _hasPoint(false),
                                 _hasPolygon(false),
                                 _hasMultiPolygon(false)
@@ -68,21 +69,13 @@ Feature::FeatureGeometry::~FeatureGeometry()
 
 Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::Type()
 {
-    switch(wkbFlatten(_geometry->getGeometryType()))
-    {
-        case wkbPoint:
-            return GeometryType::PointType;
-        case wkbPolygon:
-            return GeometryType::PolygonType;
-        case wkbMultiPolygon:
-            return GeometryType::MultiPolygonType;
-    }
-    return GeometryType::Other;
+    return _geometryType;
 }
 
 void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
 {
     _parsedGeometry = true;
+    _geometryType = ParseGeometryType(geometry);
     if (geometry == nullptr || Type() == GeometryType::Other)
         return;
     
@@ -139,6 +132,21 @@ Polygon Feature::FeatureGeometry::ParsePolygon(OGRPolygon* ogrPolygon)
     }
     return polygon;
 }
+
+Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::ParseGeometryType(OGRGeometry *geometry)
+{
+    switch(wkbFlatten(geometry->getGeometryType()))
+    {
+        case wkbPoint:
+            return GeometryType::PointType;
+        case wkbPolygon:
+            return GeometryType::PolygonType;
+        case wkbMultiPolygon:
+            return GeometryType::MultiPolygonType;
+    }
+    return GeometryType::Other;
+}
+
 
 bool Feature::FeatureGeometry::HasPoint() const
 {

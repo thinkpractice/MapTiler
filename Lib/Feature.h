@@ -47,14 +47,15 @@ class Feature
                 bool HasMultiPolygon() const;
                 MultiPolygon GetMultiPolygon() const;
 
-
             private:
                 void ParseGeometry(OGRGeometry* geometry);
                 Polygon ParsePolygon(OGRPolygon* polygon);
+                GeometryType ParseGeometryType(OGRGeometry* geometry);
 
             private:
                 OGRGeometry* _geometry;
 
+                GeometryType _geometryType;
                 bool _parsedGeometry;
                 bool _hasPoint;
                 Point _point;
