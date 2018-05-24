@@ -4,6 +4,7 @@
 #include <string>
 #include "VectorFile.h"
 #include "AffineTransform.h"
+#include "CoordinateTransformation.h"
 
 class MappedVectorFile : public VectorFile
 {
@@ -12,6 +13,7 @@ public:
     virtual ~MappedVectorFile();
 
     virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);
+
 
 private:
     SpatialReference _destinationReference;
@@ -30,8 +32,10 @@ class MappedLayer : public Layer
 
     private:
         Feature MapFeature(Feature feature) const;
+        shared_ptr<CoordinateTransformation> ProjectionTransformation();
 
     private:
+        shared_ptr<CoordinateTransformation> _coordinateTransformation;
         SpatialReference _destinationReference;
         AffineTransform _rasterCoordinateTransform;
 };

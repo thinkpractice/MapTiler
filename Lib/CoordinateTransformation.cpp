@@ -11,7 +11,7 @@ CoordinateTransformation::CoordinateTransformation(SpatialReference sourceRefere
 
 CoordinateTransformation::~CoordinateTransformation()
 {
-    delete _transformation;
+    OGRCoordinateTransformation::DestroyCT(_transformation);
 }
 
 Point CoordinateTransformation::MapCoordinate(Point sourceCoordinate)
