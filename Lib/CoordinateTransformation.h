@@ -35,6 +35,7 @@ class CoordinateTransformation
 
     private:
         OGRCoordinateTransformation* Transformation();
+        Polygon::Ring MapRing(Polygon::Ring ring);
 
     private:
         SpatialReference _sourceReference;

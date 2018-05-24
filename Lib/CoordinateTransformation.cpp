@@ -60,6 +60,15 @@ Area CoordinateTransformation::MapArea(Area other)
 
 Polygon CoordinateTransformation::MapPolygon(Polygon polygon)
 {
+    Polygon::Ring mappedExternalRing = MapRing(polygon.ExternalRing());
+    
+    vector<Polygon::Ring> mappedInternalRings;
+    for (auto internalRing : polygon.InternalRings())
+    {
+        mappedInternalRings.push_back(MapRing(internalRing));
+    }
+
+    return Polygon(mappedExternalRing, mappedInternalRings);
 }
 
 MultiPolygon CoordinateTransformation::MapMultiPolygon(MultiPolygon multiPolygon)
@@ -100,4 +109,10 @@ OGRCoordinateTransformation* CoordinateTransformation::Transformation()
         _transformation = OGRCreateCoordinateTransformation(&sourceInnerReference, &targetInnerReference);
     }
     return _transformation;
+}
+
+Polygon::Ring CoordinateTransformation::MapRing(Polygon::Ring ring)
+{
+    vector<Point> mappedPoints = MapCoordinates(ring.Points());
+    return Polygon::Ring(mappedPoints);
 }

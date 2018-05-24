@@ -24,6 +24,8 @@ class Polygon
                 virtual ~Ring();
 
                 void AddPoint(Point point);
+                void SetPoints(vector<Point> points) { _points = points; }
+                vector<Point>& Points() { return _points; }
                 
                 iterator begin() { return _points.begin(); }
                 iterator end() { return _points.end(); }
@@ -36,6 +38,7 @@ class Polygon
                 vector<Point> _points;
         };
 
+        Polygon(Ring externalRing, vector<Ring> internalRings);
         Ring& ExternalRing();
         vector<Ring>& InternalRings();
 

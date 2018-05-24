@@ -4,11 +4,22 @@ Polygon::Polygon()
 {
 }
 
+Polygon::Polygon(Ring externalRing, vector<Ring> internalRings)
+            :   _externalRing(externalRing),
+                _internalRings(internalRings)
+{
+}
+
 Polygon::~Polygon()
 {
 }
 
 Polygon::Ring::Ring()
+{
+}
+
+Polygon::Ring::Ring(vector<Point> points)
+                :   _points(points)
 {
 }
 
