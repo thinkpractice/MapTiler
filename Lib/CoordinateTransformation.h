@@ -14,7 +14,7 @@ using namespace std;
 class CoordinateTransformation
 {
     public:
-        CoordinateTransformation(SpatialReference sourceReference, SpatialReference destinationReference);
+        CoordinateTransformation(const SpatialReference& sourceReference, const SpatialReference& destinationReference);
         virtual ~CoordinateTransformation();
 
         Point MapCoordinate(Point sourceCoordinate);

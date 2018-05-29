@@ -4,10 +4,12 @@
 #include "ogrsf_frmts.h"
 #include <string>
 #include <iterator>
+#include <memory>
 #include "Field.h"
 #include "Point.h"
 #include "Polygon.h"
 #include "MultiPolygon.h"
+#include "CoordinateTransformation.h"
 
 using namespace std;
 
@@ -46,6 +48,8 @@ class Feature
 
                 bool HasMultiPolygon() const;
                 MultiPolygon GetMultiPolygon() const;
+
+                void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
 
             private:
                 void ParseGeometry(OGRGeometry* geometry);

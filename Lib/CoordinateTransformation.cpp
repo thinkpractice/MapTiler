@@ -1,7 +1,7 @@
 #include "CoordinateTransformation.h"
 #include <iostream>
 
-CoordinateTransformation::CoordinateTransformation(SpatialReference sourceReference, SpatialReference destinationReference)
+CoordinateTransformation::CoordinateTransformation(const SpatialReference& sourceReference, const SpatialReference& destinationReference)
                             :   _sourceReference(sourceReference),
                                 _destinationReference(destinationReference),
                                 _transformation(nullptr)

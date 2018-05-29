@@ -18,10 +18,11 @@ shared_ptr<Layer> MappedVectorFile::LayerFor(OGRLayer* layer)
 
 MappedLayer::MappedLayer(OGRLayer* layer, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform)
                 :   Layer(layer),
-                    _coordinateTransformation(nullptr),
                     _destinationReference(destinationReference),
                     _rasterCoordinateTransform(rasterCoordinateTransform)
 {
+        const SpatialReference projectionReference = ProjectionReference();
+        _coordinateTransformation = make_shared<CoordinateTransformation>(projectionReference, _destinationReference);
 }
 
 MappedLayer::~MappedLayer()
@@ -31,19 +32,11 @@ MappedLayer::~MappedLayer()
 Feature MappedLayer::NextFeature() const
 {
     Feature feature = Layer::NextFeature();
-    return MapFeature(feature);
+    feature.Geometry().MapGeometry(ProjectionTransformation());
+    return feature;
 }
 
-Feature MappedLayer::MapFeature(Feature feature) const
+shared_ptr<CoordinateTransformation> MappedLayer::ProjectionTransformation() const
 {
-
-}
-
-shared_ptr<CoordinateTransformation> MappedLayer::ProjectionTransformation()
-{
-    if (!_coordinateTransformation.get())
-    {
-        _coordinateTransformation = make_shared<CoordinateTransformation>(ProjectionReference(), _destinationReference);
-    }
     return _coordinateTransformation;
 }

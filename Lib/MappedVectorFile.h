@@ -32,7 +32,7 @@ class MappedLayer : public Layer
 
     private:
         Feature MapFeature(Feature feature) const;
-        shared_ptr<CoordinateTransformation> ProjectionTransformation();
+        shared_ptr<CoordinateTransformation> ProjectionTransformation() const;
 
     private:
         shared_ptr<CoordinateTransformation> _coordinateTransformation;

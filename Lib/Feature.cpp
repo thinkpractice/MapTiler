@@ -178,6 +178,22 @@ MultiPolygon Feature::FeatureGeometry::GetMultiPolygon() const
     return _multiPolygon;
 }
 
+void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation)
+{
+    if (HasPoint())
+    {
+        _point = transformation->MapCoordinate(_point);
+    }
+    else if (HasPolygon())
+    {
+        _polygon = transformation->MapPolygon(_polygon);
+    }
+    else if (HasMultiPolygon())
+    {
+        _multiPolygon = transformation->MapMultiPolygon(_multiPolygon);
+    }
+}
+
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
                                 _currentField(nullptr, ""),

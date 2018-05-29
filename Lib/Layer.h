@@ -17,7 +17,7 @@ class Layer
         virtual ~Layer();
 
         string Name();
-        SpatialReference ProjectionReference();
+        SpatialReference ProjectionReference() const;
 
         void ClearSpatialFilter();
         void SetSpatialFilter(const Area& area);
