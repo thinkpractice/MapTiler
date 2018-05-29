@@ -2,6 +2,9 @@
 #define AFFINE_TRANSFORM_H
 
 #include "Point.h"
+#include <vector>
+
+using namespace std;
 
 class AffineTransform
 {
@@ -16,7 +19,9 @@ class AffineTransform
 
 
         Point Transform(const Point& rasterPoint);
+        vector<Point> Transform(const vector<Point>& rasterPoints);
         Point ReverseTransform(const Point& geoPoint);
+        vector<Point> ReverseTransform(const vector<Point>& geoPoints);
         void GetTransformMatrix(double* transform) const;
         
         void ToGdal(double* gdalTransform);

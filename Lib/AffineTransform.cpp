@@ -60,9 +60,26 @@ Point AffineTransform::Transform(const Point& rasterPoint)
     return (*this) * rasterPoint;
 }
 
+
+vector<Point> AffineTransform::Transform(const vector<Point>& rasterPoints)
+{
+    vector<Point> transformedPoints;
+    for (auto& point : rasterPoints)
+        transformedPoints.push_back(Transform(point));
+    return transformedPoints;
+}
+
 Point AffineTransform::ReverseTransform(const Point& geoPoint)
 {
     return Invert() * geoPoint;
+}
+
+vector<Point> AffineTransform::ReverseTransform(const vector<Point>& geoPoints)
+{
+    vector<Point> reverseTransformedPoints;
+    for (auto& point : geoPoints)
+        reverseTransformedPoints.push_back(ReverseTransform(point));
+    return reverseTransformedPoints;
 }
 
 void AffineTransform::GetTransformMatrix(double* transform) const
