@@ -2,6 +2,8 @@
 #define AFFINE_TRANSFORM_H
 
 #include "Point.h"
+#include "Polygon.h"
+#include "MultiPolygon.h"
 #include <vector>
 
 using namespace std;
@@ -19,9 +21,15 @@ class AffineTransform
 
 
         Point Transform(const Point& rasterPoint);
-        vector<Point> Transform(const vector<Point>& rasterPoints);
+        vector<Point> Transform(vector<Point>& rasterPoints);
+        Polygon Transform(Polygon& polygon);
+        MultiPolygon Transform(MultiPolygon& multiPolygon);
+
         Point ReverseTransform(const Point& geoPoint);
-        vector<Point> ReverseTransform(const vector<Point>& geoPoints);
+        vector<Point> ReverseTransform(vector<Point>& geoPoints);
+        Polygon ReverseTransform(Polygon& polygon);
+        MultiPolygon ReverseTransform(MultiPolygon& multiPolygon);
+
         void GetTransformMatrix(double* transform) const;
         
         void ToGdal(double* gdalTransform);

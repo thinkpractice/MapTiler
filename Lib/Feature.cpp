@@ -194,6 +194,23 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
     }
 }
 
+void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
+{
+    MapGeometry(transformation);
+    if (HasPoint())
+    {
+        _point = affineTransform.ReverseTransform(_point);
+    }
+    else if (HasPolygon())
+    {
+        _polygon = affineTransform.ReverseTransform(_polygon);
+    }
+    else if (HasMultiPolygon())
+    {
+        _multiPolygon = affineTransform.ReverseTransform(_multiPolygon);
+    }
+}
+
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
                                 _currentField(nullptr, ""),

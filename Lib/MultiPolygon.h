@@ -13,6 +13,7 @@ class MultiPolygon
         MultiPolygon(vector<Polygon> polygons);
         virtual ~MultiPolygon();
 
+        MultiPolygon Transform(Polygon::TransformFunction transformFunction);
         void AddPolygon(Polygon polygon);
         vector<Polygon>& Polygons() { return _polygons; };
 

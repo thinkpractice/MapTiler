@@ -1,6 +1,7 @@
 #include "AffineTransform.h"
 #include <iostream>
 #include <cstring>
+#include <functional>
 
 using namespace std;
 
@@ -60,13 +61,26 @@ Point AffineTransform::Transform(const Point& rasterPoint)
     return (*this) * rasterPoint;
 }
 
-
-vector<Point> AffineTransform::Transform(const vector<Point>& rasterPoints)
+vector<Point> AffineTransform::Transform(vector<Point>& ring)
 {
     vector<Point> transformedPoints;
-    for (auto& point : rasterPoints)
+    for (auto& point : ring)
         transformedPoints.push_back(Transform(point));
     return transformedPoints;
+}
+
+Polygon AffineTransform::Transform(Polygon& polygon)
+{
+    return polygon.Transform([&](vector<Point> points) -> vector<Point>{
+                return Transform(points);
+             });
+}
+
+MultiPolygon AffineTransform::Transform(MultiPolygon& multiPolygon)
+{
+    return multiPolygon.Transform([&](vector<Point> points) -> vector<Point>{
+                return Transform(points);
+             });
 }
 
 Point AffineTransform::ReverseTransform(const Point& geoPoint)
@@ -74,12 +88,26 @@ Point AffineTransform::ReverseTransform(const Point& geoPoint)
     return Invert() * geoPoint;
 }
 
-vector<Point> AffineTransform::ReverseTransform(const vector<Point>& geoPoints)
+vector<Point> AffineTransform::ReverseTransform(vector<Point>& geoPoints)
 {
     vector<Point> reverseTransformedPoints;
     for (auto& point : geoPoints)
         reverseTransformedPoints.push_back(ReverseTransform(point));
     return reverseTransformedPoints;
+}
+
+Polygon AffineTransform::ReverseTransform(Polygon& polygon)
+{
+    return polygon.Transform([&](vector<Point> points) -> vector<Point> {
+             return ReverseTransform(points);
+    });
+}
+
+MultiPolygon AffineTransform::ReverseTransform(MultiPolygon& multiPolygon)
+{
+    return multiPolygon.Transform([&](vector<Point> points) -> vector<Point> {
+             return ReverseTransform(points);
+    });
 }
 
 void AffineTransform::GetTransformMatrix(double* transform) const

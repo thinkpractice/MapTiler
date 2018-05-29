@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 #include "Point.h"
 
 using namespace std;
@@ -12,6 +13,8 @@ class Polygon
     public:
         Polygon();
         virtual ~Polygon();
+
+        using TransformFunction = function< vector<Point>(vector<Point>&)>;
 
         class Ring
         {
@@ -23,6 +26,7 @@ class Polygon
                 Ring(vector<Point> points);
                 virtual ~Ring();
 
+                Ring Transform(TransformFunction transformFunction);
                 void AddPoint(Point point);
                 void SetPoints(vector<Point> points) { _points = points; }
                 vector<Point>& Points() { return _points; }
@@ -42,6 +46,7 @@ class Polygon
         Ring& ExternalRing();
         vector<Ring>& InternalRings();
 
+        Polygon Transform(TransformFunction transformFunction);
     private:
         Ring _externalRing;
         vector<Ring> _internalRings;

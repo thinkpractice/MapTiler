@@ -10,6 +10,7 @@
 #include "Polygon.h"
 #include "MultiPolygon.h"
 #include "CoordinateTransformation.h"
+#include "AffineTransform.h"
 
 using namespace std;
 
@@ -51,6 +52,7 @@ class Feature
 
                 void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
 
+                void MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform);
             private:
                 void ParseGeometry(OGRGeometry* geometry);
                 Polygon ParsePolygon(OGRPolygon* polygon);
