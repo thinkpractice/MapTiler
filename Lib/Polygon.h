@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <functional>
+#include <iostream>
 #include "Point.h"
 
 using namespace std;
@@ -46,10 +47,37 @@ class Polygon
         Ring& ExternalRing();
         vector<Ring>& InternalRings();
 
+        Ring GetExternalRing() const;
+        vector<Ring> GetInternalRings() const;
+
         Polygon Transform(TransformFunction transformFunction);
     private:
         Ring _externalRing;
         vector<Ring> _internalRings;
 };
+
+inline std::ostream& operator<<(std::ostream &strm, const Polygon::Ring &ring)
+{
+    strm << "Ring" << endl;
+    for (auto& point : ring)
+    {
+        strm << point << endl;
+    }
+    return strm;
+}
+
+inline std::ostream& operator<<(std::ostream &strm, const Polygon& polygon)
+{
+    //TODO refactor Get methods.
+    strm << "Polygon" << endl;
+    strm << "==== External Ring ====" << endl;
+    strm << polygon.GetExternalRing() << endl;
+    for (auto& ring : polygon.GetInternalRings())
+    {
+        strm << "==== Internal Ring ====" << endl;
+        strm << ring << endl;
+    }
+    return strm;
+}
 
 #endif

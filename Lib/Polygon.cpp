@@ -53,6 +53,16 @@ vector<Polygon::Ring>& Polygon::InternalRings()
     return _internalRings;
 }
 
+Polygon::Ring Polygon::GetExternalRing() const
+{
+    return _externalRing;
+}
+
+vector<Polygon::Ring> Polygon::GetInternalRings() const
+{
+    return _internalRings;
+}
+
 Polygon Polygon::Transform(TransformFunction transformFunction)
 {
     Polygon::Ring mappedExternalRing = ExternalRing().Transform(transformFunction);

@@ -37,6 +37,7 @@ Feature MappedLayer::NextFeature() const
     cout << "MappedLayer::NextFeature" << endl;
     Feature feature = Layer::NextFeature();
     feature.Geometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
+
     return feature;
 }
 

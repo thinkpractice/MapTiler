@@ -93,45 +93,15 @@ int main(int argc, char** argv)
         cout << "type=" << feature.Geometry().Type() << endl;
         if (feature.Geometry().HasPoint())
         {
-            cout << "Point(" << feature.Geometry().GetPoint().X << "," << feature.Geometry().GetPoint().Y << ")" << endl;
+            cout << feature.Geometry().GetPoint() << endl;
         }
         else if (feature.Geometry().HasPolygon())
         {
-            cout << "==== External Ring ====" << endl;
-            for (auto p : feature.Geometry().GetPolygon().ExternalRing())
-            {
-                cout << "Point(" << p.X << "," << p.Y << ")" << endl;
-            }
-
-            for (auto ring : feature.Geometry().GetPolygon().InternalRings())
-            {
-                cout << "==== Internal Ring ====" << endl; 
-                for (auto p : ring)
-                {
-                    cout << "Point(" << p.X << "," << p.Y << ")" << endl;
-                }
-            }
+            cout << feature.Geometry().GetPolygon() << endl;
         }
         else if (feature.Geometry().HasMultiPolygon())
         {
-            cout << "=== Polygon in MultiPolygon ===" << endl;
-            for (auto polygon : feature.Geometry().GetMultiPolygon())
-            {
-                cout << "==== External Ring ====" << endl;
-                for (auto p : polygon.ExternalRing())
-                {
-                    cout << "Point(" << p.X << "," << p.Y << ")" << endl;
-                }
-
-                for (auto ring : polygon.InternalRings())
-                {
-                    cout << "==== Internal Ring ====" << endl; 
-                    for (auto p : ring)
-                    {
-                        cout << "Point(" << p.X << "," << p.Y << ")" << endl;
-                    }
-                }
-            }
+            cout << feature.Geometry().GetMultiPolygon() << endl;
         }
 
         cout << endl;

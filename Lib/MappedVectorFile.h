@@ -14,7 +14,6 @@ public:
 
     virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);
 
-
 private:
     SpatialReference _destinationReference;
     AffineTransform _rasterCoordinateTransform;

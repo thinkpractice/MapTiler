@@ -31,4 +31,12 @@ class MultiPolygon
         vector <Polygon> _polygons;
 };
 
+inline std::ostream& operator<<(std::ostream &strm, const MultiPolygon& multiPolygon)
+{
+    strm << "MultiPolygon" << endl;
+    for (auto& polygon : multiPolygon)
+        strm << polygon << endl;
+    return strm;
+}
+
 #endif /* ifndef MULTI_POLYGON_H */
