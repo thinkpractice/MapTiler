@@ -36,6 +36,7 @@ class Feature
                 enum GeometryType {PointType, PolygonType, MultiPolygonType, Other};
 
             public:
+                FeatureGeometry();
                 FeatureGeometry(OGRGeometry* geometry);
                 virtual ~FeatureGeometry();
 
@@ -110,7 +111,7 @@ class Feature
         iterator begin() const;
         iterator end() const;
         
-        FeatureGeometry Geometry();
+        FeatureGeometry& Geometry();
 
     private:
         Field GetFieldAtIndex(size_t index) const;
@@ -118,6 +119,7 @@ class Feature
 
     private:
         OGRFeature* _feature;
+        FeatureGeometry _geometry;
         
 };
 

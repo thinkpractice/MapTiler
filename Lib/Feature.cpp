@@ -4,13 +4,20 @@
 Feature::Feature(OGRFeature* feature)
             :   _feature(feature)
 {
+    if (_feature)
+    {
+        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+    }
 }
 
 Feature::Feature(const Feature& other)
             :   _feature(nullptr)
 {
     if (other._feature)
+    {
         _feature = other._feature->Clone();
+        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+    }
 }
 
 Feature::~Feature()
@@ -32,7 +39,10 @@ Feature& Feature::operator=(const Feature& other)
 {
     _feature = nullptr;
     if (other._feature)
+    {
         _feature = other._feature->Clone();
+        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+    }
     return *this;
 }
 
@@ -53,6 +63,11 @@ bool Feature::operator==(const Feature& other) const
     _feature == other._feature;
 }
 
+Feature::FeatureGeometry::FeatureGeometry()
+                            :   FeatureGeometry(nullptr)
+{
+}
+
 Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
                             :   _geometry(geometry),
                                 _geometryType(Other),
@@ -60,7 +75,8 @@ Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
                                 _hasPolygon(false),
                                 _hasMultiPolygon(false)
 {
-    ParseGeometry(geometry);
+    if (_geometry)
+        ParseGeometry(geometry);
 }
 
 Feature::FeatureGeometry::~FeatureGeometry()
@@ -197,6 +213,7 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
 void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
 {
     MapGeometry(transformation);
+    cout << "MapGeometry" << endl;
     if (HasPoint())
     {
         _point = affineTransform.ReverseTransform(_point);
@@ -291,10 +308,9 @@ Feature::iterator Feature::end() const
     return {this, false};
 }
 
-Feature::FeatureGeometry Feature::Geometry()
+Feature::FeatureGeometry& Feature::Geometry()
 {
-    OGRGeometry *geometry = _feature->GetGeometryRef();
-    return FeatureGeometry(geometry);
+    return _geometry;
 }
 
 OGRFeatureDefn* Feature::FeatureDefinition() const

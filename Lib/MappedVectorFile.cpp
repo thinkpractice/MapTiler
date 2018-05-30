@@ -1,4 +1,7 @@
 #include "MappedVectorFile.h"
+#include <iostream>
+
+using namespace std;
 
 MappedVectorFile::MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform)
                     :   VectorFile(filename),
@@ -31,8 +34,9 @@ MappedLayer::~MappedLayer()
 
 Feature MappedLayer::NextFeature() const
 {
+    cout << "MappedLayer::NextFeature" << endl;
     Feature feature = Layer::NextFeature();
-    feature.Geometry().MapGeometry(ProjectionTransformation());
+    feature.Geometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
     return feature;
 }
 

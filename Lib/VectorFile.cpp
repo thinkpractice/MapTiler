@@ -53,7 +53,6 @@ vector<shared_ptr<Layer>>& VectorFile::Layers()
     return _layers;
 }
 
-
 vector<Feature> VectorFile::ExecuteSql(const char* sqlStatement)
 {
     OGRLayer* layer = Dataset()->ExecuteSQL(sqlStatement, nullptr, nullptr);
