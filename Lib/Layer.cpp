@@ -18,7 +18,6 @@ string Layer::Name()
 
 SpatialReference Layer::ProjectionReference() const
 {
-    cout << "spatial ref=" << _layer->GetSpatialRef() << endl;
     return SpatialReference(_layer->GetSpatialRef());
 }
 

@@ -119,7 +119,7 @@ class Feature
 
     private:
         OGRFeature* _feature;
-        FeatureGeometry _geometry;
+        FeatureGeometry _featureGeometry;
         
 };
 

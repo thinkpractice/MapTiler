@@ -34,11 +34,11 @@ MappedLayer::~MappedLayer()
 
 Feature MappedLayer::NextFeature() const
 {
-    cout << "MappedLayer::NextFeature" << endl;
     Feature feature = Layer::NextFeature();
-    feature.Geometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
+    Feature newFeature = feature;
+    newFeature.Geometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
 
-    return feature;
+    return newFeature;
 }
 
 shared_ptr<CoordinateTransformation> MappedLayer::ProjectionTransformation() const
