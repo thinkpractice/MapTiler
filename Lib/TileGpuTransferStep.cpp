@@ -72,7 +72,7 @@ void TileGpuTransferStep::Run()
                     cout << "multipolygon=" << multiPolygon << endl;
                     
                     glBegin(GL_POLYGON);
-                        glColor3f(1.0f, 0.0f, 0.0f);
+                        glColor3f(1.0f, 1.0f, 1.0f);
                         for (auto polygon : multiPolygon)
                         {
                             for (auto point : polygon.ExternalRing())
