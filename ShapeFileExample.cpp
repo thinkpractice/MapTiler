@@ -50,11 +50,11 @@ int main(int argc, char** argv)
     //vector<Feature> coupledAddresses = addresses.ExecuteSql("select * from inspireadressen left join '../ZonnePanelen/solarpanel_addresses'.addresses on inspireadressen.postcode = addresses.postcode");
     //printFeatures(coupledAddresses.begin(), coupledAddresses.end());
 
-    VectorFile solarpanel_addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
+    /*VectorFile solarpanel_addresses("/home/tjadejong/Documents/CBS/ZonnePanelen/solarpanel_addresses");
     cout << "LayerCount solar_panel addresses = " << solarpanel_addresses.LayerCount() << endl;
 
     vector<Feature> filteredAddresses = solarpanel_addresses.ExecuteSql("select * from addresses where postcode='6372KV'");
-    printFeatures(filteredAddresses.begin(), filteredAddresses.end());
+    printFeatures(filteredAddresses.begin(), filteredAddresses.end());*/
 
     filename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
     VectorFile vectorFile(filename);
