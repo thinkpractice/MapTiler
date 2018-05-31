@@ -63,33 +63,37 @@ void TileGpuTransferStep::Run()
             cout << "boundingArea=" << geoTile->BoundingArea().LeftTop() << "," << geoTile->BoundingArea().BottomRight() << endl;
             layer->SetSpatialFilter(geoTile->BoundingArea());
             glDisable(GL_TEXTURE_2D);
-            glBegin(GL_POLYGON);
-                glColor3f(1.0f, 0.0f, 0.0f);
                 for (auto it = layer->begin(); it != layer->end(); ++it)
                 {
+
                     cout << "here" << endl;
                     auto feature = *it;
                     auto multiPolygon = feature.Geometry().GetMultiPolygon();
                     cout << "multipolygon=" << multiPolygon << endl;
-                    for (auto polygon : multiPolygon)
-                    {
-                        for (auto point : polygon.ExternalRing())
+                    
+                    glBegin(GL_POLYGON);
+                        glColor3f(1.0f, 0.0f, 0.0f);
+                        for (auto polygon : multiPolygon)
                         {
-                            double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / 512.0;
-                            double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / 512.0;
-                            cout << "Plotting point (" << x << "," << y << ")" << endl;
-                            glVertex3f(x, y, 0.0);
+                            for (auto point : polygon.ExternalRing())
+                            {
+                                double width = geoTile->BoundingRect().Width() / 2.0;
+                                double height = geoTile->BoundingRect().Height() / 2.0;
+                                double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;// + 0.7;
+                                double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
+                                cout << "Plotting point (" << x << "," << y << ")" << endl;
+                                glVertex3f(x, y, 0.0);
+                            }
                         }
-                    }
+                    glEnd();
                 }
-            glEnd();
                 
 
             // Swap buffers
             glfwSwapBuffers(window);
             
             //TODO: For now pass tile on to next step
-            //OutQueue()->enqueue(geoTile);
+            OutQueue()->enqueue(geoTile);
             //return;
         }
 

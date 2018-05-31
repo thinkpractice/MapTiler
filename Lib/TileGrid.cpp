@@ -58,7 +58,7 @@ Rect TileGrid::operator()(int row, int column) const
     double startY = PixelDimensions().Top() + (row * TileHeight());
 
     Rect tileRect = Rect(startX, startY, TileWidth(), TileHeight());
-    return ClipTileDimensions(tileRect);
+    return tileRect; // ClipTileDimensions(tileRect);
 }
 
 TileGrid::iterator TileGrid::begin() const
