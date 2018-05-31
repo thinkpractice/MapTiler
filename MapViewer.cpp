@@ -38,10 +38,10 @@ void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxInd
     delete tile;
 }
 
-void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory)
+void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory, string polygonFilename)
 {
     TileProcessor processor(chosenMap, area);
-    processor.StartProcessing(tileDirectory);
+    processor.StartProcessing(tileDirectory, polygonFilename);
 }
 
 int main(int argc, char** argv)
@@ -82,6 +82,8 @@ int main(int argc, char** argv)
     Area mapArea = chosenMap->GetMapArea();
     cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
+    string polygonFilename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
+
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
 
@@ -91,7 +93,7 @@ int main(int argc, char** argv)
                             {
                                 return to_string(i) + ") " + area.Description();
                             });
-                    DownloadTilesForArea(chosenMap, chosenArea, tileDirectory);
+                    DownloadTilesForArea(chosenMap, chosenArea, tileDirectory, polygonFilename);
                 }
             });
     for (auto& serviceProvider : areaLookup.ServiceProviders())
@@ -101,106 +103,8 @@ int main(int argc, char** argv)
     //areaLookup.GetAreaForAddress("Heerlen");
     //areaLookup.GetAreaForAddress("Landgraaf");
     Area area(6.00,50.89,6.01,50.88);
-    DownloadTilesForArea(chosenMap, area, tileDirectory);
-    /*GLWindow window(1024, 768);
-    window.StartRendering([&](GLFWwindow* window)
-    {
-        glClearStencil(0);
-        do
-        {
-            glClearDepth(1.0);
-            
-            glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            //Draw mask into the stencil buffer
-            glLoadIdentity();
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-            glEnable(GL_STENCIL_TEST);
-            glStencilFunc(GL_ALWAYS, 1, 1);
-            glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-            
-            glBegin(GL_TRIANGLES);
-                glVertex2f(0.25, 0.0);
-                glVertex2f(0.75, 0.0);
-                glVertex2f(0.5, 0.5);
-            glEnd();
-
-            //Draw texture
-            glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
-            glStencilFunc(GL_EQUAL, 1, 1);
-            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-            glEnable(GL_TEXTURE_2D);
-            //glColor3f(1.0, 1.0, 1.0);
-            //glBindTexture( GL_TEXTURE_2D, textureID);
-            glBegin(GL_POLYGON);
-                glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
-                glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
-                glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
-                glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
-            glEnd();
-
-            glDisable(GL_STENCIL_TEST);
-            // Swap buffers
-            glfwSwapBuffers(window);
-            glfwPollEvents();
-
-    } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-    glfwWindowShouldClose(window) == 0 );
-    });*/
-
-    /*cout << "Calculate number of blocks" << endl;
     
-    cout << "blocksize (" << nXBlockSize << "," << nYBlockSize << ")";
-    cout << "number of blocks (" << nXBlocks << "," << nYBlocks << ")";
+    DownloadTilesForArea(chosenMap, area, tileDirectory, polygonFilename);
 
-    int x = poDataset->GetRasterXSize() / 2 + 10000;
-    int y = poDataset->GetRasterYSize() / 2 + 10000;
-    int width = nXBlockSize * 10;
-    int height = nYBlockSize * 10;
-    GByte* redData = getDataForBand(poDataset, 1, x, y, width, height);
-    GByte* blueData = getDataForBand(poDataset, 2, x, y, width, height);
-    GByte* greenData = getDataForBand(poDataset, 3, x, y, width, height);
-    GByte* alphaData = getDataForBand(poDataset, 4, x, y, width, height);
-    if (!redData || !blueData || !greenData)
-    {
-        cout << "redData=" << redData << ",blueData=" << blueData << ",greenData=" << greenData << endl;
-        return -1;
-    }
-    //ignore 4th raster for now
-    int numberOfTilePixels = width*height;
-    int arrayLength = numberOfTilePixels * rasterCount;
-
-    GLubyte textureData[arrayLength];
-    for (int x  = 0, i = 0; x < arrayLength; x += rasterCount, i++)
-    {
-        textureData[x] = redData[i];
-        textureData[x+1] = blueData[i];
-        textureData[x+2] = greenData[i];
-        textureData[x+3] = alphaData[i];
-    }
-
-    CPLFree(redData);
-    CPLFree(blueData);
-    CPLFree(greenData);
-    
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
-    // Create one OpenGL texture
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    // "Bind" the newly created texture : all future texture functions will modify this texture
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Give the image to OpenGL
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    
-    */
-
-    //getline(cin, input);
     return app.exec();
 }

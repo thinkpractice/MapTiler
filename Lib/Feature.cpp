@@ -6,7 +6,7 @@ Feature::Feature(OGRFeature* feature)
 {
     if (_feature)
     {
-        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+        _featureGeometry = FeatureGeometry(_feature->GetGeometryRef());
     }
 }
 
@@ -16,7 +16,7 @@ Feature::Feature(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+        _featureGeometry = other._featureGeometry;
     }
 }
 
@@ -41,7 +41,7 @@ Feature& Feature::operator=(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        _geometry = FeatureGeometry(_feature->GetGeometryRef());
+        _featureGeometry = other._featureGeometry;
     }
     return *this;
 }
@@ -213,7 +213,6 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
 void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
 {
     MapGeometry(transformation);
-    cout << "MapGeometry" << endl;
     if (HasPoint())
     {
         _point = affineTransform.ReverseTransform(_point);
@@ -310,7 +309,7 @@ Feature::iterator Feature::end() const
 
 Feature::FeatureGeometry& Feature::Geometry()
 {
-    return _geometry;
+    return _featureGeometry;
 }
 
 OGRFeatureDefn* Feature::FeatureDefinition() const

@@ -1,6 +1,7 @@
 #include "Layer.h"
 #include "CoordinateTransformation.h"
 #include <iostream>
+#include <algorithm>
 
 Layer::Layer(OGRLayer* layer)
             :   _layer(layer)
@@ -18,7 +19,6 @@ string Layer::Name()
 
 SpatialReference Layer::ProjectionReference() const
 {
-    cout << "spatial ref=" << _layer->GetSpatialRef() << endl;
     return SpatialReference(_layer->GetSpatialRef());
 }
 
@@ -29,9 +29,15 @@ void Layer::ClearSpatialFilter()
 
 void Layer::SetSpatialFilter(const Area& area)
 {
+    ClearSpatialFilter();
 
     Area filterArea = CoordinateTransformation::MapArea(area, ProjectionReference());
-    _layer->SetSpatialFilterRect(filterArea.LeftTop().X, filterArea.LeftTop().Y, filterArea.BottomRight().X, filterArea.BottomRight().Y);
+    cout << "filterArea" << filterArea.LeftTop() << "," << filterArea.BottomRight() << endl;
+    double minX = min(filterArea.LeftTop().X, filterArea.BottomRight().X);
+    double minY = min(filterArea.LeftTop().Y, filterArea.BottomRight().Y);
+    double maxX = max(filterArea.LeftTop().X, filterArea.BottomRight().X);
+    double maxY = max(filterArea.LeftTop().Y, filterArea.BottomRight().Y);
+    _layer->SetSpatialFilterRect(minX, minY, maxX, maxY);
 }
 
 void Layer::ResetReading() const

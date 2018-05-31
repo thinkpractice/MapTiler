@@ -78,6 +78,9 @@ int main(int argc, char** argv)
     //auto layer = *vectorFile[1].get();
     auto layer = mappedVectorFile[1];
     
+    Area bagArea(layer->ProjectionReference(), Point(198516,321317), Point(198321,321464));
+    layer->SetSpatialFilter(bagArea);
+
     int numberOfFeatures = 0;
     for (auto it = layer->begin(); it != layer->end(); ++it)
     {

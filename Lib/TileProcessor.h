@@ -18,7 +18,7 @@ class TileProcessor
         TileProcessor(GeoMap* mainRasterMap, const Area& areaToProcess, int tileWidth = 1024, int tileHeight = 1024);
         virtual ~TileProcessor();
 
-        void StartProcessing(string outputDirectory);
+        void StartProcessing(string outputDirectory, string polygonFilename);
 
     private:
         GeoMap* _mainRasterMap;
