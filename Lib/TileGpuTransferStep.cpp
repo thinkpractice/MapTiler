@@ -5,8 +5,10 @@
 
 using namespace std;
 
-TileGpuTransferStep::TileGpuTransferStep()
-                        :   ProcessingStep(PreProcessing)
+TileGpuTransferStep::TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex)
+                        :   ProcessingStep(PreProcessing),
+                            _vectorFile(vectorFile),
+                            _layerIndex(layerIndex)
 {
 }
 
@@ -18,6 +20,7 @@ void TileGpuTransferStep::Run()
 {
     GLWindow window(1024, 1024);
 
+    auto layer = _vectorFile->Layers()[_layerIndex];
     window.StartRendering([&](GLFWwindow* window)
     {
         glEnable(GL_TEXTURE_2D);
@@ -56,6 +59,31 @@ void TileGpuTransferStep::Run()
                 glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, 0.0);
             glEnd();
              
+            //Get geometries for this tile
+            
+            cout << "boundingArea=" << geoTile->BoundingArea().LeftTop() << "," << geoTile->BoundingArea().BottomRight() << endl;
+            layer->SetSpatialFilter(geoTile->BoundingArea());
+            glBegin(GL_POLYGON);
+                for (auto it = layer->begin(); it != layer->end(); ++it)
+                {
+                    cout << "here" << endl;
+                    auto feature = *it;
+                    auto multiPolygon = feature.Geometry().GetMultiPolygon();
+                    cout << "multipolygon=" << multiPolygon << endl;
+                    for (auto polygon : multiPolygon)
+                    {
+                        for (auto point : polygon.ExternalRing())
+                        {
+                            double x = point.X - geoTile->BoundingRect().Left();
+                            double y = point.Y - geoTile->BoundingRect().Top();
+                            cout << "Plotting point (" << x << "," << y << ")" << endl;
+                            glVertex3f(x, y, 0.0);
+                        }
+                    }
+                }
+            glEnd();
+                
+
             // Swap buffers
             glfwSwapBuffers(window);
             
