@@ -22,7 +22,7 @@ TileProcessor::~TileProcessor()
 void TileProcessor::StartProcessing(string outputDirectory, string polygonFilename)
 {
     _pipeline.AddProcessingStep(new TileProducerStep(_mainRasterMap, _tileGrid));
-    _pipeline.AddProcessingStep(new TileGpuTransferStep(make_shared<MappedVectorFile>(polygonFilename, _mainRasterMap->ProjectionReference(), _mainRasterMap->MapTransform()),0));
+    _pipeline.AddProcessingStep(new TileGpuTransferStep(make_shared<MappedVectorFile>(polygonFilename, _mainRasterMap->ProjectionReference(), _mainRasterMap->MapTransform()),1));
     _pipeline.AddProcessingStep(new TileWriterStep(outputDirectory));
     _pipeline.StartProcessing();
 }
