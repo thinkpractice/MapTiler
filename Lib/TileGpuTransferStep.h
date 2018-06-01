@@ -3,6 +3,7 @@
 
 #include "ProcessingStep.h"
 #include "VectorFile.h"
+#include "GLWindow.h"
 
 class TileGpuTransferStep : public ProcessingStep
 {
@@ -11,6 +12,10 @@ public:
     virtual ~TileGpuTransferStep();
 
     void Run();
+
+private:
+    void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
+    shared_ptr<GeoTile> DrawPolygons(shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
 
 private:
     shared_ptr<VectorFile> _vectorFile;
