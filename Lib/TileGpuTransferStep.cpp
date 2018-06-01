@@ -27,13 +27,7 @@ void TileGpuTransferStep::Run()
         cout << "max texture size=" << maxSize << endl;
         while(auto geoTile = InQueue()->dequeue())
         {
-            /*glClearDepth(1.0);
-            
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);*/
-
-            glLoadIdentity();
+            //glLoadIdentity();
             GLuint frameBuffer;
             glGenFramebuffers(1, &frameBuffer);
             glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -143,7 +137,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
                     double width = geoTile->BoundingRect().Width() / 2.0;
                     double height = geoTile->BoundingRect().Height() / 2.0;
                     double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
-                    double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
+                    //double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
+                    double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
                     cout << "Plotting point (" << x << "," << y << ")" << endl;
                     
                     points[i][0] = x;
