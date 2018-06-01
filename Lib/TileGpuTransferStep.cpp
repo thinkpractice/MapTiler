@@ -45,7 +45,6 @@ void TileGpuTransferStep::Run()
             int textureWidth = geoTile->BoundingRect().Width();
             int textureHeight = geoTile->BoundingRect().Height();
 
-            cout << "texture size = (" << textureWidth << "," << textureHeight << ")" << endl;
             glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -59,35 +58,50 @@ void TileGpuTransferStep::Run()
             glEnd();
             
             //Get geometries for this tile
-            
-            cout << "boundingArea=" << geoTile->BoundingArea().LeftTop() << "," << geoTile->BoundingArea().BottomRight() << endl;
             layer->SetSpatialFilter(geoTile->BoundingArea());
             glDisable(GL_TEXTURE_2D);
-                for (auto it = layer->begin(); it != layer->end(); ++it)
-                {
+            GLUtesselator *tess = gluNewTess(); // create a tessellator
+            if (!tess)
+                cout << "tess null" << endl;
 
-                    cout << "here" << endl;
-                    auto feature = *it;
-                    auto multiPolygon = feature.Geometry().GetMultiPolygon();
-                    cout << "multipolygon=" << multiPolygon << endl;
-                    
-                    glBegin(GL_POLYGON);
-                        glColor3f(1.0f, 1.0f, 1.0f);
-                        for (auto polygon : multiPolygon)
-                        {
-                            for (auto point : polygon.ExternalRing())
-                            {
-                                double width = geoTile->BoundingRect().Width() / 2.0;
-                                double height = geoTile->BoundingRect().Height() / 2.0;
-                                double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;// + 0.7;
-                                double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
-                                cout << "Plotting point (" << x << "," << y << ")" << endl;
-                                glVertex3f(x, y, 0.0);
-                            }
-                        }
-                    glEnd();
-                }
+            gluTessCallback(tess, GLU_TESS_VERTEX, (GLvoid (*) ()) &glVertex3dv);
+            gluTessCallback(tess, GLU_TESS_BEGIN, (GLvoid (*) ()) &glBegin);
+            gluTessCallback(tess, GLU_TESS_END, (GLvoid (*) ()) &glEnd);
+
+            for (auto it = layer->begin(); it != layer->end(); ++it)
+            {
+                auto feature = *it;
+                auto multiPolygon = feature.Geometry().GetMultiPolygon();
+                cout << "multipolygon=" << multiPolygon << endl;
+               
+                glDisable(GL_TEXTURE_2D); 
                 
+                glColor3f(1.0f, 1.0f, 1.0f);
+                for (auto polygon : multiPolygon)
+                {
+                    GLdouble points[polygon.ExternalRing().Points().size()][3];
+                    gluTessBeginPolygon(tess, NULL);
+                        gluTessBeginContour(tess);
+                        int i = 0;
+                        for (auto point : polygon.ExternalRing())
+                        {
+                            double width = geoTile->BoundingRect().Width() / 2.0;
+                            double height = geoTile->BoundingRect().Height() / 2.0;
+                            double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
+                            double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
+                            cout << "Plotting point (" << x << "," << y << ")" << endl;
+                            
+                            points[i][0] = x;
+                            points[i][1] = y;
+                            points[i][2] = 0.0;
+                            gluTessVertex(tess, points[i], points[i]);
+                            i++;
+                        }
+                        gluTessEndContour(tess);
+                    gluTessEndPolygon(tess);
+                }
+            }
+            gluDeleteTess(tess);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -103,3 +117,5 @@ void TileGpuTransferStep::Run()
     });
     OutQueue()->enqueue(nullptr);
 }
+
+

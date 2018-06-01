@@ -16,7 +16,7 @@ include_directories(/usr/include/gdal ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location_I
 add_subdirectory(Lib)
 
 add_executable(MapViewer MapViewer.cpp)
-target_link_libraries(MapViewer Lib libGL.so libGLEW.so libglfw.so)
+target_link_libraries(MapViewer Lib)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)
 target_link_libraries(ShapeFileExample Lib)
