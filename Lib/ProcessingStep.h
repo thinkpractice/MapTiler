@@ -13,7 +13,8 @@ class ProcessingStep
     public:
         enum ProcessingType { PreProcessing, PostProcessing };
 
-        using QueueType = SafeQueue<GeoTile*>;
+        using TileType = shared_ptr<GeoTile>;
+        using QueueType = SafeQueue<TileType>;
     public:
         ProcessingStep(ProcessingType type);
         virtual ~ProcessingStep();

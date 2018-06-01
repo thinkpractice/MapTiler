@@ -20,24 +20,6 @@
 
 using namespace std;
 
-void WriteTile(GeoTile* tile, string tileDirectory, int currentIndex, int maxIndex)
-{
-    TileWriter tileWriter;
-    double onePercent = maxIndex / 100.0;
-    double totalNumberOfBytes = currentIndex * tile->NumberOfBytes();
-    if (currentIndex % (int)onePercent == 0)
-    {
-        //auto t2 = std::chrono::high_resolution_clock::now();
-        //auto duration = std::chrono::duration_cast<std::chrono::seconds>(t2-t1).count();
-        int imagePercentage = (currentIndex / onePercent) + 1;
-        cout << "Wrote " << imagePercentage << "\% out of " << maxIndex << " images(" << currentIndex << " Images, " << fixed << setprecision(2) << (totalNumberOfBytes / 1024) << "KB in " << endl; // duration << " seconds)" << endl;
-        
-    }
-    string tileFilename = tileDirectory + to_string(currentIndex) + ".png" ;
-    tileWriter.Save(tile, tileFilename);
-    delete tile;
-}
-
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory, string polygonFilename)
 {
     TileProcessor processor(chosenMap, area);

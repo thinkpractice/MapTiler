@@ -6,7 +6,7 @@ TileWriter::TileWriter()
 {
 }
 
-void TileWriter::Save(GeoTile* tile, string filename)
+void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     //cout << "Writing tile to file: " << filename << endl;
 

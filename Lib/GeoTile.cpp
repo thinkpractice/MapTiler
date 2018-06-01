@@ -55,8 +55,6 @@ unsigned char* GeoTile::Data()
 
 void GeoTile::SetRasterData(unsigned char** rasterData)
 {
-    cout << "width=" << _rect.Width() << ", height=" << _rect.Height() << endl;
-    cout << "number of bytes " << NumberOfBytes() << endl;
     unsigned char* data = Data();
     for (int arrayIndex = 0, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
     {

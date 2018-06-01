@@ -16,11 +16,11 @@ TileWriterStep::~TileWriterStep()
 
 void TileWriterStep::Run()
 {
-     while (GeoTile* tileToProcess = InQueue()->dequeue())
+     while (auto tileToProcess = InQueue()->dequeue())
          SaveTile(tileToProcess);
 }
 
-void TileWriterStep::SaveTile(GeoTile* tile)
+void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)
 {
     Utils::TimeIt([&]
             {

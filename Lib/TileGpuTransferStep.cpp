@@ -26,7 +26,7 @@ void TileGpuTransferStep::Run()
         GLint maxSize;
         glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxSize );
         cout << "max texture size=" << maxSize << endl;
-        while(GeoTile* geoTile = InQueue()->dequeue())
+        while(auto geoTile = InQueue()->dequeue())
         {
             glClearDepth(1.0);
             
@@ -34,6 +34,10 @@ void TileGpuTransferStep::Run()
 
             glLoadIdentity();
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+            GLuint frameBuffer;
+            glGenFramebuffers(1, &frameBuffer);
+            glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
             glEnable(GL_TEXTURE_2D);
             //Transfer texture to GPU
@@ -49,6 +53,12 @@ void TileGpuTransferStep::Run()
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+
             glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
             glBegin(GL_POLYGON);
                 glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, 1.0, 0.0);
@@ -56,7 +66,25 @@ void TileGpuTransferStep::Run()
                 glTexCoord2f(1.0, 1.0); glVertex3f(1.0, -1.0, 0.0);
                 glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, 0.0);
             glEnd();
-            
+
+
+            GLuint polygonBuffer;
+            glGenFramebuffers(1, &polygonBuffer);
+            glBindFramebuffer(GL_FRAMEBUFFER, polygonBuffer);
+
+            glEnable(GL_TEXTURE_2D);
+            //Transfer texture to GPU
+            GLuint polygonTextureId;
+            glGenTextures(1, &polygonTextureId);
+
+            glBindTexture(GL_TEXTURE_2D, polygonTextureId);
+
+            glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, polygonTextureId, 0);
+
             //Get geometries for this tile
             layer->SetSpatialFilter(geoTile->BoundingArea());
             glDisable(GL_TEXTURE_2D);
@@ -103,11 +131,21 @@ void TileGpuTransferStep::Run()
             }
             gluDeleteTess(tess);
 
+            
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            shared_ptr<GeoTile> maskTile = make_shared<GeoTile>(geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+            maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
+            glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA8, GL_UNSIGNED_BYTE, geoTile->Data());
+
+            glDeleteFramebuffers(1, &frameBuffer);
+            glDeleteFramebuffers(1, &polygonBuffer);
+
             // Swap buffers
             glfwSwapBuffers(window);
             
             //TODO: For now pass tile on to next step
             OutQueue()->enqueue(geoTile);
+            OutQueue()->enqueue(maskTile);
             //return;
         }
 
