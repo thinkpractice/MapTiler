@@ -31,9 +31,9 @@ void TileGpuTransferStep::Run()
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glLoadIdentity();
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);*/
 
+            glLoadIdentity();
             GLuint frameBuffer;
             glGenFramebuffers(1, &frameBuffer);
             glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -50,8 +50,8 @@ void TileGpuTransferStep::Run()
             //Do onscreen drawing
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            //glBindTexture(GL_TEXTURE_2D, polygonTextureId);
+            //glBindTexture(GL_TEXTURE_2D, textureId);
+            glBindTexture(GL_TEXTURE_2D, polygonTextureId);
 
             glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
             glBegin(GL_POLYGON);
@@ -102,7 +102,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
 {
 
     glEnable(GL_TEXTURE_2D);
-    //Transfer texture to GPU
     GLuint polygonTextureId;
     glGenTextures(1, textureId);
 
@@ -118,10 +117,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
 
     //Get geometries for this tile
     layer->SetSpatialFilter(geoTile->BoundingArea());
-    glDisable(GL_TEXTURE_2D);
     GLUtesselator *tess = gluNewTess(); // create a tessellator
-    if (!tess)
-        cout << "tess null" << endl;
 
     gluTessCallback(tess, GLU_TESS_VERTEX, (GLvoid (*) ()) &glVertex3dv);
     gluTessCallback(tess, GLU_TESS_BEGIN, (GLvoid (*) ()) &glBegin);
@@ -135,7 +131,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
        
         glDisable(GL_TEXTURE_2D); 
         
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         for (auto polygon : multiPolygon)
         {
             GLdouble points[polygon.ExternalRing().Points().size()][3];
@@ -165,7 +161,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     shared_ptr<GeoTile> maskTile = make_shared<GeoTile>(geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
-    glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA8, GL_UNSIGNED_BYTE, geoTile->Data());
+    glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, maskTile->Data());
 
     return maskTile;
 }
