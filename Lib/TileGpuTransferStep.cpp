@@ -19,9 +19,14 @@ void TileGpuTransferStep::Run()
 {
     GLWindow window(1024, 1024);
 
+
     auto layer = _vectorFile->Layers()[_layerIndex];
     window.StartRendering([&](GLFWwindow* window)
     {
+        GLuint vao;
+        GLuint shaderProgram;
+        SetupShaders(&vao, &shaderProgram);
+
         GLint maxSize;
         glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxSize );
         cout << "max texture size=" << maxSize << endl;
@@ -43,18 +48,9 @@ void TileGpuTransferStep::Run()
 
             //Do onscreen drawing
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            //glBindTexture(GL_TEXTURE_2D, polygonTextureId);
 
-            //glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
-            /*glBegin(GL_POLYGON);
-                glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, 1.0, 0.0);
-                glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 1.0, 0.0);
-                glTexCoord2f(1.0, 1.0); glVertex3f(1.0, -1.0, 0.0);
-                glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, 0.0);
-            glEnd();*/
-            DrawOnScreen();
+            glBindVertexArray(vao);
+            DrawOnScreen(shaderProgram, textureId, polygonTextureId);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -74,11 +70,10 @@ void TileGpuTransferStep::Run()
     OutQueue()->enqueue(nullptr);
 }
 
-void TileGpuTransferStep::DrawOnScreen()
+void TileGpuTransferStep::SetupShaders(GLuint* vao, GLuint* shaderProgram)
 {
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(*vao);
 
     float vertices[] = {-1.0, 1.0, 0.0, 0.0,
                         1.0, 1.0, 1.0, 0.0,
@@ -136,11 +131,14 @@ void TileGpuTransferStep::DrawOnScreen()
     in vec2 Texcoord;
     out vec4 outColor;
 
-    uniform sampler2D tex;
+    uniform sampler2D aerialTex;
+    uniform sampler2D polygonTex;
 
     void main()
     {
-        outColor = texture(tex, Texcoord);
+        vec4 aerialColor = texture(aerialTex, Texcoord);
+        vec4 polygonColor = texture(polygonTex, Texcoord);
+        outColor = aerialColor;
     }
     )glsl";
 
@@ -158,23 +156,34 @@ void TileGpuTransferStep::DrawOnScreen()
         cout << "shader error: " << buffer << endl;
     }
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glBindFragDataLocation(shaderProgram, 0, "outColor");
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
+    *shaderProgram = glCreateProgram();
+    glAttachShader(*shaderProgram, vertexShader);
+    glAttachShader(*shaderProgram, fragmentShader);
+    glBindFragDataLocation(*shaderProgram, 0, "outColor");
+    glLinkProgram(*shaderProgram);
+    glUseProgram(*shaderProgram);
 
 
-    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    GLint posAttrib = glGetAttribLocation(*shaderProgram, "position");
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glEnableVertexAttribArray(posAttrib);
 
-    GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+    GLint texAttrib = glGetAttribLocation(*shaderProgram, "texcoord");
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
                            4*sizeof(float), (void*)(2*sizeof(float)));
+}   
     
+void TileGpuTransferStep::DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId)
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glUniform1i(glGetUniformLocation(shaderProgram, "aerialTex"), 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, polygonTextureId);
+    glUniform1i(glGetUniformLocation(shaderProgram, "polygonTex"), 1);
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -226,7 +235,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     {
         auto feature = *it;
         auto multiPolygon = feature.Geometry().GetMultiPolygon();
-        cout << "multipolygon=" << multiPolygon << endl;
        
         glDisable(GL_TEXTURE_2D); 
         
@@ -244,7 +252,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
                     double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
                     //double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
                     double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
-                    cout << "Plotting point (" << x << "," << y << ")" << endl;
+                    //cout << "Plotting point (" << x << "," << y << ")" << endl;
                     
                     points[i][0] = x;
                     points[i][1] = y;

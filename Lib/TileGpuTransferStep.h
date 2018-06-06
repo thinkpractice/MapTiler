@@ -14,7 +14,8 @@ public:
     void Run();
 
 private:
-    void DrawOnScreen();
+    void SetupShaders(GLuint* vao, GLuint* shaderProgram);
+    void DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId);
     void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
     shared_ptr<GeoTile> DrawPolygons(shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
 
