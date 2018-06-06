@@ -43,8 +43,8 @@ void TileGpuTransferStep::Run()
 
             //Do onscreen drawing
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            //glEnable(GL_TEXTURE_2D);
-            //glBindTexture(GL_TEXTURE_2D, textureId);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, textureId);
             //glBindTexture(GL_TEXTURE_2D, polygonTextureId);
 
             //glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
@@ -80,10 +80,10 @@ void TileGpuTransferStep::DrawOnScreen()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    float vertices[] = {-1.0, 1.0,
-                        1.0, 1.0,
-                        1.0, -1.0,
-                        -1.0, -1.0};
+    float vertices[] = {-1.0, 1.0, 0.0, 0.0,
+                        1.0, 1.0, 1.0, 0.0,
+                        1.0, -1.0, 1.0, 1.0,
+                        -1.0, -1.0, 0.0, 1.0};
     
     GLuint vbo;
     glGenBuffers(1, &vbo);
@@ -104,10 +104,14 @@ void TileGpuTransferStep::DrawOnScreen()
     const char* vertexSource = R"glsl(
     #version 130
 
+    in vec2 texcoord;
     in vec2 position;
+
+    out vec2 Texcoord;
 
     void main()
     {
+        Texcoord = texcoord;
         gl_Position = vec4(position, 0.0, 1.0);
     }
     )glsl";
@@ -129,12 +133,14 @@ void TileGpuTransferStep::DrawOnScreen()
     const char* fragmentSource = R"glsl(
     #version 130
 
-    uniform vec3 triangleColor;
+    in vec2 Texcoord;
     out vec4 outColor;
+
+    uniform sampler2D tex;
 
     void main()
     {
-        outColor = vec4(triangleColor, 1.0);
+        outColor = texture(tex, Texcoord);
     }
     )glsl";
 
@@ -161,11 +167,13 @@ void TileGpuTransferStep::DrawOnScreen()
 
 
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glEnableVertexAttribArray(posAttrib);
 
-    GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-    glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
+    GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
+                           4*sizeof(float), (void*)(2*sizeof(float)));
     
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
