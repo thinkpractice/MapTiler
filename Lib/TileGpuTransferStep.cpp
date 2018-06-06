@@ -19,7 +19,6 @@ void TileGpuTransferStep::Run()
 {
     GLWindow window(1024, 1024);
 
-
     auto layer = _vectorFile->Layers()[_layerIndex];
     window.StartRendering([&](GLFWwindow* window)
     {
@@ -32,7 +31,6 @@ void TileGpuTransferStep::Run()
         cout << "max texture size=" << maxSize << endl;
         while(auto geoTile = InQueue()->dequeue())
         {
-            //glLoadIdentity();
             GLuint frameBuffer;
             glGenFramebuffers(1, &frameBuffer);
             glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -49,7 +47,7 @@ void TileGpuTransferStep::Run()
             //Do onscreen drawing
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-            glBindVertexArray(vao);
+            //glBindVertexArray(vao);
             DrawOnScreen(shaderProgram, textureId, polygonTextureId);
 
             // Swap buffers
@@ -138,7 +136,7 @@ void TileGpuTransferStep::SetupShaders(GLuint* vao, GLuint* shaderProgram)
     {
         vec4 aerialColor = texture(aerialTex, Texcoord);
         vec4 polygonColor = texture(polygonTex, Texcoord);
-        outColor = aerialColor;
+        outColor = polygonColor;
     }
     )glsl";
 
@@ -178,10 +176,14 @@ void TileGpuTransferStep::DrawOnScreen(GLuint shaderProgram, GLuint textureId, G
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glUniform1i(glGetUniformLocation(shaderProgram, "aerialTex"), 0);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, polygonTextureId);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glUniform1i(glGetUniformLocation(shaderProgram, "polygonTex"), 1);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -272,4 +274,32 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, maskTile->Data());
 
     return maskTile;
+}
+
+void TileGpuTransferStep::BeginVA(GLenum mode, VA *va)
+{
+  va->current_mode = mode;
+}
+
+void TileGpuTransferStep::EndVA(VA *va)
+{
+  va->current_mode = 0;
+}
+
+void TileGpuTransferStep::VertexVA(void *p, VA *va)
+{
+  GLuint idx = (GLuint)((intptr_t) p);
+
+  switch(va->current_mode) 
+  {
+      case GL_TRIANGLES: 
+          va->triangle_face_indices.push_back(idx); 
+          break;
+      case GL_TRIANGLE_STRIP: 
+          va->tristrip_face_indices.push_back(idx); 
+          break;
+      case GL_TRIANGLE_FAN: 
+          va->trifan_face_indices.push_back(idx); 
+          break;
+  }
 }

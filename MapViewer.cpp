@@ -30,8 +30,8 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
-    //string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
+    //string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
+    string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
     if (argc > 1)
     {
         tileDirectory = string(argv[1]);
