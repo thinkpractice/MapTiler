@@ -25,14 +25,20 @@ public:
     void Run();
 
 private:
-    void SetupShaders(GLuint* vao, GLuint* shaderProgram);
+    GLuint LoadShader(GLenum shaderType, const char* shaderSource);
+    GLuint CreateShaderProgram(const char* vertexShader, const char* fragmentShader);
+
+
+    void SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram);
+    void SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram);
     void DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId);
     void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
     shared_ptr<GeoTile> DrawPolygons(shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
 
-    void BeginVA(GLenum mode, VA* va);
-    void EndVA(VA* va);
-    void VertexVA(void* p, VA* va);
+    void DrawElements(GLenum mode, vector<GLuint>& elements);
+    static void BeginVA(GLenum mode, VA* va);
+    static void EndVA(VA* va);
+    static void VertexVA(void* p, VA* va);
 
 private:
     shared_ptr<VectorFile> _vectorFile;
