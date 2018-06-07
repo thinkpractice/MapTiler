@@ -61,10 +61,10 @@ void TileGpuTransferStep::Run()
             
             //Pass original and created tiles on to next step
             OutQueue()->enqueue(geoTile);
-            //OutQueue()->enqueue(maskTile);
+            OutQueue()->enqueue(maskTile);
 
-            /*glDeleteFramebuffers(1, &frameBuffer);
-            glDeleteFramebuffers(1, &polygonBuffer);*/
+            //glDeleteFramebuffers(1, &frameBuffer);
+            glDeleteFramebuffers(1, &polygonBuffer);
         }
 
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
@@ -268,9 +268,12 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     layer->SetSpatialFilter(geoTile->BoundingArea());
     GLUtesselator *tess = gluNewTess(); // create a tessellator
 
+    gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
+    gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
     gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
     gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
     gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())TileGpuTransferStep::VertexVA);
+    gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())TileGpuTransferStep::ErrorCallback);
 
     glDisable(GL_TEXTURE_2D); 
     for (auto it = layer->begin(); it != layer->end(); ++it)
@@ -309,8 +312,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
-            DrawElements(GL_TRIANGLES, va.triangle_face_indices);
-            DrawElements(GL_TRIANGLE_STRIP, va.tristrip_face_indices);
+            //DrawElements(GL_TRIANGLES, va.triangle_face_indices);
+            //DrawElements(GL_TRIANGLE_STRIP, va.tristrip_face_indices);
             DrawElements(GL_TRIANGLE_FAN, va.trifan_face_indices);
         }
     }
@@ -363,4 +366,12 @@ void TileGpuTransferStep::VertexVA(void *p, VA *va)
           va->trifan_face_indices.push_back(idx); 
           break;
   }
+}
+
+void TileGpuTransferStep::ErrorCallback(GLenum errorCode)
+{
+   const GLubyte *estring;
+
+   estring = gluErrorString(errorCode);
+   fprintf (stderr, "Tessellation Error: %s\n", estring);
 }

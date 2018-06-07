@@ -39,6 +39,7 @@ private:
     static void BeginVA(GLenum mode, VA* va);
     static void EndVA(VA* va);
     static void VertexVA(void* p, VA* va);
+    static void ErrorCallback(GLenum errorCode);
 
 private:
     shared_ptr<VectorFile> _vectorFile;
