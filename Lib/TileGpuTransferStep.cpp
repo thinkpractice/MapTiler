@@ -26,22 +26,14 @@ void TileGpuTransferStep::Run()
         GLuint maskingShaderProgram;
         SetupMaskingShaders(&maskingVao, &maskingShaderProgram);
 
-        /*GLuint polygonVao;
+        GLuint polygonVao;
         GLuint polygonShaderProgram;
-        SetupPolygonShaders(&polygonVao, &polygonShaderProgram);*/
+        SetupPolygonShaders(&polygonVao, &polygonShaderProgram);
 
-        GLint maxSize;
-        glGetIntegerv( GL_MAX_TEXTURE_SIZE, &maxSize );
-        cout << "max texture size=" << maxSize << endl;
         while(auto geoTile = InQueue()->dequeue())
         {
-            GLuint frameBuffer;
-            glGenFramebuffers(1, &frameBuffer);
-            glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-
-            GLuint textureId;
-            TileToTexture(geoTile, &textureId);
-            
+            glBindVertexArray(polygonVao);
+            glUseProgram(polygonShaderProgram);
             GLuint polygonBuffer;
             glGenFramebuffers(1, &polygonBuffer);
             glBindFramebuffer(GL_FRAMEBUFFER, polygonBuffer);
@@ -50,32 +42,19 @@ void TileGpuTransferStep::Run()
             auto maskTile = DrawPolygons(geoTile, layer, &polygonTextureId);
 
             //Do onscreen drawing
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            
             glBindVertexArray(maskingVao);
-            DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
+            glUseProgram(maskingShaderProgram);
 
-            /*float vertices[] = {-1.0, 1.0,
-                                1.0, 1.0,
-                                1.0, -1.0,
-                                -1.0, -1.0};
+            GLuint frameBuffer;
+            glGenFramebuffers(1, &frameBuffer);
+            glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+            GLuint textureId;
+            TileToTexture(geoTile, &textureId);
             
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-            GLuint elements[] = {
-                0, 1, 2,
-                2, 3, 0
-            };
-
-            GLuint ebo;
-            glGenBuffers(1, &ebo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            
+            DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 
             // Swap buffers
             glfwSwapBuffers(window);
@@ -217,7 +196,7 @@ void TileGpuTransferStep::SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram
     {
         vec4 aerialColor = texture(aerialTex, Texcoord);
         vec4 polygonColor = texture(polygonTex, Texcoord);
-        outColor = vec4(1.0, 1.0, 1.0, 1.0);
+        outColor = aerialColor * polygonColor;
     }
     )glsl";
 
@@ -289,9 +268,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     layer->SetSpatialFilter(geoTile->BoundingArea());
     GLUtesselator *tess = gluNewTess(); // create a tessellator
 
-    /*gluTessCallback(tess, GLU_TESS_VERTEX, (GLvoid (*) ()) &glVertex3dv);
-    gluTessCallback(tess, GLU_TESS_BEGIN, (GLvoid (*) ()) &glBegin);
-    gluTessCallback(tess, GLU_TESS_END, (GLvoid (*) ()) &glEnd);*/
     gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
     gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
     gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())TileGpuTransferStep::VertexVA);
