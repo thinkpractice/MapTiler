@@ -33,9 +33,9 @@ private:
     void SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram);
     void DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId);
     void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
-    shared_ptr<GeoTile> DrawPolygons(shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
+    shared_ptr<GeoTile> DrawPolygons(GLuint shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
 
-    void DrawElements(GLenum mode, vector<Point>& elements);
+    void DrawElements(GLuint shaderProgram, GLenum mode, vector<Point>& elements);
     static void BeginVA(GLenum mode, VA* va);
     static void EndVA(VA* va);
     static void VertexVA(void* p, VA* va);

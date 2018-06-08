@@ -39,7 +39,7 @@ void TileGpuTransferStep::Run()
             glBindFramebuffer(GL_FRAMEBUFFER, polygonBuffer);
 
             GLuint polygonTextureId;
-            auto maskTile = DrawPolygons(geoTile, layer, &polygonTextureId);
+            auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
 
             //Do onscreen drawing
             glBindVertexArray(maskingVao);
@@ -136,12 +136,7 @@ void TileGpuTransferStep::SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram
     )glsl";
 
     *shaderProgram = CreateShaderProgram(vertexSource, fragmentSource);
-
-    GLint posAttrib = glGetAttribLocation(*shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(posAttrib);
 }
-
 
 void TileGpuTransferStep::SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram)
 {
@@ -196,7 +191,7 @@ void TileGpuTransferStep::SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram
     {
         vec4 aerialColor = texture(aerialTex, Texcoord);
         vec4 polygonColor = texture(polygonTex, Texcoord);
-        outColor = aerialColor * polygonColor;
+        outColor = polygonColor;
     }
     )glsl";
 
@@ -248,7 +243,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* tex
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *textureId, 0);
 }
 
-shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId)
+shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId)
 {
     glEnable(GL_TEXTURE_2D);
     GLuint polygonTextureId;
@@ -315,9 +310,9 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
                 cout << "idx: " << index << endl; // " = (" << points[index][0] << "," << points[index][1]<< endl;
             }
 
-            DrawElements(GL_TRIANGLES, va.triangle_face_indices);
-            DrawElements(GL_TRIANGLE_STRIP, va.tristrip_face_indices);
-            DrawElements(GL_TRIANGLE_FAN, va.trifan_face_indices);
+            DrawElements(shaderProgram, GL_TRIANGLES, va.triangle_face_indices);
+            DrawElements(shaderProgram, GL_TRIANGLE_STRIP, va.tristrip_face_indices);
+            DrawElements(shaderProgram, GL_TRIANGLE_FAN, va.trifan_face_indices);
 
             //glDeleteBuffers(1, &vbo);
         }
@@ -332,7 +327,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     return maskTile;
 }
 
-void TileGpuTransferStep::DrawElements(GLenum mode, vector<Point>& elements)
+void TileGpuTransferStep::DrawElements(GLuint shaderProgram, GLenum mode, vector<Point>& elements)
 {
     if (elements.size() == 0)
         return;
@@ -358,6 +353,10 @@ void TileGpuTransferStep::DrawElements(GLenum mode, vector<Point>& elements)
     glDrawElements(mode, elements.size(), GL_UNSIGNED_INT, 0);
 
     glDeleteBuffers(1, &ebo);*/
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posAttrib);
+
     glDrawArrays(mode, 0, elements.size() * 2);
     glDeleteBuffers(1, &vbo);
 }
