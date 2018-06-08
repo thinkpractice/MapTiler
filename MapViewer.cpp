@@ -41,11 +41,12 @@ int main(int argc, char** argv)
     string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
 
-    GeoMap* chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
+    /*GeoMap* chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
                 string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
                 return menuItem;
             });
-
+*/
+    GeoMap* chosenMap = mapProvider.Maps()[1];
     cout << "===GeoTransform===" << endl;
     double geoTransform[6];
     chosenMap->MapTransform().GetTransformMatrix(geoTransform);

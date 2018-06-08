@@ -32,6 +32,7 @@ void TileGpuTransferStep::Run()
 
         while(auto geoTile = InQueue()->dequeue())
         {
+            cout << ">>>>>>Begin Tile" << endl;
             glBindVertexArray(polygonVao);
             glUseProgram(polygonShaderProgram);
             GLuint polygonBuffer;
@@ -65,6 +66,7 @@ void TileGpuTransferStep::Run()
 
             glDeleteFramebuffers(1, &frameBuffer);
             glDeleteFramebuffers(1, &polygonBuffer);
+            cout << ">>>>>>End Tile" << endl;
         }
 
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
@@ -265,6 +267,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
 
     //gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
     //gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+    
 
     gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
     gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
@@ -273,7 +276,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
     //gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())TileGpuTransferStep::CombineCallback);
     gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())TileGpuTransferStep::ErrorCallback);
 
-    glDisable(GL_TEXTURE_2D); 
     for (auto it = layer->begin(); it != layer->end(); ++it)
     {
         auto feature = *it;
@@ -281,7 +283,9 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
         
         for (auto polygon : multiPolygon)
         {
-            GLdouble points[polygon.ExternalRing().Points().size()][2];
+            cout << "====Begin Polygon=====" << endl;
+            GLdouble points[polygon.ExternalRing().Points().size()][3];
+
             VA va;
             gluTessBeginPolygon(tess, &va);
                 gluTessBeginContour(tess);
@@ -298,20 +302,33 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
                     points[i][0] = x;
                     points[i][1] = y;
                     points[i][2] = 0;
-                    
                     gluTessVertex(tess, points[i], points[i]);
                     i++;
                 }
                 gluTessEndContour(tess);
             gluTessEndPolygon(tess);
 
-            for (auto index : va.trifan_face_indices)
+            cout << "GL_TRIANGLES" << endl;
+            for (auto point : va.triangle_face_indices)
             {
-                cout << "idx: " << index << endl; // " = (" << points[index][0] << "," << points[index][1]<< endl;
+                cout << point << endl;
             }
 
-            DrawElements(shaderProgram, GL_TRIANGLES, va.triangle_face_indices);
-            DrawElements(shaderProgram, GL_TRIANGLE_STRIP, va.tristrip_face_indices);
+            cout << "GL_TRIANGLE_STRIP" << endl;
+            for (auto point : va.tristrip_face_indices)
+            {
+                cout << point << endl;
+            }
+
+            cout << "GL_TRIANGLE_FAN" << endl;
+            for (auto point : va.trifan_face_indices)
+            {
+                cout << point << endl;
+            }
+
+            cout << "====End Polygon=====" << endl;
+            //DrawElements(shaderProgram, GL_TRIANGLES, va.triangle_face_indices);
+            //DrawElements(shaderProgram, GL_TRIANGLE_STRIP, va.tristrip_face_indices);
             DrawElements(shaderProgram, GL_TRIANGLE_FAN, va.trifan_face_indices);
 
             //glDeleteBuffers(1, &vbo);
@@ -357,7 +374,7 @@ void TileGpuTransferStep::DrawElements(GLuint shaderProgram, GLenum mode, vector
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
 
-    glDrawArrays(mode, 0, elements.size() * 2);
+    glDrawArrays(mode, 0, elements.size() * 3);
     glDeleteBuffers(1, &vbo);
 }
 

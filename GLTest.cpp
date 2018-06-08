@@ -1,7 +1,20 @@
 #include "Lib/GLWindow.h"
 #include <iostream>
+#include <vector>
 
 using namespace std;
+
+struct Primitive
+{
+    GLenum mode;
+    vector<GLdouble> points;
+};
+
+struct VA
+{
+    Primitive currentPrimitive;
+    vector<Primitive> primitives;
+};
 
 GLuint LoadShader(GLenum shaderType, const char* shaderSource)
 {
@@ -46,12 +59,9 @@ void SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram)
     #version 130
 
     in vec2 position;
-    in vec3 color;
-    out vec3 Color;
 
     void main()
     {
-        Color = color;
         gl_Position = vec4(position, 0.0, 1.0);
     }
     )glsl";
@@ -59,17 +69,74 @@ void SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram)
     const char* fragmentSource = R"glsl(
     #version 130
 
-    in vec3 Color;
     out vec4 outColor;
 
     void main()
     {
-        outColor = vec4(Color, 1.0);
+        outColor = vec4(0.0, 1.0, 0.0, 1.0);
     }
     )glsl";
 
     *shaderProgram = CreateShaderProgram(vertexSource, fragmentSource);
+}
 
+void BeginVA(GLenum mode, VA* va)
+{
+    Primitive primitive;
+    primitive.mode = mode;
+    va->currentPrimitive = primitive;
+}
+
+void EndVA(VA* va)
+{
+    va->primitives.push_back(va->currentPrimitive);
+}
+
+void VertexVA(void* p, VA* va)
+{
+    GLdouble* vertex = (GLdouble*)p;
+    va->currentPrimitive.points.push_back(vertex[0]);
+    va->currentPrimitive.points.push_back(vertex[1]);
+    va->currentPrimitive.points.push_back(vertex[2]);
+}
+
+void ErrorCallback(GLenum errorCode)
+{
+   const GLubyte *estring;
+
+   estring = gluErrorString(errorCode);
+   cout << "Tessellation Error: " << estring << endl;
+}
+
+GLuint PushPrimitivePoints(Primitive primitive)
+{
+    GLuint vbo1;
+    glGenBuffers(1, &vbo1);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo1);
+    glBufferData(GL_ARRAY_BUFFER, primitive.points.size(), &primitive.points[0], GL_STATIC_DRAW);
+    return vbo1;
+}
+
+void EdgeFlagCallback(GLboolean flag, VA* va)
+{
+ // Indicates which edges lie on the polygon boundary 
+ // (so to enable us to draw outlines), also 
+ // if this callback is provided triangle fans and strips are
+ // converted to independent triangles
+}
+
+void CombineCallback(GLdouble coords[3],
+                     GLdouble *vertex_data[4],
+                     GLfloat weight[4], GLdouble **dataOut, VA* va)
+{
+   GLdouble vertex[3];
+   vertex[0] = coords[0];
+   vertex[1] = coords[1];
+   vertex[2] = coords[2];
+   va->currentPrimitive.points.push_back(coords[0]);
+   va->currentPrimitive.points.push_back(coords[1]);
+   va->currentPrimitive.points.push_back(coords[2]);
+   *dataOut = vertex;
 }
 
 int main(int argc, char** argv)
@@ -83,6 +150,41 @@ int main(int argc, char** argv)
         {
 
             SetupPolygonShaders(&vao, &shaderProgram);
+
+            GLdouble points[][3] = {
+                {-1.28247,-1.01088, 0.0},
+                {-1.76332,-0.671701, 0.0},
+                {-1.67036,-0.539197, 0.0},
+                {-1.62333,-0.572359, 0.0},
+                {-1.2211,0.000491298, 0.0},
+                {-1.20929,-0.76946, 0.0},
+                {-1.14493,-0.814861, 0.0},
+                {-0.849858,-0.256995, 0.0},
+                {-1.17161,-0.0344123, 0.0},
+                {-0.934818,0.303098, 0.0},
+                {-0.615166,0.0776264, 0.0},
+                {-0.849858,-0.256995, 0.0}
+            };
+
+            int numberOfPoints = 12; //sizeof(points) / 3;
+            /*float triangle[] = {-1.17161,-0.0344123,1.0, 0.0, 0.0,
+                 -1.20929,-0.76946,1.0, 1.0, 0.0,
+                 -1.2211,0.000491298,1.0, 0.0, 1.0};
+
+            float triangle_fan[] = {
+                -1.28247,-1.01088,0.0, 0.0, 1.0,
+                -1.76332,-0.671701,0.0, 0.0, 1.0,
+                -1.67036,-0.539197,0.0, 0.0, 1.0,
+                -1.62333,-0.572359,0.0, 0.0, 1.0,
+                -1.2211,0.000491298,0.0, 0.0, 1.0,
+                -1.20929,-0.76946,0.0, 0.0, 1.0,
+                -1.14493,-0.814861,0.0, 0.0, 1.0,
+                -0.849858,-0.256995,0.0, 0.0, 1.0,
+                -1.20929,-0.76946,0.0, 0.0, 1.0,
+                -1.17161,-0.0344123,0.0, 0.0, 1.0,
+                -0.934818,0.303098,1.0, 0.0, 0.0,
+                -0.615166,0.0776264,1.0, 0.0, 0.0};*/
+
             /*float vertices[] = {-1.28247,-1.01088, 1.0, 0.0, 0.0,
                                 -1.76332,-0.671701,1.0, 0.0, 0.0,
                                 -1.67036,-0.539197,1.0, 0.0, 0.0,
@@ -96,56 +198,55 @@ int main(int argc, char** argv)
                                 -0.934818,0.303098,0.0, 0.0, 1.0,
                                 -0.615166,0.0776264,0.0, 0.0, 1.0};*/
 
-            float vertices[] = {-1.0,-0.5, 1.0, 0.0, 0.0,
-                                -0.5,-0.5, 1.0, 0.0, 0.0,
-                                -0.5,-1.0, 1.0, 0.0, 0.0,
-                                -1.0,-1.0, 1.0, 0.0, 0.0,
-                                -1.2211,0.000491298,0.0, 1.0, 0.0,
-                                -1.20929,-0.76946,0.0, 1.0, 0.0,
-                                -1.14493,-0.814861,0.0, 1.0, 0.0,
-                                -0.849858,-0.256995,0.0, 1.0, 0.0,
-                                -1.20929,-0.76946, 0.0, 0.0, 1.0,
-                                -1.17161,-0.0344123,0.0, 0.0, 1.0,
-                                -0.934818,0.303098,0.0, 0.0, 1.0,
-                                -0.615166,0.0776264,0.0, 0.0, 1.0};
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+            GLUtesselator *tess = gluNewTess(); // create a tessellator
+            
+            gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
+            gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+            gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())BeginVA);
+            gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())EndVA);
+            gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())VertexVA);
+            gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA, (GLvoid(*)())EdgeFlagCallback);
+            //Causes rendering artefacts!
+            gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())CombineCallback);
+            gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())ErrorCallback);
 
-            GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-            glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
-            glEnableVertexAttribArray(posAttrib);
+            VA va;
+            gluTessBeginPolygon(tess, &va);
+                gluTessBeginContour(tess);
+                for (int i = 0; i < numberOfPoints ; i++)
+                {
+                    gluTessVertex(tess, points[i], points[i]);
+                }
+                gluTessEndContour(tess);
+            gluTessEndPolygon(tess);
+            gluDeleteTess(tess);
 
-            GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+            GLuint vbos[va.primitives.size()];
+            int i = 0;
+            for (auto primitive : va.primitives)
+            {
+                vbos[i] = PushPrimitivePoints(primitive);
+                i++;
+            }
+
+
+            /*GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
             glEnableVertexAttribArray(colAttrib);
             glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE,
-                       5*sizeof(float), (void*)(2*sizeof(float)));
+                       5*sizeof(float), (void*)(2*sizeof(float)));*/
 
-            GLuint elements[] = {
-                0, 1, 2,
-                2, 3, 0
-            };
+            i = 0;
+            for (auto primitive : va.primitives)
+            {
+                cout << "drawing: " << primitive.mode << endl;
+                glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
+                GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+                glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+                glEnableVertexAttribArray(posAttrib);
 
-            GLuint ebo;
-            glGenBuffers(1, &ebo);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-            //glDrawArrays(GL_TRIANGLE_STRIP, 0, sizeof(vertices));
-
-            GLuint elements2[] = {
-                4, 5, 6,
-                6, 7, 4
-            };
-
-            GLuint ebo2;
-            glGenBuffers(1, &ebo2);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo2);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements2), elements2, GL_STATIC_DRAW);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+                glDrawArrays(primitive.mode, 0, primitive.points.size() / 3);
+                i++;
+            }
             glfwSwapBuffers(window);
             glfwPollEvents();
 
