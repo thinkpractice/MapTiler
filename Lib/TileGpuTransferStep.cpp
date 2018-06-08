@@ -63,7 +63,7 @@ void TileGpuTransferStep::Run()
             OutQueue()->enqueue(geoTile);
             OutQueue()->enqueue(maskTile);
 
-            //glDeleteFramebuffers(1, &frameBuffer);
+            glDeleteFramebuffers(1, &frameBuffer);
             glDeleteFramebuffers(1, &polygonBuffer);
         }
 
@@ -116,11 +116,11 @@ void TileGpuTransferStep::SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram
     const char* vertexSource = R"glsl(
     #version 130
 
-    in vec2 position;
+    in vec3 position;
 
     void main()
     {
-        gl_Position = vec4(position, 0.0, 1.0);
+        gl_Position = vec4(position, 1.0);
     }
     )glsl";
    
@@ -138,7 +138,7 @@ void TileGpuTransferStep::SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram
     *shaderProgram = CreateShaderProgram(vertexSource, fragmentSource);
 
     GLint posAttrib = glGetAttribLocation(*shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
 }
 
@@ -268,11 +268,14 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     layer->SetSpatialFilter(geoTile->BoundingArea());
     GLUtesselator *tess = gluNewTess(); // create a tessellator
 
-    gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
-    gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+    //gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
+    //gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+
     gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
     gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
     gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())TileGpuTransferStep::VertexVA);
+    //Causes rendering artefacts!
+    //gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())TileGpuTransferStep::CombineCallback);
     gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())TileGpuTransferStep::ErrorCallback);
 
     glDisable(GL_TEXTURE_2D); 
@@ -283,7 +286,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
         
         for (auto polygon : multiPolygon)
         {
-            GLdouble points[polygon.ExternalRing().Points().size()][3];
+            GLdouble points[polygon.ExternalRing().Points().size()][2];
             VA va;
             gluTessBeginPolygon(tess, &va);
                 gluTessBeginContour(tess);
@@ -295,26 +298,28 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
                     double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
                     //double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
                     double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
-                    //cout << "Plotting point (" << x << "," << y << ")" << endl;
+                    cout << "(" << x << "," << y << ")" << endl;
                     
                     points[i][0] = x;
                     points[i][1] = y;
-                    points[i][2] = 0.0;
+                    points[i][2] = 0;
                     
-                    gluTessVertex(tess, points[i], (void*)((intptr_t)i));
+                    gluTessVertex(tess, points[i], points[i]);
                     i++;
                 }
                 gluTessEndContour(tess);
             gluTessEndPolygon(tess);
 
-            GLuint vbo;
-            glGenBuffers(1, &vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+            for (auto index : va.trifan_face_indices)
+            {
+                cout << "idx: " << index << endl; // " = (" << points[index][0] << "," << points[index][1]<< endl;
+            }
 
-            //DrawElements(GL_TRIANGLES, va.triangle_face_indices);
-            //DrawElements(GL_TRIANGLE_STRIP, va.tristrip_face_indices);
+            DrawElements(GL_TRIANGLES, va.triangle_face_indices);
+            DrawElements(GL_TRIANGLE_STRIP, va.tristrip_face_indices);
             DrawElements(GL_TRIANGLE_FAN, va.trifan_face_indices);
+
+            //glDeleteBuffers(1, &vbo);
         }
     }
     gluDeleteTess(tess);
@@ -327,45 +332,80 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(shared_ptr<GeoTile> geoTil
     return maskTile;
 }
 
-void TileGpuTransferStep::DrawElements(GLenum mode, vector<GLuint>& elements)
+void TileGpuTransferStep::DrawElements(GLenum mode, vector<Point>& elements)
 {
     if (elements.size() == 0)
         return;
 
-    GLuint ebo;
+    GLdouble points[elements.size()][2];
+    int i = 0;
+    for (auto point : elements)
+    {
+        points[i][0] = point.X;
+        points[i][1] = point.Y;
+        i++;
+    }
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+    /*GLuint ebo;
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLuint), &elements.front(), GL_STATIC_DRAW);
     glDrawElements(mode, elements.size(), GL_UNSIGNED_INT, 0);
-}
 
+    glDeleteBuffers(1, &ebo);*/
+    glDrawArrays(mode, 0, elements.size() * 2);
+    glDeleteBuffers(1, &vbo);
+}
 
 void TileGpuTransferStep::BeginVA(GLenum mode, VA *va)
 {
-  va->current_mode = mode;
+    va->current_mode = mode;
 }
 
 void TileGpuTransferStep::EndVA(VA *va)
 {
-  va->current_mode = 0;
+    va->current_mode = 0;
 }
 
 void TileGpuTransferStep::VertexVA(void *p, VA *va)
 {
-  GLuint idx = (GLuint)((intptr_t) p);
+  GLdouble* pointData = (GLdouble*) p;
 
+  Point point(pointData[0], pointData[1]);
   switch(va->current_mode) 
   {
       case GL_TRIANGLES: 
-          va->triangle_face_indices.push_back(idx); 
+          va->triangle_face_indices.push_back(point);
           break;
       case GL_TRIANGLE_STRIP: 
-          va->tristrip_face_indices.push_back(idx); 
+          va->tristrip_face_indices.push_back(point);
           break;
       case GL_TRIANGLE_FAN: 
-          va->trifan_face_indices.push_back(idx); 
+          va->trifan_face_indices.push_back(point);
           break;
   }
+}
+
+void TileGpuTransferStep::CombineCallback(GLdouble coords[3], 
+                     GLdouble *vertex_data[4],
+                     GLfloat weight[4], GLdouble **dataOut, VA* va)
+{
+   GLdouble vertex[3];
+   vertex[0] = coords[0];
+   vertex[1] = coords[1];
+   vertex[2] = coords[2];
+   //vertex[3] = (GLuint)((intptr_t)vertex_data[0]);
+   /*for (int i = 3; i < 7; i++)
+      vertex[i] = weight[0] * vertex_data[0][i] 
+                  + weight[1] * vertex_data[1][i]
+                  + weight[2] * vertex_data[2][i] 
+                  + weight[3] * vertex_data[3][i];*/
+   *dataOut = vertex;
 }
 
 void TileGpuTransferStep::ErrorCallback(GLenum errorCode)
