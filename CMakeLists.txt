@@ -20,3 +20,6 @@ target_link_libraries(MapViewer Lib)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)
 target_link_libraries(ShapeFileExample Lib)
+
+add_executable(GLTest GLTest.cpp)
+target_link_libraries(GLTest Lib)
