@@ -156,22 +156,24 @@ int main(int argc, char** argv)
         SetupPolygonShaders(&vao, &shaderProgram, &vertexShader, &fragmentShader);
 
         glBindVertexArray(vao);
-        GLdouble points[][3] = {
-            {-0.28247,-1.01088, 0.0},
-            {-0.76332,-0.671701, 0.0},
-            {-0.67036,-0.539197, 0.0},
-            {-0.62333,-0.572359, 0.0},
-            {-0.2211,0.000491298, 0.0},
-            {-0.20929,-0.76946, 0.0},
-            {-0.14493,-0.814861, 0.0},
-            {-0.849858+1.0,-0.256995, 0.0},
-            {-0.17161,-0.0344123, 0.0},
-            {-0.934818+1.0,0.303098, 0.0},
-            {-0.615166+1.0,0.0776264, 0.0},
-            {-0.849858+1.0,-0.256995, 0.0}
-        };
-        int numberOfPoints = 12; //sizeof(points) / 3;
 
+        GLdouble points[][3] = {
+            {-1.28247,-1.01088, 0.0},
+            {-1.76332,-0.671701, 0.0},
+            {-1.67036,-0.539197, 0.0},
+            {-1.62333,-0.572359, 0.0},
+            {-1.2211,0.000491298, 0.0},
+            {-1.20929,-0.76946, 0.0},
+            {-1.14493,-0.814861, 0.0},
+            {-0.849858,-0.256995, 0.0},
+            {-1.17161,-0.0344123, 0.0},
+            {-0.934818,0.303098, 0.0},
+            {-0.615166,0.0776264, 0.0},
+            {-0.849858,-0.256995, 0.0}
+        };
+
+        int numberOfPoints = 12;
+        
         GLUtesselator *tess = gluNewTess(); // create a tessellator
 
         //gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
@@ -208,16 +210,17 @@ int main(int argc, char** argv)
             cout << "{" << p.x << "," << p.y << "," << p.z << "," << p.original << "}" << endl;
             vertexIndex += 3;
         }
-        cout << "vertices size=" << vertexIndex << endl;
+        cout << "vertices size=" << vertexIndex / 3 << endl;
 
         GLuint vbo;
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPoints), vertexPoints, GL_STATIC_DRAW);
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPoints), vertexPoints, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
         cout << "number of primitives" << va.primitives.size() << endl;
 
         GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-        glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glVertexAttribPointer(posAttrib, 3, GL_DOUBLE, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(posAttrib);
         do
         {
@@ -237,38 +240,6 @@ int main(int argc, char** argv)
                 {-0.615166,0.0776264, 0.0},
                 {-0.849858,-0.256995, 0.0}
             };*/
-
-            /*float triangle[] = {-1.17161,-0.0344123,1.0, 0.0, 0.0,
-                 -1.20929,-0.76946,1.0, 1.0, 0.0,
-                 -1.2211,0.000491298,1.0, 0.0, 1.0};
-
-            float triangle_fan[] = {
-                -1.28247,-1.01088,0.0, 0.0, 1.0,
-                -1.76332,-0.671701,0.0, 0.0, 1.0,
-                -1.67036,-0.539197,0.0, 0.0, 1.0,
-                -1.62333,-0.572359,0.0, 0.0, 1.0,
-                -1.2211,0.000491298,0.0, 0.0, 1.0,
-                -1.20929,-0.76946,0.0, 0.0, 1.0,
-                -1.14493,-0.814861,0.0, 0.0, 1.0,
-                -0.849858,-0.256995,0.0, 0.0, 1.0,
-                -1.20929,-0.76946,0.0, 0.0, 1.0,
-                -1.17161,-0.0344123,0.0, 0.0, 1.0,
-                -0.934818,0.303098,1.0, 0.0, 0.0,
-                -0.615166,0.0776264,1.0, 0.0, 0.0};*/
-
-            /*float vertices[] = {-1.28247,-1.01088, 1.0, 0.0, 0.0,
-                                -1.76332,-0.671701,1.0, 0.0, 0.0,
-                                -1.67036,-0.539197,1.0, 0.0, 0.0,
-                                -1.62333,-0.572359,1.0, 0.0, 0.0,
-                                -1.2211,0.000491298,0.0, 1.0, 0.0,
-                                -1.20929,-0.76946,0.0, 1.0, 0.0,
-                                -1.14493,-0.814861,0.0, 1.0, 0.0,
-                                -0.849858,-0.256995,0.0, 1.0, 0.0,
-                                -1.20929,-0.76946, 0.0, 0.0, 1.0,
-                                -1.17161,-0.0344123,0.0, 0.0, 1.0,
-                                -0.934818,0.303098,0.0, 0.0, 1.0,
-                                -0.615166,0.0776264,0.0, 0.0, 1.0};*/
-
 
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);

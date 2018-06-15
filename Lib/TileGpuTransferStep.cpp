@@ -265,15 +265,14 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
     layer->SetSpatialFilter(geoTile->BoundingArea());
     GLUtesselator *tess = gluNewTess(); // create a tessellator
 
-    //gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
-    //gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
-
-    
+    gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
+    gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
     gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
     gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
     gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())TileGpuTransferStep::VertexVA);
     //Causes rendering artefacts!
-    //gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())TileGpuTransferStep::CombineCallback);
+    gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA, (GLvoid(*)())TileGpuTransferStep::EdgeFlagCallback);
+    gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())TileGpuTransferStep::CombineCallback);
     gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())TileGpuTransferStep::ErrorCallback);
 
     for (auto it = layer->begin(); it != layer->end(); ++it)
@@ -371,10 +370,10 @@ void TileGpuTransferStep::DrawElements(GLuint shaderProgram, GLenum mode, vector
 
     glDeleteBuffers(1, &ebo);*/
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 2, GL_DOUBLE, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
 
-    glDrawArrays(mode, 0, elements.size() * 3);
+    glDrawArrays(mode, 0, elements.size());
     glDeleteBuffers(1, &vbo);
 }
 
@@ -411,17 +410,22 @@ void TileGpuTransferStep::CombineCallback(GLdouble coords[3],
                      GLdouble *vertex_data[4],
                      GLfloat weight[4], GLdouble **dataOut, VA* va)
 {
-   GLdouble vertex[3];
-   vertex[0] = coords[0];
-   vertex[1] = coords[1];
-   vertex[2] = coords[2];
-   //vertex[3] = (GLuint)((intptr_t)vertex_data[0]);
-   /*for (int i = 3; i < 7; i++)
-      vertex[i] = weight[0] * vertex_data[0][i]
-                  + weight[1] * vertex_data[1][i]
-                  + weight[2] * vertex_data[2][i]
-                  + weight[3] * vertex_data[3][i];*/
-   *dataOut = vertex;
+  //TODO need to free these?
+  GLdouble *vertex;
+  vertex = (GLdouble *) malloc(3 * sizeof(GLdouble));
+  vertex[0] = coords[0];
+  vertex[1] = coords[1];
+  vertex[2] = coords[2];
+
+  *dataOut = vertex;
+}
+
+void TileGpuTransferStep::EdgeFlagCallback(GLboolean flag, VA* va)
+{
+ // Indicates which edges lie on the polygon boundary
+ // (so to enable us to draw outlines), also
+ // if this callback is provided triangle fans and strips are
+ // converted to independent triangles
 }
 
 void TileGpuTransferStep::ErrorCallback(GLenum errorCode)
