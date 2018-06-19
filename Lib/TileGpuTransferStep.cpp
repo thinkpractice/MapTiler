@@ -32,7 +32,6 @@ void TileGpuTransferStep::Run()
 
         while(auto geoTile = InQueue()->dequeue())
         {
-            cout << ">>>>>>Begin Tile:" << geoTile->UniqueId() << endl;
             glBindVertexArray(polygonVao);
             glUseProgram(polygonShaderProgram);
             GLuint polygonBuffer;
@@ -56,17 +55,18 @@ void TileGpuTransferStep::Run()
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
-
+            auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");
             // Swap buffers
-            glfwSwapBuffers(window);
+            //glfwSwapBuffers(window);
 
             //Pass original and created tiles on to next step
             OutQueue()->enqueue(geoTile);
             OutQueue()->enqueue(maskTile);
+            OutQueue()->enqueue(maskedTile);
 
             glDeleteFramebuffers(1, &frameBuffer);
             glDeleteFramebuffers(1, &polygonBuffer);
-            cout << ">>>>>>End Tile" << endl;
         }
 
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
@@ -78,7 +78,6 @@ void TileGpuTransferStep::Run()
 
 GLuint TileGpuTransferStep::LoadShader(GLenum shaderType, const char* shaderSource)
 {
-
     GLuint shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &shaderSource, NULL);
     glCompileShader(shader);
@@ -193,7 +192,7 @@ void TileGpuTransferStep::SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram
     {
         vec4 aerialColor = texture(aerialTex, Texcoord);
         vec4 polygonColor = texture(polygonTex, Texcoord);
-        outColor = polygonColor;
+        outColor = polygonColor * aerialColor;
     }
     )glsl";
 
@@ -282,7 +281,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
 
         for (auto polygon : multiPolygon)
         {
-            cout << "====Begin Polygon=====" << endl;
             GLdouble points[polygon.ExternalRing().Points().size()][3];
 
             VA va;
@@ -296,7 +294,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
                     double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
                     //double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
                     double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
-                    cout << "(" << x << "," << y << ")" << endl;
 
                     points[i][0] = x;
                     points[i][1] = y;
@@ -307,40 +304,30 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
                 gluTessEndContour(tess);
             gluTessEndPolygon(tess);
 
-            cout << "GL_TRIANGLES" << endl;
-            for (auto point : va.triangle_face_indices)
-            {
-                cout << point << endl;
-            }
-
-            cout << "GL_TRIANGLE_STRIP" << endl;
-            for (auto point : va.tristrip_face_indices)
-            {
-                cout << point << endl;
-            }
-
-            cout << "GL_TRIANGLE_FAN" << endl;
-            for (auto point : va.trifan_face_indices)
-            {
-                cout << point << endl;
-            }
-
-            cout << "====End Polygon=====" << endl;
             DrawElements(shaderProgram, GL_TRIANGLES, va.triangle_face_indices);
-            //DrawElements(shaderProgram, GL_TRIANGLE_STRIP, va.tristrip_face_indices);
-            //DrawElements(shaderProgram, GL_TRIANGLE_FAN, va.trifan_face_indices);
 
             //glDeleteBuffers(1, &vbo);
         }
     }
     gluDeleteTess(tess);
 
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+    maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
+
+    /*glReadBuffer(GL_COLOR_ATTACHMENT0);
     shared_ptr<GeoTile> maskTile = make_shared<GeoTile>(geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
     glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, maskTile->Data());
-
+*/
     return maskTile;
+}
+
+shared_ptr<GeoTile> TileGpuTransferStep::ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers)
+{
+   glReadBuffer(mode);
+   shared_ptr<GeoTile> readTile = make_shared<GeoTile>(boundingRect, boundingArea, numberOfLayers);
+   glReadPixels(0,0, boundingRect.Width(), boundingRect.Height(), GL_RGBA, GL_UNSIGNED_BYTE, readTile->Data());
+   return readTile;
 }
 
 void TileGpuTransferStep::DrawElements(GLuint shaderProgram, GLenum mode, vector<Point>& elements)

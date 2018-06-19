@@ -34,6 +34,7 @@ private:
     void DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId);
     void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
     shared_ptr<GeoTile> DrawPolygons(GLuint shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
+    shared_ptr<GeoTile> ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers);
 
     void DrawElements(GLuint shaderProgram, GLenum mode, vector<Point>& elements);
     static void BeginVA(GLenum mode, VA* va);

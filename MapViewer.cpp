@@ -30,8 +30,8 @@ int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
-    //string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
+    //string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
+    string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
     if (argc > 1)
     {
         tileDirectory = string(argv[1]);
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     cout << "raster count=" << chosenMap->RasterCount() << endl;
     cout << "raster X size=" << chosenMap->WidthInPixels() << endl;
     cout << "raster Y size=" << chosenMap->HeightInPixels() << endl;
-    
+
     Area mapArea = chosenMap->GetMapArea();
     cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
     //areaLookup.GetAreaForAddress("Heerlen");
     //areaLookup.GetAreaForAddress("Landgraaf");
     Area area(6.00,50.89,6.01,50.88);
-    
+
     DownloadTilesForArea(chosenMap, area, tileDirectory, polygonFilename);
 
     return app.exec();
