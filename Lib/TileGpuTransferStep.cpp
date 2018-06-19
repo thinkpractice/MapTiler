@@ -4,10 +4,12 @@
 
 using namespace std;
 
-TileGpuTransferStep::TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex)
+TileGpuTransferStep::TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex, int tileWidth, int tileHeight)
                         :   ProcessingStep(PreProcessing),
                             _vectorFile(vectorFile),
-                            _layerIndex(layerIndex)
+                            _layerIndex(layerIndex),
+                            _tileWidth(tileWidth),
+                            _tileHeight(tileHeight)
 {
 }
 
@@ -17,7 +19,7 @@ TileGpuTransferStep::~TileGpuTransferStep()
 
 void TileGpuTransferStep::Run()
 {
-    GLWindow window(1024, 1024);
+    GLWindow window(_tileWidth, _tileHeight);
 
     auto layer = _vectorFile->Layers()[_layerIndex];
     window.StartRendering([&](GLFWwindow* window)
@@ -227,7 +229,6 @@ void TileGpuTransferStep::DrawOnScreen(GLuint shaderProgram, GLuint textureId, G
 
 void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId)
 {
-
     glEnable(GL_TEXTURE_2D);
     //Transfer texture to GPU
     glGenTextures(1, textureId);
@@ -314,11 +315,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(GLuint shaderProgram, shar
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
 
-    /*glReadBuffer(GL_COLOR_ATTACHMENT0);
-    shared_ptr<GeoTile> maskTile = make_shared<GeoTile>(geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-    maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
-    glReadPixels(0,0, textureWidth, textureHeight, GL_RGBA, GL_UNSIGNED_BYTE, maskTile->Data());
-*/
     return maskTile;
 }
 
@@ -347,15 +343,8 @@ void TileGpuTransferStep::DrawElements(GLuint shaderProgram, GLenum mode, vector
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STREAM_DRAW);
 
-    /*GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLuint), &elements.front(), GL_STATIC_DRAW);
-    glDrawElements(mode, elements.size(), GL_UNSIGNED_INT, 0);
-
-    glDeleteBuffers(1, &ebo);*/
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glVertexAttribPointer(posAttrib, 2, GL_DOUBLE, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);

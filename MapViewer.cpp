@@ -20,9 +20,9 @@
 
 using namespace std;
 
-void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, string tileDirectory, string polygonFilename)
+void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, int tileWidth, int tileHeight, string tileDirectory, string polygonFilename)
 {
-    TileProcessor processor(chosenMap, area);
+    TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
     processor.StartProcessing(tileDirectory, polygonFilename);
 }
 
@@ -32,6 +32,9 @@ int main(int argc, char** argv)
 
     //string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
     string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
+    int tileWidth = 1024;
+    int tileHeight = 1024;
+
     if (argc > 1)
     {
         tileDirectory = string(argv[1]);
@@ -76,7 +79,7 @@ int main(int argc, char** argv)
                             {
                                 return to_string(i) + ") " + area.Description();
                             });
-                    DownloadTilesForArea(chosenMap, chosenArea, tileDirectory, polygonFilename);
+                    DownloadTilesForArea(chosenMap, chosenArea, tileWidth, tileHeight, tileDirectory, polygonFilename);
                 }
             });
     for (auto& serviceProvider : areaLookup.ServiceProviders())
@@ -87,7 +90,7 @@ int main(int argc, char** argv)
     //areaLookup.GetAreaForAddress("Landgraaf");
     Area area(6.00,50.89,6.01,50.88);
 
-    DownloadTilesForArea(chosenMap, area, tileDirectory, polygonFilename);
+    DownloadTilesForArea(chosenMap, area, tileWidth, tileHeight, tileDirectory, polygonFilename);
 
     return app.exec();
 }

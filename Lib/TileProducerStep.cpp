@@ -16,7 +16,6 @@ TileProducerStep::~TileProducerStep()
 
 void TileProducerStep::Run()
 {
-
     int numberOfTilesDownloaded = 0;
     cout << "TileGrid dimensions=(" << _tileGrid.WidthInTiles() << "," << _tileGrid.HeightInTiles() << ")" << endl;
     cout << "Tile Dimensions=(" << _tileGrid.TileWidth() << "," << _tileGrid.TileHeight() << ")" << endl;
@@ -24,7 +23,7 @@ void TileProducerStep::Run()
     {
         try
         {
-            cout << "downloading tile (" << tileRect.Left() << "," << tileRect.Top() << "," << tileRect.Right() << "," << tileRect.Bottom() << ")" << endl;
+            //cout << "downloading tile (" << tileRect.Left() << "," << tileRect.Top() << "," << tileRect.Right() << "," << tileRect.Bottom() << ")" << endl;
             auto tile = shared_ptr<GeoTile>(_map->GetTileForRect(tileRect));
             //TODO implement ProcessingState object with common variables? like the GeoTile being processed?
 

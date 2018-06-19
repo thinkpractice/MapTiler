@@ -14,7 +14,7 @@ using namespace std;
 class TileProcessor
 {
     public:
-        TileProcessor(GeoMap* mainRasterMap, int tileWidth = 1024, int tileHeight = 1024);
+        TileProcessor(GeoMap* mainRasterMap, int tileWidth, int tileHeight);
         TileProcessor(GeoMap* mainRasterMap, const Area& areaToProcess, int tileWidth = 1024, int tileHeight = 1024);
         virtual ~TileProcessor();
 
@@ -27,4 +27,3 @@ class TileProcessor
 };
 
 #endif /* TILEPROCESSOR_H */
-

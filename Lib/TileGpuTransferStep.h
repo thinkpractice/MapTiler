@@ -19,7 +19,7 @@ struct VA
 class TileGpuTransferStep : public ProcessingStep
 {
 public:
-    TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex);
+    TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex, int tileWidth, int tileHeight);
     virtual ~TileGpuTransferStep();
 
     void Run();
@@ -47,6 +47,8 @@ private:
 private:
     shared_ptr<VectorFile> _vectorFile;
     int _layerIndex;
+    int _tileWidth;
+    int _tileHeight;
 };
 
 #endif /* TILEGPUTRANSFERSTEP_H */
