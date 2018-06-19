@@ -57,6 +57,7 @@ void TileGpuTransferStep::Run()
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
+            //TODO output is flipped!
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
             maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");
             // Swap buffers
