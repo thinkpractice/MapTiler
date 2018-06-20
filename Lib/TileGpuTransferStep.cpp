@@ -147,10 +147,10 @@ void TileGpuTransferStep::SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
 
-    float vertices[] = {-1.0, 1.0, 0.0, 0.0,
-                        1.0, 1.0, 1.0, 0.0,
-                        1.0, -1.0, 1.0, 1.0,
-                        -1.0, -1.0, 0.0, 1.0};
+    float vertices[] = {-1.0, -1.0, 0.0, 0.0,
+                        1.0, -1.0, 1.0, 0.0,
+                        1.0, 1.0, 1.0, 1.0,
+                        -1.0, 1.0, 0.0, 1.0};
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
