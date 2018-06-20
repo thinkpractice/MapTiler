@@ -22,13 +22,11 @@ void TileWriterStep::Run()
 
 void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)
 {
-    Utils::TimeIt([&]
-            {
     TileWriter tileWriter;
     string tileFilename = _tileDirectory + tile->UniqueId() + ".png";
     tileWriter.Save(tile, tileFilename);
-    
+
     _numberOfTilesWritten++;
-    cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << endl;
-    });
+    if (_numberOfTilesWritten % 100 == 0)
+        cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << endl;
 }
