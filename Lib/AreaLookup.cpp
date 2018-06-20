@@ -44,6 +44,11 @@ void AreaLookup::SetGeoServiceProvider(string serviceProvider)
         return;
 
     QString providerName(serviceProvider.c_str());
+
+    //QMap<QString,QVariant> params;
+    //params["here.app_id"] = "W0ld4NLEzTJ4761RTuAx";
+    //params["here.token"] = "uu2p23fqWihADLqgsiICgw";
+
     SetGeoServiceProvider(new QGeoServiceProvider(providerName));
 }
 
@@ -92,7 +97,7 @@ void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 
         QString locationString = QString("%1 - (%2, %3, %4, %5)").arg(location.address().text()).arg(topLeft.latitude()).arg(topLeft.longitude()).arg(bottomRight.latitude()).arg(bottomRight.longitude());
         cout << "location found:" << locationString.toStdString().c_str() << endl;
-        
+
         Area area = AreaForGeoRectangle(location.boundingBox());
         area.SetDescription(locationString.toStdString());
         foundAreas.push_back(area);

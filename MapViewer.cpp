@@ -32,8 +32,8 @@ int main(int argc, char** argv)
 
     //string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
     string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
-    int tileWidth = 1024;
-    int tileHeight = 1024;
+    int tileWidth = 256;
+    int tileHeight = 256;
 
     if (argc > 1)
     {
@@ -86,11 +86,11 @@ int main(int argc, char** argv)
     {
         std::cout << serviceProvider << std::endl;
     }
-    //areaLookup.GetAreaForAddress("Heerlen");
+    areaLookup.GetAreaForAddress("Heerlen");
     //areaLookup.GetAreaForAddress("Landgraaf");
-    Area area(6.00,50.89,6.01,50.88);
+    //Area area(6.00,50.89,6.01,50.88);
 
-    DownloadTilesForArea(chosenMap, area, tileWidth, tileHeight, tileDirectory, polygonFilename);
+    //DownloadTilesForArea(chosenMap, area, tileWidth, tileHeight, tileDirectory, polygonFilename);
 
     return app.exec();
 }
