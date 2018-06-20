@@ -45,11 +45,12 @@ void AreaLookup::SetGeoServiceProvider(string serviceProvider)
 
     QString providerName(serviceProvider.c_str());
 
-    //QMap<QString,QVariant> params;
+    QMap<QString,QVariant> params;
+    params["osm.geocoding.host"] = "https://nominatim.openstreetmap.org";
     //params["here.app_id"] = "W0ld4NLEzTJ4761RTuAx";
     //params["here.token"] = "uu2p23fqWihADLqgsiICgw";
 
-    SetGeoServiceProvider(new QGeoServiceProvider(providerName));
+    SetGeoServiceProvider(new QGeoServiceProvider(providerName, params));
 }
 
 void AreaLookup::SetGeoServiceProvider(QGeoServiceProvider* serviceProvider)
