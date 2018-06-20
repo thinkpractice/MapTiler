@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(MapViewer)
+project(MapTiler)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_PREFIX_PATH $ENV{HOME}/Qt/5.10.1/gcc_64)
@@ -15,8 +15,8 @@ include_directories(/usr/include/gdal ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location_I
 
 add_subdirectory(Lib)
 
-add_executable(MapViewer MapViewer.cpp)
-target_link_libraries(MapViewer Lib)
+add_executable(MapTiler MapViewer.cpp)
+target_link_libraries(MapTiler Lib)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)
 target_link_libraries(ShapeFileExample Lib)
