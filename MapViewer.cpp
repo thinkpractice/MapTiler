@@ -17,21 +17,46 @@
 #include "Lib/ThreadPool.h"
 #include "Lib/SafeQueue.h"
 #include "Lib/TileProcessor.h"
+#include "Lib/Utils.h"
 
 using namespace std;
 
 void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, int tileWidth, int tileHeight, string tileDirectory, string polygonFilename)
 {
-    TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
-    processor.StartProcessing(tileDirectory, polygonFilename);
+    Utils.TimeIt([&]
+    {
+      TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
+      processor.StartProcessing(tileDirectory, polygonFilename);
+    });
 }
 
 int main(int argc, char** argv)
 {
-    QApplication app(argc, argv);
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName("MapTiler");
+    QCoreApplication::setApplicationVersion("0.1");
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription("MapTiler downloads tiles of a given size from a geo raster webservice (WMS/WTMS) and masks them with a polygon layer.");
+    parser.addHelpOption();
+
+    parser.addPositionalArgument("rasterurl", QCoreApplication::translate("main", "Url to raster webservice (WMS/WMTS) with the aerial image."));
+    parser.addPositionalArgument("vectorurl", QCoreApplication::translate("main", "Url to the vector webservice (WFS) with the polygons."));
+    parser.addOptions({
+        {"address", QCoreApplication::translate("main", "The address/city name/region for which the tiles should be downloaded.")},
+        {{"t", "target-directory"},
+            QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
+            QCoreApplication::translate("main", "directory")},
+        },
+        {{"w","tilewidth"}, QCoreApplication::translate("main","The width of the tiles to be written to disk")},
+        {{"h","tileheight"}, QCoreApplication::translate("main","The height of the tiles to be written to disk")}
+    });
+    string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
+    string polygonFilename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
+    string address = "Heerlen";
     string tileDirectory = "/media/tim/Data/Work/CBS/Tiles/";
     //string tileDirectory = "/home/tjadejong/Documents/CBS/ZonnePanelen/Tiles/";
+
     int tileWidth = 256;
     int tileHeight = 256;
 
@@ -41,15 +66,23 @@ int main(int argc, char** argv)
         cout << "output directory: " << tileDirectory << endl;
     }
 
-    string filename = u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml";
     GeoMapProvider mapProvider(filename);
+    if (mapProvider.Maps().size() == 0)
+    {
+        cout << "No maps at url/in file" << endl;\
+        return -1;
+    }
 
-    /*GeoMap* chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
+    GeoMap* chosenMap = mapProvider.Maps()[1];
+    if (mapProvider.Maps().size() > 1)
+    {
+        cout << "Multiple Maps found at url, please choose the one you would like to use:" << endl;
+        chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
                 string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
                 return menuItem;
             });
-*/
-    GeoMap* chosenMap = mapProvider.Maps()[1];
+    }
+
     cout << "===GeoTransform===" << endl;
     double geoTransform[6];
     chosenMap->MapTransform().GetTransformMatrix(geoTransform);
@@ -68,8 +101,6 @@ int main(int argc, char** argv)
     Area mapArea = chosenMap->GetMapArea();
     cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
-    string polygonFilename = "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs";
-
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
 
@@ -86,11 +117,7 @@ int main(int argc, char** argv)
     {
         std::cout << serviceProvider << std::endl;
     }
-    areaLookup.GetAreaForAddress("Heerlen");
-    //areaLookup.GetAreaForAddress("Landgraaf");
-    //Area area(6.00,50.89,6.01,50.88);
-
-    //DownloadTilesForArea(chosenMap, area, tileWidth, tileHeight, tileDirectory, polygonFilename);
+    areaLookup.GetAreaForAddress(address);
 
     return app.exec();
 }
