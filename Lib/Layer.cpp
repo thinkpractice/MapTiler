@@ -32,7 +32,6 @@ void Layer::SetSpatialFilter(const Area& area)
     ClearSpatialFilter();
 
     Area filterArea = CoordinateTransformation::MapArea(area, ProjectionReference());
-    cout << "filterArea" << filterArea.LeftTop() << "," << filterArea.BottomRight() << endl;
     double minX = min(filterArea.LeftTop().X, filterArea.BottomRight().X);
     double minY = min(filterArea.LeftTop().Y, filterArea.BottomRight().Y);
     double maxX = max(filterArea.LeftTop().X, filterArea.BottomRight().X);
