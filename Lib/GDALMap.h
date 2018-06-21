@@ -28,6 +28,7 @@ class GDALMap : public GeoMap
         AffineTransform MapTransform();
         Area GetMapArea();
         GeoTile* GetTileForRect(const Rect& rectangle);
+        void WriteTile(GeoTile* tile);
 
         tuple<int, int> GetTileSize();
         Rect RectForArea(const Area& area);

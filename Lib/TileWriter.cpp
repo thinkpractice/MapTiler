@@ -140,7 +140,9 @@ bool GdalWriter::HandlesFile(string filename)
 void GdalWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     auto mapForTile = MapFor(tile, filename);
-
+    mapForTile->SetProjectionReference( );
+    mapForTile->SetMapTransform( );
+    mapForTile->WriteTile(tile);
 }
 
 shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
@@ -155,7 +157,7 @@ shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
     char **papszOptions = nullptr;
     Rect boundingRect = tile->BoundingRect();
     GDALDataset *dataset = driver->Create(filename.c_str(), boundingRect.Width(), boundingRect.Height(), tile->NumberOfLayers(), GDT_Byte, papszOptions);
-    return make_shared<GDALMap>()
+    return make_shared<GDALMap>(filename, dataset);
 }
 
 GDALDriver* GdalWriter::DriverFor(string fileFormat)

@@ -49,6 +49,11 @@ SpatialReference GDALMap::ProjectionReference()
     return SpatialReference(Dataset()->GetProjectionRef());
 }
 
+void GDALMap::SetProjectionReference(const SpatialReference& reference)
+{
+
+}
+
 AffineTransform GDALMap::MapTransform()
 {
     double transform[6];
@@ -58,6 +63,13 @@ AffineTransform GDALMap::MapTransform()
         return AffineTransform();
     }
     return AffineTransform::FromGdal(transform);
+}
+
+void GDALMap::SetMapTransform(const AffineTransform& affineTransform)
+{
+    double transform[6];
+    affineTransform.ToGdal(transform);
+    Dataset()->SetGeoTransform(transform);
 }
 
 Area GDALMap::GetMapArea()
@@ -96,6 +108,11 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
     }
 
     return geoTile;
+}
+
+void GDALMap::WriteTile(GeoTile* tile)
+{
+
 }
 
 Rect GDALMap::RectForArea(const Area& area)
