@@ -148,12 +148,12 @@ bool GdalWriter::HandlesFile(string filename)
 void GdalWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     auto mapForTile = MapFor(tile, filename);
+    mapForTile->SetProjectionReference(_targetProjection);
+
     //Convert tile area into target projection
     Area targetArea = CoordinateTransformation::MapArea(tile->BoundingArea(), _targetProjection);
-    //Calculate affine matrix for new projection
+    mapForTile->SetMapTransform(AffineTransform::FromAreaAndRect(targetArea, tile->BoundingRect()));
 
-    mapForTile->SetProjectionReference(_targetProjection);
-    mapForTile->SetMapTransform(AffineTransform::FromAreaAndRect(tile->BoundingArea(), tile->BoundingRect()));
     mapForTile->WriteTile(tile);
 }
 
