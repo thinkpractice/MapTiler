@@ -15,6 +15,7 @@ class GDALMap : public GeoMap
 {
     public:
         GDALMap(string filename);
+        GDALMap(string filename, GDALDataset* dataset);
         virtual ~GDALMap();
 
         GeoMap* Clone();

@@ -3,8 +3,13 @@
 #include "CoordinateTransformation.h"
 
 GDALMap::GDALMap(string filename)
+            :   GDALMap(filename, nullptr)
+{
+}
+
+GDALMap::GDALMap(string filename, GDALDataset* dataset)
             :   GeoMap(filename),
-                _dataset(nullptr)
+                _dataset(dataset)
 {
 }
 
@@ -132,7 +137,7 @@ tuple<int, int> GDALMap::GetTileSize()
 
 GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int height)
 {
-     
+
     GDALRasterBand* band = Dataset()->GetRasterBand(rasterIndex);
     /*printf( "Type=%s, ColorInterp=%s\n",
     GDALGetDataTypeName(band->GetRasterDataType()),

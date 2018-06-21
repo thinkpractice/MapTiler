@@ -123,3 +123,50 @@ finalise:
 
     //return code;
 }
+
+GdalWriter::GdalWriter()
+{
+}
+
+GdalWriter::~GdalWriter()
+{
+}
+
+bool GdalWriter::HandlesFile(string filename)
+{
+    return Utils::GetFileExtension(filename) == "tiff";
+}
+
+void GdalWriter::Save(shared_ptr<GeoTile> tile, string filename)
+{
+    auto mapForTile = MapFor(tile, filename);
+
+}
+
+shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
+{
+    GDALDriver* driver = DriverFor("GTiff");
+    if (!SupportsCreate(driver))
+    {
+        cerr << "Driver does not support create" << endl;
+        return;
+    }
+
+    char **papszOptions = nullptr;
+    Rect boundingRect = tile->BoundingRect();
+    GDALDataset *dataset = driver->Create(filename.c_str(), boundingRect.Width(), boundingRect.Height(), tile->NumberOfLayers(), GDT_Byte, papszOptions);
+    return make_shared<GDALMap>()
+}
+
+GDALDriver* GdalWriter::DriverFor(string fileFormat)
+{
+    return GetGDALDriverManager()->GetDriverByName(fileFormat.c_str());
+}
+
+bool GdalWriter::SupportsCreate(GDALDriver* driver)
+{
+    char **papszMetadata = poDriver->GetMetadata();
+    if(CSLFetchBoolean(papszMetadata, GDAL_DCAP_CREATE, FALSE ))
+        return true;
+    return false;
+}
