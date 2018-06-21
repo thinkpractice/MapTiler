@@ -7,6 +7,14 @@ TileWriter::TileWriter()
 }
 
 void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
+{    
+}
+
+PngWriter::PngWriter()
+{
+}
+
+void PngWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     //cout << "Writing tile to file: " << filename << endl;
 
@@ -22,7 +30,7 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
     unsigned char* rgba = tile->Data();
 
     fp = fopen(filename.c_str(), "wb");
-    if (fp == NULL) 
+    if (fp == NULL)
     {
       fprintf(stderr, "Could not open file %s for writing\n", filename.c_str());
       code = 1;
@@ -31,7 +39,7 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
 
     // Initialize write structure
     png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (png_ptr == NULL) 
+    if (png_ptr == NULL)
     {
       fprintf(stderr, "Could not allocate write struct\n");
       code = 1;
@@ -40,7 +48,7 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
 
     // Initialize info structure
     info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL) 
+    if (info_ptr == NULL)
     {
       fprintf(stderr, "Could not allocate info struct\n");
       code = 1;
@@ -55,9 +63,9 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
     }
 
     png_init_io(png_ptr, fp);
-    
+
     // Write header (8 bit colour depth)
-    png_set_IHDR(png_ptr, info_ptr, 
+    png_set_IHDR(png_ptr, info_ptr,
             width,
             height,
          8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
@@ -95,13 +103,13 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
     png_write_end(png_ptr, NULL);
 
 finalise:
-    if (fp != NULL) 
+    if (fp != NULL)
         fclose(fp);
-    if (info_ptr != NULL) 
+    if (info_ptr != NULL)
         png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
-    if (png_ptr != NULL) 
+    if (png_ptr != NULL)
         png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-    if (row != NULL) 
+    if (row != NULL)
         free(row);
 
     //return code;
