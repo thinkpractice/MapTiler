@@ -1,6 +1,8 @@
 #include "TileWriter.h"
 #include <iostream>
 #include "Utils.h"
+#include "AffineTransform.h"
+#include "CoordinateTransformation.h"
 #include <png.h>
 
 TileWriter::TileWriter(shared_ptr<GeoTileWriter> writer)
@@ -125,6 +127,12 @@ finalise:
 }
 
 GdalWriter::GdalWriter()
+                :   GdalWriter(SpatialReference::FromEPSG("EPSG:4326"))
+{
+}
+
+GdalWriter::GdalWriter(const SpatialReference& targetProjection)
+                :   _targetProjection(targetProjection)
 {
 }
 
@@ -140,8 +148,12 @@ bool GdalWriter::HandlesFile(string filename)
 void GdalWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     auto mapForTile = MapFor(tile, filename);
-    mapForTile->SetProjectionReference( );
-    mapForTile->SetMapTransform( );
+    //Convert tile area into target projection
+    Area targetArea = CoordinateTransformation::MapArea(tile->BoundingArea(), _targetProjection);
+    //Calculate affine matrix for new projection
+
+    mapForTile->SetProjectionReference(_targetProjection);
+    mapForTile->SetMapTransform(AffineTransform::FromAreaAndRect(tile->BoundingArea(), tile->BoundingRect()));
     mapForTile->WriteTile(tile);
 }
 

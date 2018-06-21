@@ -136,6 +136,30 @@ AffineTransform AffineTransform::FromGdal(double* gdalTransform)
     return AffineTransform(transform);
 }
 
+AffineTransform AffineTransform::FromAreaAndRect(const Area& area, const Rect& rect)
+{
+    //TODO check if calculation is correct
+    //See if we can derive it with linear algebra
+    double width = rect.Width();
+    double height = rect.Height();
+
+    double xmin = area.LeftTop().X;
+    double ymin = area.LeftTop().Y
+    double xmax = area.BottomRight().X;
+    double ymax = area.BottomRight().Y;
+
+    double xres = (xmax - xmin) / double(width);
+    double yres = (ymax - ymin) / double(height);
+
+    double transform[9] =
+    {
+        xres, 0.0, xmin,
+        0.0, -yres, ymax,
+        0.0, 0.0, 1.0
+    };
+    return AffineTransform(transform);
+}
+
 Point operator*(const AffineTransform& affineTransform, Point rasterPoint)
 {
     double transform[9];

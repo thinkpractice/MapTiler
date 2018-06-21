@@ -31,11 +31,12 @@ class AffineTransform
         MultiPolygon ReverseTransform(MultiPolygon& multiPolygon);
 
         void GetTransformMatrix(double* transform) const;
-        
+
         void ToGdal(double* gdalTransform);
 
     public:
         static AffineTransform FromGdal(double* gdalTransform);
+        static AffineTransform FromAreaAndRect(const Area& area, const Rect& rect);
 
     private:
         double _transform[9];

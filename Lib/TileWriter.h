@@ -6,6 +6,7 @@
 #include <memory>
 #include "GeoTile.h"
 #include "GDALMap.h"
+#include "SpatialReference.h"
 #include "cpl_string.h"
 
 using namespace std;
@@ -41,6 +42,7 @@ class GdalWriter : public GeoTileWriter
 {
 public:
     GdalWriter();
+    GdalWriter(const SpatialReference& targetProjection);
     virtual ~GdalWriter();
 
     bool HandlesFile(string filename);
@@ -50,6 +52,9 @@ private:
     shared_ptr<GeoMap> MapFor(shared_ptr<GeoTile> tile, string filename);
     GDALDriver* DriverFor(string fileFormat);
     bool SupportsCreate(GDALDriver* driver);
+
+private:
+    SpatialReference _targetProjection;
 };
 
 #endif

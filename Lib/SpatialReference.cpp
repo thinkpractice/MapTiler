@@ -34,6 +34,18 @@ OGRSpatialReference SpatialReference::InnerReference()
     return _spatialReference;
 }
 
+string SpatialReference::ToWkt()
+{
+    char *wktString = nullptr;
+
+    _spatialReference.exportToWkt(&wktString);
+    string wkt(wktString);
+
+    CPLFree(wktString);
+
+    return wkt;
+}
+
 SpatialReference SpatialReference::FromEPSG(string epsgCode)
 {
     SpatialReference reference;

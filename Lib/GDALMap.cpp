@@ -51,7 +51,7 @@ SpatialReference GDALMap::ProjectionReference()
 
 void GDALMap::SetProjectionReference(const SpatialReference& reference)
 {
-
+    Dataset()->SetProjection(reference.ToWkt().c_str());
 }
 
 AffineTransform GDALMap::MapTransform()
