@@ -1,17 +1,26 @@
 #include "TileWriter.h"
 #include <iostream>
+#include "Utils.h"
 #include <png.h>
 
-TileWriter::TileWriter()
+TileWriter::TileWriter(shared_ptr<GeoTileWriter> writer)
+                :   _writer(writer)
 {
 }
 
 void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
-{    
+{
+    _writer->Save(tile, filename);
 }
 
 PngWriter::PngWriter()
+            :   GeoTileWriter()
 {
+}
+
+bool PngWriter::HandlesFile(string filename)
+{
+    return Utils::GetFileExtension(filename) == "png";
 }
 
 void PngWriter::Save(shared_ptr<GeoTile> tile, string filename)

@@ -22,7 +22,7 @@ void TileWriterStep::Run()
 
 void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)
 {
-    TileWriter tileWriter;
+    TileWriter tileWriter(make_shared<PngWriter>());
     string tileFilename = _tileDirectory + tile->UniqueId() + ".png";
     tileWriter.Save(tile, tileFilename);
 

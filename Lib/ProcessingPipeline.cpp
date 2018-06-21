@@ -38,4 +38,3 @@ void ProcessingPipeline::AddProcessingStep(shared_ptr<ProcessingStep> step)
     shared_ptr<SafeQueue<shared_ptr<GeoTile>>> inQueue = _queues[previousStepIndex + 1];
     step->InitQueues(inQueue, outQueue);
 }
-

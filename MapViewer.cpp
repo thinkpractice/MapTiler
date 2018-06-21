@@ -124,6 +124,7 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, int tileWidth, in
       TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
       processor.StartProcessing(tileDirectory, polygonFilename);
     });
+    cout << "Finished" << endl;    
 }
 
 int main(int argc, char** argv)

@@ -14,6 +14,7 @@ class Utils
         static string GetKeyType(string key);
         static string UUID();
         static void TimeIt(function<void()> function);
+        static string GetFileExtension(const string& fileName);
 };
 
 #endif
