@@ -14,7 +14,7 @@ class Area
         SpatialReference ProjectionReference() const;
         Point LeftTop() const;
         Point BottomRight() const;
-        
+
         void SetDescription(string description);
         string Description() const;
 
