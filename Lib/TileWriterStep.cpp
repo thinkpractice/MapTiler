@@ -22,8 +22,8 @@ void TileWriterStep::Run()
 
 void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)
 {
-    TileWriter tileWriter(make_shared<PngWriter>());
-    string tileFilename = _tileDirectory + tile->UniqueId() + ".png";
+    TileWriter tileWriter(make_shared<GdalWriter>());
+    string tileFilename = _tileDirectory + tile->UniqueId() + ".tiff";
     tileWriter.Save(tile, tileFilename);
 
     _numberOfTilesWritten++;

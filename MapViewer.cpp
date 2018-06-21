@@ -124,7 +124,7 @@ void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, int tileWidth, in
       TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
       processor.StartProcessing(tileDirectory, polygonFilename);
     });
-    cout << "Finished" << endl;    
+    cout << "Finished" << endl;
 }
 
 int main(int argc, char** argv)
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    GeoMap* chosenMap = mapProvider.Maps()[1];
+    GeoMap* chosenMap = mapProvider.Maps().front();
     if (mapProvider.Maps().size() > 1)
     {
         cout << "Multiple Maps found at url, please choose the one you would like to use:" << endl;
@@ -201,10 +201,14 @@ int main(int argc, char** argv)
 
                 if (areas.size() > 0)
                 {
-                    Area chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
+                    Area chosenArea = areas.front();
+                    if (areas.size() > 1)
+                    {
+                            chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
                             {
                                 return to_string(i) + ") " + area.Description();
                             });
+                    }
                     DownloadTilesForArea(chosenMap, chosenArea, settings.tileWidth, settings.tileHeight, settings.targetDirectory, settings.polygonFilename);
                 }
             });
