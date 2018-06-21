@@ -9,14 +9,14 @@ set(CMAKE_AUTOMOC ON)
 
 message(STATUS ${CMAKE_PREFIX_PATH})
 
-find_package(Qt5 COMPONENTS Widgets Location REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets Location REQUIRED)
 
 include_directories(/usr/include/gdal ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location_INCLUDE_DIRS})
 
 add_subdirectory(Lib)
 
 add_executable(MapTiler MapViewer.cpp)
-target_link_libraries(MapTiler Lib)
+target_link_libraries(MapTiler Lib Qt5::Core)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)
 target_link_libraries(ShapeFileExample Lib)

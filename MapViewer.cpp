@@ -26,11 +26,7 @@ struct MapTilerSettings
 {
     MapTilerSettings()
         :   rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
-            polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs"),
-            address("Heerlen"),
-            targetDirectory("/media/tim/Data/Work/CBS/Tiles/"),
-            tileWidth(256),
-            tileHeight(256)
+            polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs")
     {
     }
 
@@ -52,26 +48,25 @@ enum CommandLineParseResult
 
 CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSettings *settings, string *errorMessage)
 {
-    parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
+    //parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
     parser.setApplicationDescription("MapTiler downloads tiles of a given size from a geo raster webservice (WMS/WTMS) and masks them with a polygon layer.");
-    parser.addHelpOption();
-
     parser.addPositionalArgument("rasterurl", QCoreApplication::translate("main", "Url to raster webservice (WMS/WMTS) with the aerial image."));
     parser.addPositionalArgument("vectorurl", QCoreApplication::translate("main", "Url to the vector webservice (WFS) with the polygons."));
 
     QCommandLineOption useDefaultUrls({"d", "defaulturls"}, QCoreApplication::translate("main", "Uses default urls for rasterurl and vectorurl"));
     parser.addOption(useDefaultUrls);
 
-    parser.addOptions({
-        {"address", QCoreApplication::translate("main", "The address/city name/region for which the tiles should be downloaded.")},
-        {{"t", "target-directory"},
-            QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
-            QCoreApplication::translate("main", "directory")},
-        {{"c","tilewidth"}, QCoreApplication::translate("main","The width (number of columns) of the tiles to be written to disk")},
-        {{"r","tileheight"}, QCoreApplication::translate("main","The height (number of rows) of the tiles to be written to disk")}
-    });
     const QCommandLineOption helpOption = parser.addHelpOption();
     const QCommandLineOption versionOption = parser.addVersionOption();
+
+    parser.addOptions({
+        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
+        {{"t", "target-directory"},
+            QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
+            QCoreApplication::translate("main", "directory"), "/media/tim/Data/Work/CBS/Tiles/"},
+        {{"c","tilewidth"}, QCoreApplication::translate("main","The <width> (number of columns) of the tiles to be written to disk"), "width", "256"},
+        {{"r","tileheight"}, QCoreApplication::translate("main","The <height> (number of rows) of the tiles to be written to disk"), "height", "256"}
+    });
 
     if (!parser.parse(QCoreApplication::arguments()))
     {
@@ -86,19 +81,20 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
         return CommandLineHelpRequested;
 
     QString address = parser.value("address");
-    if (address != "")
+    cout << "add=" << address.toStdString() << endl;
+    if (!address.isEmpty())
         settings->address = address.toStdString();
 
     QString targetDirectory = parser.value("t");
-    if (targetDirectory != "")
+    if (!targetDirectory.isEmpty())
         settings->targetDirectory = targetDirectory.toStdString();
 
     QString tileWidth = parser.value("c");
-    if (tileWidth != "")
+    if (!tileWidth.isEmpty())
         settings->tileWidth = tileWidth.toInt();
 
     QString tileHeight = parser.value("r");
-    if (tileHeight != "")
+    if (!tileHeight.isEmpty())
         settings->tileHeight = tileHeight.toInt();
 
     if (parser.isSet(useDefaultUrls))
