@@ -20,6 +20,8 @@ class GeoTile
         unsigned char* Data();
         void SetRasterData(unsigned char** rasterData);
 
+        unsigned char* GetRasterBand(int rasterIndex);
+
     private:
         Area _area;
         Rect _rect;
