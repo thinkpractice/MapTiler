@@ -119,7 +119,7 @@ void GDALMap::WriteTile(shared_ptr<GeoTile> tile)
         GDALRasterBand* rasterBand = Dataset()->GetRasterBand(rasterIndex);
         unsigned char* rasterData = tile->GetRasterBand(rasterIndex);
         rasterBand->RasterIO(GF_Write, 0, 0, tileWidth, tileHeight, rasterData, tileWidth, tileHeight, GDT_Byte, 0, 0 );
-        free(rasterData);
+        delete[] rasterData;
     }
 }
 

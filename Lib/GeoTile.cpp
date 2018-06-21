@@ -67,13 +67,13 @@ void GeoTile::SetRasterData(unsigned char** rasterData)
 
 unsigned char* GeoTile::GetRasterBand(int rasterIndex)
 {
-    unsigned char* rasterData = new unsigned char[NumberOfBytes() / NumberOfLayers()];
+    int numberOfRasterBytes = NumberOfBytes() / NumberOfLayers();
+    unsigned char* rasterData = new unsigned char[numberOfRasterBytes];
     if (rasterIndex > NumberOfLayers())
         return rasterData;
 
     unsigned char* data = Data();
-    rasterIndex = rasterIndex-1;
-    for (int arrayIndex = rasterIndex, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += rasterIndex, i++)
+    for (int arrayIndex = (rasterIndex-1), i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
     {
         rasterData[i] = data[arrayIndex];
     }
