@@ -25,10 +25,14 @@ class GDALMap : public GeoMap
         int HeightInPixels();
 
         SpatialReference ProjectionReference();
+        void SetProjectionReference(const SpatialReference& reference);
+
         AffineTransform MapTransform();
+        void SetMapTransform(const AffineTransform& affineTransform);
+
         Area GetMapArea();
         GeoTile* GetTileForRect(const Rect& rectangle);
-        void WriteTile(GeoTile* tile);
+        void WriteTile(shared_ptr<GeoTile> tile);
 
         tuple<int, int> GetTileSize();
         Rect RectForArea(const Area& area);

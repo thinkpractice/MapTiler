@@ -1,4 +1,5 @@
 #include "SpatialReference.h"
+#include <cpl_conv.h>
 
 SpatialReference::SpatialReference()
 {
@@ -34,7 +35,7 @@ OGRSpatialReference SpatialReference::InnerReference()
     return _spatialReference;
 }
 
-string SpatialReference::ToWkt()
+string SpatialReference::ToWkt() const
 {
     char *wktString = nullptr;
 

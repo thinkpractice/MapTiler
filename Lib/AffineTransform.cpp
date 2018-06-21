@@ -115,7 +115,7 @@ void AffineTransform::GetTransformMatrix(double* transform) const
     std::memcpy(transform, _transform, sizeof(double) * 9);
 }
 
-void AffineTransform::ToGdal(double* transform)
+void AffineTransform::ToGdal(double* transform) const
 {
     double gdalTransform[6] =
     {
@@ -144,7 +144,7 @@ AffineTransform AffineTransform::FromAreaAndRect(const Area& area, const Rect& r
     double height = rect.Height();
 
     double xmin = area.LeftTop().X;
-    double ymin = area.LeftTop().Y
+    double ymin = area.LeftTop().Y;
     double xmax = area.BottomRight().X;
     double ymax = area.BottomRight().Y;
 

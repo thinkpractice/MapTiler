@@ -33,14 +33,18 @@ class GeoMap
         virtual int RasterCount() = 0;
         virtual int WidthInPixels() = 0;
         virtual int HeightInPixels() = 0;
+
         virtual SpatialReference ProjectionReference() = 0;
+        virtual void SetProjectionReference(const SpatialReference& reference) = 0;
+
         virtual AffineTransform MapTransform() = 0;
+        virtual void SetMapTransform(const AffineTransform& affineTransform) = 0;
         virtual Area GetMapArea() = 0;
 
         vector<Rect> GetTileRectsForArea(const Area& area);
         vector<Rect> GetTilesForRect(const Rect& rect);
         virtual GeoTile* GetTileForRect(const Rect& rect) = 0;
-        virtual void WriteTile(GeoTile* tile) = 0;
+        virtual void WriteTile(shared_ptr<GeoTile> tile) = 0;
 
         virtual tuple<int, int> GetTileSize() = 0;
         virtual Rect RectForArea(const Area& area) = 0;

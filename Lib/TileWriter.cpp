@@ -148,6 +148,8 @@ bool GdalWriter::HandlesFile(string filename)
 void GdalWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
     auto mapForTile = MapFor(tile, filename);
+    if (!mapForTile)
+        return;
     mapForTile->SetProjectionReference(_targetProjection);
 
     //Convert tile area into target projection
@@ -163,7 +165,7 @@ shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
     if (!SupportsCreate(driver))
     {
         cerr << "Driver does not support create" << endl;
-        return;
+        return nullptr;
     }
 
     char **papszOptions = nullptr;
@@ -179,7 +181,7 @@ GDALDriver* GdalWriter::DriverFor(string fileFormat)
 
 bool GdalWriter::SupportsCreate(GDALDriver* driver)
 {
-    char **papszMetadata = poDriver->GetMetadata();
+    char **papszMetadata = driver->GetMetadata();
     if(CSLFetchBoolean(papszMetadata, GDAL_DCAP_CREATE, FALSE ))
         return true;
     return false;

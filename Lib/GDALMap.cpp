@@ -110,7 +110,7 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
     return geoTile;
 }
 
-void GDALMap::WriteTile(GeoTile* tile)
+void GDALMap::WriteTile(shared_ptr<GeoTile> tile)
 {
 
 }

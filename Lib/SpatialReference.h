@@ -18,13 +18,14 @@ class SpatialReference
         bool IsSame(SpatialReference& reference);
 
         OGRSpatialReference InnerReference();
-    
+        string ToWkt() const;
+
     public:
         static SpatialReference FromEPSG(string epsgCode);
 
     private:
         OGRSpatialReference _spatialReference;
-        
+
 };
 
 #endif

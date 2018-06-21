@@ -1,6 +1,8 @@
 #ifndef AFFINE_TRANSFORM_H
 #define AFFINE_TRANSFORM_H
 
+#include "Rect.h"
+#include "Area.h"
 #include "Point.h"
 #include "Polygon.h"
 #include "MultiPolygon.h"
@@ -32,7 +34,7 @@ class AffineTransform
 
         void GetTransformMatrix(double* transform) const;
 
-        void ToGdal(double* gdalTransform);
+        void ToGdal(double* gdalTransform) const;
 
     public:
         static AffineTransform FromGdal(double* gdalTransform);
