@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QCoreApplication>
 #include <iostream>
 #include <iomanip>
 #include <regex>
@@ -25,15 +26,17 @@ using namespace std;
 struct MapTilerSettings
 {
     MapTilerSettings()
-        :   rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
+        :   //rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
+            rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"),
             polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs")
     {
     }
 
     string rasterFilename;
     string polygonFilename;
-    string address;
     string targetDirectory;
+    string address;    
+    int addressOption;
     int tileWidth;
     int tileHeight;
 };
@@ -61,6 +64,7 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
 
     parser.addOptions({
         {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
+        {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},              
         {{"t", "target-directory"},
             QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
             QCoreApplication::translate("main", "directory"), "/media/tim/Data/Work/CBS/Tiles/"},
@@ -81,10 +85,13 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
         return CommandLineHelpRequested;
 
     QString address = parser.value("address");
-    cout << "add=" << address.toStdString() << endl;
     if (!address.isEmpty())
         settings->address = address.toStdString();
 
+    QString addressOption = parser.value("addressoption");
+    if (!addressOption.isEmpty())
+        settings->addressOption = addressOption.toInt();
+    
     QString targetDirectory = parser.value("t");
     if (!targetDirectory.isEmpty())
         settings->targetDirectory = targetDirectory.toStdString();
@@ -204,12 +211,15 @@ int main(int argc, char** argv)
                     Area chosenArea = areas.front();
                     if (areas.size() > 1)
                     {
-                            chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
+                            chosenArea = areas[settings.addressOption];
+                            
+                            /*chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
                             {
                                 return to_string(i) + ") " + area.Description();
-                            });
+                            });*/
                     }
                     DownloadTilesForArea(chosenMap, chosenArea, settings.tileWidth, settings.tileHeight, settings.targetDirectory, settings.polygonFilename);
+					QCoreApplication::exit(0);
                 }
             });
     for (auto& serviceProvider : areaLookup.ServiceProviders())

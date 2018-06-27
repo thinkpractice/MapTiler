@@ -46,22 +46,24 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
     {
         maps.push_back(new GDALMap(_filename));
     }
-    
-    for (int i = 0; metadata[i]; i++)
+    else
     {
-           vector<string> matches = Utils::SplitKeyValuePair(metadata[i]);
-           string key = matches[1];
-           string value = matches[2];
-           string keyType = Utils::GetKeyType(key);
-           if (keyType == kNameFieldKey)
-           {
-               maps.push_back(new GDALMap(value));
-           }
-           else if (keyType  == kDescriptionFieldKey)
-           {
-               GeoMap* map = maps.back();
-               map->SetTitle(value);
-           }
+        for (int i = 0; metadata[i]; i++)
+        {
+            vector<string> matches = Utils::SplitKeyValuePair(metadata[i]);
+            string key = matches[1];
+            string value = matches[2];
+            string keyType = Utils::GetKeyType(key);
+            if (keyType == kNameFieldKey)
+            {
+                maps.push_back(new GDALMap(value));
+            }
+            else if (keyType  == kDescriptionFieldKey)
+            {
+                GeoMap* map = maps.back();
+                map->SetTitle(value);
+            }
+        }
     }
     GDALClose(dataset);
     return maps;

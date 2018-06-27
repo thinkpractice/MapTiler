@@ -34,6 +34,7 @@ void TileGpuTransferStep::Run()
 
         while(auto geoTile = InQueue()->dequeue())
         {
+			cout << "GeoTile ptr" << geoTile << endl;
             glBindVertexArray(polygonVao);
             glUseProgram(polygonShaderProgram);
             GLuint polygonBuffer;
@@ -239,7 +240,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* tex
     int textureWidth = geoTile->BoundingRect().Width();
     int textureHeight = geoTile->BoundingRect().Height();
 
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 

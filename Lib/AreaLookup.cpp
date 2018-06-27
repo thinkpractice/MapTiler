@@ -97,8 +97,7 @@ void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 
 
         QString locationString = QString("%1 - (%2, %3, %4, %5)").arg(location.address().text()).arg(topLeft.latitude()).arg(topLeft.longitude()).arg(bottomRight.latitude()).arg(bottomRight.longitude());
-        cout << "location found:" << locationString.toStdString().c_str() << endl;
-
+        
         Area area = AreaForGeoRectangle(location.boundingBox());
         area.SetDescription(locationString.toStdString());
         foundAreas.push_back(area);
