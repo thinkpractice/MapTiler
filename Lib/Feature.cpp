@@ -37,7 +37,12 @@ size_t Feature::NumberOfFields() const
 
 Feature& Feature::operator=(const Feature& other)
 {
-    _feature = nullptr;
+	if (_feature)
+	{
+		OGRFeature::DestroyFeature(_feature);
+		_feature = nullptr;
+	}
+	
     if (other._feature)
     {
         _feature = other._feature->Clone();

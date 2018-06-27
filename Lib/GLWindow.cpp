@@ -25,7 +25,7 @@ void GLWindow::StartRendering(function<void(GLFWwindow*)> renderLoop)
 
     // Open a window and create its OpenGL context
     GLFWwindow* window = glfwCreateWindow( _width, _height, "Tutorial 01", nullptr, nullptr);
-    if( window == NULL )
+    if( window == nullptr )
     {
         fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
         glfwTerminate();
@@ -43,5 +43,7 @@ void GLWindow::StartRendering(function<void(GLFWwindow*)> renderLoop)
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
     renderLoop(window);
+	
 	glfwDestroyWindow(window);
+	glfwTerminate();
 }

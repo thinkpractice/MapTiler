@@ -4,6 +4,7 @@
 #include "ProcessingStep.h"
 #include "VectorFile.h"
 #include "GLWindow.h"
+#include "ShaderProgram.h"
 #include <vector>
 
 using namespace std;
@@ -25,18 +26,14 @@ public:
     void Run();
 
 private:
-    GLuint LoadShader(GLenum shaderType, const char* shaderSource);
-    GLuint CreateShaderProgram(const char* vertexShader, const char* fragmentShader);
-
-
-    void SetupPolygonShaders(GLuint* vao, GLuint* shaderProgram);
-    void SetupMaskingShaders(GLuint* vao, GLuint* shaderProgram);
-    void DrawOnScreen(GLuint shaderProgram, GLuint textureId, GLuint polygonTextureId);
+    ShaderProgram SetupPolygonShaders(GLuint* vao);
+    ShaderProgram SetupMaskingShaders(GLuint* vao);
     void TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId);
-    shared_ptr<GeoTile> DrawPolygons(GLuint shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
+    void DrawOnScreen(const ShaderProgram& shaderProgram, GLuint textureId, GLuint polygonTextureId);
+    shared_ptr<GeoTile> DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId);
     shared_ptr<GeoTile> ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers);
 
-    void DrawElements(GLuint shaderProgram, GLenum mode, vector<Point>& elements);
+    void DrawElements(const ShaderProgram& shaderProgram, GLenum mode, vector<Point>& elements);
     static void BeginVA(GLenum mode, VA* va);
     static void EndVA(VA* va);
     static void VertexVA(void* p, VA* va);
