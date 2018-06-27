@@ -27,7 +27,12 @@ void TileGpuTransferStep::Run()
     {
         GLuint maskingVao;
 		ShaderProgram maskingShaderProgram = SetupMaskingShaders(&maskingVao);
-		maskingShaderProgram.Create();
+		maskingShaderProgram.Create();		
+		
+		GLuint vbo;
+		GLuint ebo;
+		
+		BindMaskingVertices(maskingShaderProgram, &vbo, &ebo);
 		
         GLuint polygonVao;
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
@@ -44,13 +49,13 @@ void TileGpuTransferStep::Run()
 			
             GLuint polygonTextureId;
             auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
-
-            //Do onscreen drawing
-            glBindVertexArray(maskingVao);
-            maskingShaderProgram.Use();
-
+           
+			//Do onscreen drawing
+			glBindVertexArray(maskingVao);
             FrameBuffer frameBuffer;
 			frameBuffer.Bind();
+			
+			maskingShaderProgram.Use();
 			
             GLuint textureId;
             TileToTexture(geoTile, &textureId);
@@ -76,6 +81,9 @@ void TileGpuTransferStep::Run()
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(window) == 0)
             glfwPollEvents();
+		
+		glDeleteBuffers(1, &ebo);
+		glDeleteBuffers(1, &vbo);
     });
     OutQueue()->enqueue(nullptr);
 }
@@ -123,27 +131,7 @@ ShaderProgram TileGpuTransferStep::SetupMaskingShaders(GLuint* vao)
     glBindVertexArray(*vao);
 	
 	ShaderProgram shaderProgram;
-
-    float vertices[] = {-1.0, -1.0, 0.0, 0.0,
-                        1.0, -1.0, 1.0, 0.0,
-                        1.0, 1.0, 1.0, 1.0,
-                        -1.0, 1.0, 0.0, 1.0};
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    GLuint elements[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
+	
     const char* vertexSource = R"glsl(
     #version 130
 
@@ -179,18 +167,38 @@ ShaderProgram TileGpuTransferStep::SetupMaskingShaders(GLuint* vao)
     )glsl";
     Shader fragmentShader(GL_FRAGMENT_SHADER, fragmentSource);
 	shaderProgram.AddShader(fragmentShader);
- 
-
-    GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glEnableVertexAttribArray(posAttrib);
-
-    GLint texAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "texcoord");
-    glEnableVertexAttribArray(texAttrib);
-    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
-                           4*sizeof(float), (void*)(2*sizeof(float)));
 	
 	return shaderProgram;
+}
+
+void TileGpuTransferStep::BindMaskingVertices(const ShaderProgram& shaderProgram, GLuint* vbo, GLuint* ebo)
+{
+	float vertices[] = {-1.0, -1.0, 0.0, 0.0,
+		1.0, -1.0, 1.0, 0.0,
+		1.0, 1.0, 1.0, 1.0,
+		-1.0, 1.0, 0.0, 1.0};
+		
+	glGenBuffers(1, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, *vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	
+	GLuint elements[] = {
+		0, 1, 2,
+		2, 3, 0
+	};
+	
+	glGenBuffers(1, ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	
+	GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glEnableVertexAttribArray(posAttrib);
+	
+	GLint texAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
+						  4*sizeof(float), (void*)(2*sizeof(float)));
 }
 
 void TileGpuTransferStep::DrawOnScreen(const ShaderProgram& shaderProgram, GLuint textureId, GLuint polygonTextureId)
@@ -231,9 +239,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* tex
 shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId)
 {
     glEnable(GL_TEXTURE_2D);
-    GLuint polygonTextureId;
     glGenTextures(1, textureId);
-
     glBindTexture(GL_TEXTURE_2D, *textureId);
 
     int textureWidth = geoTile->BoundingRect().Width();
