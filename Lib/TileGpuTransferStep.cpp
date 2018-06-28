@@ -30,9 +30,9 @@ void TileGpuTransferStep::Run()
 		ShaderProgram maskingShaderProgram = SetupMaskingShaders(&maskingVao);
 		maskingShaderProgram.Create();		
 		
-		GLuint vbo;
+        GLuint vbo;
 		GLuint ebo;
-		BindMaskingVertices(maskingShaderProgram, &vbo, &ebo);
+        BindMaskingVertices(maskingShaderProgram, &vbo, &ebo);
 		
         GLuint polygonVao;
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
@@ -41,16 +41,22 @@ void TileGpuTransferStep::Run()
         while(auto geoTile = InQueue()->dequeue())
         {
 			cout << "GeoTile ptr" << geoTile->UniqueId() << endl;
+
             glBindVertexArray(polygonVao);
-			/*FrameBuffer polygonBuffer;
-			polygonBuffer.Bind();*/
-		    
-			polygonShaderProgram.Use();
+
+            FrameBuffer polygonBuffer;
+            polygonBuffer.Bind();
+
+            glClearColor(0,0,0,1);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            polygonShaderProgram.Use();
+
             GLuint polygonTextureId;
             auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
            
 			//Do onscreen drawing
-			/*glBindVertexArray(maskingVao);
+            glBindVertexArray(maskingVao);
             FrameBuffer frameBuffer;
 			frameBuffer.Bind();
 			
@@ -64,25 +70,25 @@ void TileGpuTransferStep::Run()
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 			
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");*/
+            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");
             // Swap buffers
             glfwSwapBuffers(window);
 
             //Pass original and created tiles on to next step
             OutQueue()->enqueue(geoTile);
             OutQueue()->enqueue(maskTile);
-            //OutQueue()->enqueue(maskedTile);
+            OutQueue()->enqueue(maskedTile);
 			
-			//glDeleteTextures(1, &textureId);
-			glDeleteTextures(1, &polygonTextureId);
+            glDeleteTextures(1, &textureId);
+            glDeleteTextures(1, &polygonTextureId);
 		}
 		
         while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
             glfwWindowShouldClose(window) == 0)
             glfwPollEvents();
 		
-		glDeleteBuffers(1, &ebo);
-		glDeleteBuffers(1, &vbo);
+        glDeleteBuffers(1, &ebo);
+        glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &maskingVao);
 		glDeleteVertexArrays(1, &polygonVao);
 		
@@ -270,7 +276,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
                 for (auto point : polygon.ExternalRing())
                 {
                     Point glPoint = MapGeoTileCoordinateToGL(geoTile, point);
-                    //cout << "(" << glPoint.X << "," << glPoint.Y << ")" << endl;
                     tesselator.AddVertex(glPoint);
                     i++;
                 }
@@ -309,8 +314,6 @@ void TileGpuTransferStep::DrawElements(const ShaderProgram& shaderProgram, GLenu
     {
         points[i][0] = point.X;
         points[i][1] = point.Y;
-        cout << "(" << point.X << "," << point.Y << ")" << endl;
-        //cout << "(" << points[i][0] << "," << points[i][1] << ")" << endl;
         i++;
     }
 

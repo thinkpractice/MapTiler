@@ -21,7 +21,8 @@ Tesselator::Tesselator()
 Tesselator::~Tesselator()
 {
 	gluDeleteTess(_tesselator);
-    delete[] _points;
+    if (_points)
+        delete[] _points;
 }
 
 void Tesselator::BeginPolygon(int numberOfPoints)
