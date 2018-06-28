@@ -1,6 +1,7 @@
 #include "TileGpuTransferStep.h"
 #include "GeoTile.h"
 #include "FrameBuffer.h"
+#include "Tesselator.h"
 #include <iostream>
 
 using namespace std;
@@ -31,7 +32,6 @@ void TileGpuTransferStep::Run()
 		
 		GLuint vbo;
 		GLuint ebo;
-		
 		BindMaskingVertices(maskingShaderProgram, &vbo, &ebo);
 		
         GLuint polygonVao;
@@ -40,18 +40,17 @@ void TileGpuTransferStep::Run()
 
         while(auto geoTile = InQueue()->dequeue())
         {
-			cout << "GeoTile ptr" << geoTile << endl;
+			cout << "GeoTile ptr" << geoTile->UniqueId() << endl;
             glBindVertexArray(polygonVao);
-            polygonShaderProgram.Use();
-            
-			FrameBuffer polygonBuffer;
-			polygonBuffer.Bind();
-			
+			/*FrameBuffer polygonBuffer;
+			polygonBuffer.Bind();*/
+		    
+			polygonShaderProgram.Use();
             GLuint polygonTextureId;
             auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
            
 			//Do onscreen drawing
-			glBindVertexArray(maskingVao);
+			/*glBindVertexArray(maskingVao);
             FrameBuffer frameBuffer;
 			frameBuffer.Bind();
 			
@@ -63,18 +62,18 @@ void TileGpuTransferStep::Run()
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
-            //TODO output is flipped!
+			
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");
+            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");*/
             // Swap buffers
-            //glfwSwapBuffers(window);
+            glfwSwapBuffers(window);
 
             //Pass original and created tiles on to next step
             OutQueue()->enqueue(geoTile);
             OutQueue()->enqueue(maskTile);
-            OutQueue()->enqueue(maskedTile);
+            //OutQueue()->enqueue(maskedTile);
 			
-			glDeleteTextures(1, &textureId);
+			//glDeleteTextures(1, &textureId);
 			glDeleteTextures(1, &polygonTextureId);
 		}
 		
@@ -84,6 +83,9 @@ void TileGpuTransferStep::Run()
 		
 		glDeleteBuffers(1, &ebo);
 		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &maskingVao);
+		glDeleteVertexArrays(1, &polygonVao);
+		
     });
     OutQueue()->enqueue(nullptr);
 }
@@ -252,18 +254,9 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 
     //Get geometries for this tile
     layer->SetSpatialFilter(geoTile->BoundingArea());
-    GLUtesselator *tess = gluNewTess(); // create a tessellator
 
-    gluTessProperty(tess, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
-    gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
-    gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (GLvoid (*)())TileGpuTransferStep::BeginVA);
-    gluTessCallback(tess, GLU_TESS_END_DATA, (GLvoid (*)())TileGpuTransferStep::EndVA);
-    gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (GLvoid (*)())TileGpuTransferStep::VertexVA);
-    //Causes rendering artefacts!
-    gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA, (GLvoid(*)())TileGpuTransferStep::EdgeFlagCallback);
-    gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (GLvoid (*)())TileGpuTransferStep::CombineCallback);
-    gluTessCallback(tess, GLU_TESS_ERROR, (GLvoid (*)())TileGpuTransferStep::ErrorCallback);
-
+	Tesselator tesselator;
+	int numberOfPolygons = 0;
     for (auto it = layer->begin(); it != layer->end(); ++it)
     {
         auto feature = *it;
@@ -271,35 +264,24 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 
         for (auto polygon : multiPolygon)
         {
-            GLdouble points[polygon.ExternalRing().Points().size()][3];
-
-            VA va;
-            gluTessBeginPolygon(tess, &va);
-                gluTessBeginContour(tess);
+			tesselator.BeginPolygon();
+                tesselator.BeginContour();
                 int i = 0;
                 for (auto point : polygon.ExternalRing())
                 {
-                    double width = geoTile->BoundingRect().Width() / 2.0;
-                    double height = geoTile->BoundingRect().Height() / 2.0;
-                    double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
-                    //double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
-                    double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
-
-                    points[i][0] = x;
-                    points[i][1] = y;
-                    points[i][2] = 0;
-                    gluTessVertex(tess, points[i], points[i]);
+                    Point glPoint = MapGeoTileCoordinateToGL(geoTile, point);
+					tesselator.AddVertex(glPoint);
                     i++;
                 }
-                gluTessEndContour(tess);
-            gluTessEndPolygon(tess);
+                tesselator.EndContour();
+            tesselator.EndPolygon();
 
-            DrawElements(shaderProgram, GL_TRIANGLES, va.triangle_face_indices);
-
-            //glDeleteBuffers(1, &vbo);
+			vector<Point> triangles = tesselator.Points();
+            DrawElements(shaderProgram, GL_TRIANGLES, triangles);
         }
+        numberOfPolygons++;
     }
-    gluDeleteTess(tess);
+    cout << "number of polygons=" << numberOfPolygons << endl;
 
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
@@ -326,13 +308,14 @@ void TileGpuTransferStep::DrawElements(const ShaderProgram& shaderProgram, GLenu
     {
         points[i][0] = point.X;
         points[i][1] = point.Y;
+		cout << "(" << points[i][0] << "," << points[i][1] << ")" << endl;
         i++;
     }
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);// GL_STREAM_DRAW);
 
     GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
     glVertexAttribPointer(posAttrib, 2, GL_DOUBLE, GL_FALSE, 0, 0);
@@ -342,61 +325,14 @@ void TileGpuTransferStep::DrawElements(const ShaderProgram& shaderProgram, GLenu
     glDeleteBuffers(1, &vbo);
 }
 
-void TileGpuTransferStep::BeginVA(GLenum mode, VA *va)
+Point TileGpuTransferStep::MapGeoTileCoordinateToGL(shared_ptr< GeoTile > geoTile, const Point& point)
 {
-    va->current_mode = mode;
+	double width = geoTile->BoundingRect().Width() / 2.0;
+	double height = geoTile->BoundingRect().Height() / 2.0;
+	double x = -1.0 + (point.X - geoTile->BoundingRect().Left()) / width;
+	//double y = 1.0 - (point.Y - geoTile->BoundingRect().Top()) / height;
+	double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
+	
+	return Point(x, y);
 }
 
-void TileGpuTransferStep::EndVA(VA *va)
-{
-    va->current_mode = 0;
-}
-
-void TileGpuTransferStep::VertexVA(void *p, VA *va)
-{
-  GLdouble* pointData = (GLdouble*) p;
-
-  Point point(pointData[0], pointData[1]);
-  switch(va->current_mode)
-  {
-      case GL_TRIANGLES:
-          va->triangle_face_indices.push_back(point);
-          break;
-      case GL_TRIANGLE_STRIP:
-          va->tristrip_face_indices.push_back(point);
-          break;
-      case GL_TRIANGLE_FAN:
-          va->trifan_face_indices.push_back(point);
-          break;
-  }
-}
-
-void TileGpuTransferStep::CombineCallback(GLdouble coords[3],
-                     GLdouble *vertex_data[4],
-                     GLfloat weight[4], GLdouble **dataOut, VA* va)
-{
-  //TODO need to free these?
-  GLdouble *vertex;
-  vertex = (GLdouble *) malloc(3 * sizeof(GLdouble));
-  vertex[0] = coords[0];
-  vertex[1] = coords[1];
-  vertex[2] = coords[2];
-
-  *dataOut = vertex;
-}
-
-void TileGpuTransferStep::EdgeFlagCallback(GLboolean flag, VA* va)
-{
- // Indicates which edges lie on the polygon boundary
- // (so to enable us to draw outlines), also
- // if this callback is provided triangle fans and strips are
- // converted to independent triangles
-}
-
-void TileGpuTransferStep::ErrorCallback(GLenum errorCode)
-{
-   const GLubyte *estring;
-
-   estring = gluErrorString(errorCode);
-   fprintf (stderr, "Tessellation Error: %s\n", estring);
-}

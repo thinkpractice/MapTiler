@@ -9,14 +9,6 @@
 
 using namespace std;
 
-struct VA
-{
-    GLenum current_mode; // Drawing mode (GL_TRIANGLE, *_FAN or *_STRIP)
-    vector<Point> triangle_face_indices;
-    vector<Point> tristrip_face_indices;
-    vector<Point> trifan_face_indices;
-};
-
 class TileGpuTransferStep : public ProcessingStep
 {
 public:
@@ -35,12 +27,8 @@ private:
 	void BindMaskingVertices(const ShaderProgram& shaderProgram, GLuint* vbo, GLuint* ebo);
 	
     void DrawElements(const ShaderProgram& shaderProgram, GLenum mode, vector<Point>& elements);
-    static void BeginVA(GLenum mode, VA* va);
-    static void EndVA(VA* va);
-    static void VertexVA(void* p, VA* va);
-    static void EdgeFlagCallback(GLboolean flag, VA* va);
-    static void CombineCallback(GLdouble coords[3],GLdouble *vertex_data[4],GLfloat weight[4], GLdouble **dataOut, VA* va);
-    static void ErrorCallback(GLenum errorCode);
+   
+	Point MapGeoTileCoordinateToGL(shared_ptr<GeoTile> geoTile, const Point& point);
 
 private:
     shared_ptr<VectorFile> _vectorFile;
