@@ -2,6 +2,7 @@
 #include <iostream>
 
 Tesselator::Tesselator()
+                :	_currentIndex(0)
 {
 	_tesselator = gluNewTess(); // create a _tesselatorellator
 	
@@ -21,15 +22,17 @@ Tesselator::~Tesselator()
 	gluDeleteTess(_tesselator);
 }
 
-void Tesselator::BeginPolygon()
+void Tesselator::BeginPolygon(int numberOfPoints)
 {
+    _points = new GLdouble[numberOfPoints*3];
 	gluTessBeginPolygon(_tesselator, &_va);
 }
 
 void Tesselator::EndPolygon()
 {
 	_va = VA();
-	_points.clear();
+    delete[] _points;
+    _currentIndex = 0;
 	gluTessEndPolygon(_tesselator);
 }
 
@@ -45,14 +48,13 @@ void Tesselator::EndContour()
 
 void Tesselator::AddVertex(const Point& point)
 {	
-	GLdouble p[3];
-	p[0] = point.X;
-	p[1] = point.Y;
-	p[2] = point.Z;
-	_points.push_back(p);
-	
-	size_t i = _points.size() - 1;
-	gluTessVertex(_tesselator, p, p);
+    _points[_currentIndex] = point.X;
+    _points[_currentIndex + 1] = point.Y;
+    _points[_currentIndex + 2] = point.Z;
+
+    gluTessVertex(_tesselator, &_points[_currentIndex], &_points[_currentIndex]);
+
+    _currentIndex += 3;
 }
 
 std::vector<Point> Tesselator::Points()
@@ -86,8 +88,7 @@ void Tesselator::CombineCallback(GLdouble coords[3],
 										  GLfloat weight[4], GLdouble **dataOut, VA* va)
 {
 	//TODO need to free these?
-	GLdouble *vertex;
-	vertex = (GLdouble *) malloc(3 * sizeof(GLdouble));
+	GLdouble *vertex = (GLdouble *) malloc(3 * sizeof(GLdouble));
 	vertex[0] = coords[0];
 	vertex[1] = coords[1];
 	vertex[2] = coords[2];

@@ -27,7 +27,7 @@ public:
 	Tesselator();
 	virtual ~Tesselator();
 	
-	void BeginPolygon();
+    void BeginPolygon(int numberOfPoints);
 	void EndPolygon();
 	
 	void BeginContour();
@@ -48,7 +48,8 @@ private:
 private:
 	GLUtesselator* _tesselator;
 	VA _va;	
-	vector<GLdouble[3]> _points;	
+    int _currentIndex;
+    GLdouble* _points;
 };
 
 #endif

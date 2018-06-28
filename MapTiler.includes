@@ -1,0 +1,12 @@
+build/GLTest_autogen
+build/Lib/Lib_autogen
+build/MapTiler_autogen
+build/ShapeFileExample_autogen
+GLTest_autogen
+Lib
+Lib/Lib_autogen
+Lib/MapViewer_autogen
+MapTiler_autogen
+MapViewer_autogen
+QtApp
+ShapeFileExample_autogen
