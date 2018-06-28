@@ -2,7 +2,8 @@
 #include <iostream>
 
 Tesselator::Tesselator()
-                :	_currentIndex(0)
+                :	_currentIndex(0),
+                    _points(nullptr)
 {
 	_tesselator = gluNewTess(); // create a _tesselatorellator
 	
@@ -20,20 +21,23 @@ Tesselator::Tesselator()
 Tesselator::~Tesselator()
 {
 	gluDeleteTess(_tesselator);
+    delete[] _points;
 }
 
 void Tesselator::BeginPolygon(int numberOfPoints)
 {
+    if (_points)
+        delete[] _points;
+
+    _va = VA();
+    _currentIndex = 0;
     _points = new GLdouble[numberOfPoints*3];
 	gluTessBeginPolygon(_tesselator, &_va);
 }
 
 void Tesselator::EndPolygon()
 {
-	_va = VA();
-    delete[] _points;
-    _currentIndex = 0;
-	gluTessEndPolygon(_tesselator);
+    gluTessEndPolygon(_tesselator);
 }
 
 void Tesselator::BeginContour()
@@ -57,7 +61,7 @@ void Tesselator::AddVertex(const Point& point)
     _currentIndex += 3;
 }
 
-std::vector<Point> Tesselator::Points()
+vector<Point> Tesselator::Points()
 {
 	return _va.points;
 }
@@ -92,7 +96,7 @@ void Tesselator::CombineCallback(GLdouble coords[3],
 	vertex[0] = coords[0];
 	vertex[1] = coords[1];
 	vertex[2] = coords[2];
-	
+
 	*dataOut = vertex;
 }
 

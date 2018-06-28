@@ -270,7 +270,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
                 for (auto point : polygon.ExternalRing())
                 {
                     Point glPoint = MapGeoTileCoordinateToGL(geoTile, point);
-					tesselator.AddVertex(glPoint);
+                    //cout << "(" << glPoint.X << "," << glPoint.Y << ")" << endl;
+                    tesselator.AddVertex(glPoint);
                     i++;
                 }
                 tesselator.EndContour();
@@ -308,7 +309,8 @@ void TileGpuTransferStep::DrawElements(const ShaderProgram& shaderProgram, GLenu
     {
         points[i][0] = point.X;
         points[i][1] = point.Y;
-		cout << "(" << points[i][0] << "," << points[i][1] << ")" << endl;
+        cout << "(" << point.X << "," << point.Y << ")" << endl;
+        //cout << "(" << points[i][0] << "," << points[i][1] << ")" << endl;
         i++;
     }
 
