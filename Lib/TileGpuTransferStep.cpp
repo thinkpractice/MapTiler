@@ -38,10 +38,9 @@ void TileGpuTransferStep::Run()
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
 		polygonShaderProgram.Create();
 
+        //TODO geoTile will never be null, make these loops stop in all the ProcessingSteps
         while(auto geoTile = InQueue()->dequeue())
         {
-			cout << "GeoTile ptr" << geoTile->UniqueId() << endl;
-
             glBindVertexArray(polygonVao);
 
             FrameBuffer polygonBuffer;
@@ -287,7 +286,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
         }
         numberOfPolygons++;
     }
-    cout << "number of polygons=" << numberOfPolygons << endl;
 
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
