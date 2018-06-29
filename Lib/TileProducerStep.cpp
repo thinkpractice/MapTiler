@@ -11,7 +11,6 @@ TileProducerStep::TileProducerStep(GeoMap* map, const TileGrid& tileGrid)
 
 TileProducerStep::~TileProducerStep()
 {
-    delete _map;
 }
 
 void TileProducerStep::Run()
