@@ -15,18 +15,18 @@ MapTiler has a number of dependencies that have to be installed before attemptin
 * libuuid
 * libGL, libGLEW, libGLU and libglfw
 
-In addition to that, MapTiler is implemented using the C++14 standard. To be compiled, it needs a compiler that support this standard. Any modern gcc or llvm/clang compiler should be sufficient.It has been successfully compiled using GCC 5.0 and GCC 7.0.
+In addition to that, MapTiler is implemented using the C++14 standard. To be compiled, it needs a compiler that support this standard. Any modern gcc or llvm/clang compiler should be sufficient. It has been successfully compiled using GCC 5.0 and GCC 7.0.
 
 ## Compilation
 
 MapTiler can be compiled using CMake. In the location that you would like to save and build the code run the following in the terminal:
 
-'
+~~~~
 git clone https://github.com/thinkpractice/MapTiler.git
 cd MapTiler
 cmake .
 make
-'
+~~~~
 
 ## Running MapTiler
 
