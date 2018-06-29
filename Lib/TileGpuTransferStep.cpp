@@ -38,7 +38,6 @@ void TileGpuTransferStep::Run()
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
 		polygonShaderProgram.Create();
 
-        //TODO geoTile will never be null, make these loops stop in all the ProcessingSteps
         while(auto geoTile = InQueue()->dequeue())
         {
             glBindVertexArray(polygonVao);
@@ -80,12 +79,13 @@ void TileGpuTransferStep::Run()
 			
             glDeleteTextures(1, &textureId);
             glDeleteTextures(1, &polygonTextureId);
-		}
-		
-        while (glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-            glfwWindowShouldClose(window) == 0)
+
             glfwPollEvents();
-		
+
+            /*if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS || glfwWindowShouldClose(window) != 0)
+                break;*/
+        }
+
         glDeleteBuffers(1, &ebo);
         glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &maskingVao);

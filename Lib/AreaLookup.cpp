@@ -47,8 +47,6 @@ void AreaLookup::SetGeoServiceProvider(string serviceProvider)
 
     QMap<QString,QVariant> params;
     params["osm.geocoding.host"] = "https://nominatim.openstreetmap.org";
-    //params["here.app_id"] = "W0ld4NLEzTJ4761RTuAx";
-    //params["here.token"] = "uu2p23fqWihADLqgsiICgw";
 
     SetGeoServiceProvider(new QGeoServiceProvider(providerName, params));
 }
@@ -87,7 +85,6 @@ Area AreaLookup::AreaForGeoRectangle(const QGeoRectangle& geoRectangle)
 
 void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 {
-    cout << reply->locations().size() << "error=" << reply->errorString().toStdString() << endl;
     vector<Area> foundAreas;
     for (auto location : reply->locations())
     {
@@ -111,5 +108,5 @@ void AreaLookup::GeoLocationFound(QGeoCodeReply* reply)
 
 void AreaLookup::Error(QGeoCodeReply *reply, QGeoCodeReply::Error error, QString errorString)
 {
-    cout << "error=" << errorString.toStdString() << endl;
+    cerr << "error=" << errorString.toStdString() << endl;
 }

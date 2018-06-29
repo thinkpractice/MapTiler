@@ -27,8 +27,6 @@ bool PngWriter::HandlesFile(string filename)
 
 void PngWriter::Save(shared_ptr<GeoTile> tile, string filename)
 {
-    //cout << "Writing tile to file: " << filename << endl;
-
     int code = 0;
     FILE *fp = NULL;
     png_structp png_ptr = NULL;

@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Utils.h"
 
+using namespace std;
+
 TileWriterStep::TileWriterStep(string tileDirectory)
                     :   ProcessingStep(PreProcessing),
                         _tileDirectory(tileDirectory),

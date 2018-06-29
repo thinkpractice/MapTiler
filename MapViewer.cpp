@@ -185,23 +185,23 @@ int main(int argc, char** argv)
     cout << "Tile width: " << settings.tileWidth << endl;
     cout << "Tile height: " << settings.tileHeight << endl;
 
-    cout << "===GeoTransform===" << endl;
+    cout << "GeoTransform: (";
     double geoTransform[6];
     chosenMap->MapTransform().GetTransformMatrix(geoTransform);
     for (int i = 0; i < 6; i++)
     {
-        cout << geoTransform[i] << endl;
+        cout << geoTransform[i];
+        if (i < 5) cout << ",";
     }
+    cout << ")" << endl;
 
-    cout << "===GeoTransform===" << endl;
-
-    cout << "layer count=" << chosenMap->LayerCount() << endl;
-    cout << "raster count=" << chosenMap->RasterCount() << endl;
-    cout << "raster X size=" << chosenMap->WidthInPixels() << endl;
-    cout << "raster Y size=" << chosenMap->HeightInPixels() << endl;
+    cout << "Layer count: " << chosenMap->LayerCount() << endl;
+    cout << "Raster count: " << chosenMap->RasterCount() << endl;
+    cout << "Raster X size: " << chosenMap->WidthInPixels() << endl;
+    cout << "Raster Y size: " << chosenMap->HeightInPixels() << endl;
 
     Area mapArea = chosenMap->GetMapArea();
-    cout << "MapArea(" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
+    cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
