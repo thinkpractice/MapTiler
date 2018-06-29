@@ -222,10 +222,6 @@ int main(int argc, char** argv)
 					QCoreApplication::exit(0);
                 }
             });
-    for (auto& serviceProvider : areaLookup.ServiceProviders())
-    {
-        std::cout << serviceProvider << std::endl;
-    }
     areaLookup.GetAreaForAddress(settings.address);
 
     return app.exec();
