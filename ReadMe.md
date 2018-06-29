@@ -36,7 +36,7 @@ To run MapTiler, several options have to specified first. The general syntax to 
 ./MapTiler [options] rasterurl polygonurl
 ~~~~
 
-###Options
+### Options
 
 The following options can be provided to the application:
 * -d, --defaulturls,  uses default urls for rasterurl and vectorurl
@@ -48,7 +48,7 @@ The following options can be provided to the application:
 * -c, --tilewidth <width>               The <width> (number of columns) of the tiles to be written to disk
 * -r, --tileheight <height>   The <height> (number of rows) of the tiles to be written to disk
 
-###Arguments
+### Arguments
 
 Unless the -d, --defaulturls option (see above) has been specified MapTiler also needs the following arguments:
 * rasterurl, url to raster webservice (WMS/WMTS) with the aerial image.
