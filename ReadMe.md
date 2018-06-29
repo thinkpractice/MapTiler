@@ -39,18 +39,18 @@ To run MapTiler, several options have to specified first. The general syntax to 
 ### Options
 
 The following options can be provided to the application:
-* -d, --defaulturls,  uses default urls for rasterurl and vectorurl
-* -h, --help, displays a help message
-* -v, --version, displays version information.
-* --address <location>, the <location> (address/city name/region) for which the tiles should be downloaded.
-* -a, --addressoption <locationoption>  The location option to choose if the address gives back multiple option (default=first)
-* -t, --target-directory <directory>    Copy all the tiles into <directory>.
-* -c, --tilewidth <width>               The <width> (number of columns) of the tiles to be written to disk
-* -r, --tileheight <height>   The <height> (number of rows) of the tiles to be written to disk
+* **-h**, **--help**, displays a help message.
+* **-v**, **--version**, displays version information.
+* **-d**, **--defaulturls**,  uses default urls for rasterurl and vectorurl.
+* **--address <location>**, the <location> (address/city name/region) for which the tiles should be downloaded.
+* **-a**, **--addressoption <locationoption>**, the location option to choose if the address gives back multiple option (default=first).
+* **-t**, **--target-directory <directory>**, copy all the tiles into <directory>.
+* **-c**, **--tilewidth <width>**, the <width> (number of columns) of the tiles to be written to disk.
+* **-r**, **--tileheight <height>**, the <height> (number of rows) of the tiles to be written to disk.
 
 ### Arguments
 
 Unless the -d, --defaulturls option (see above) has been specified MapTiler also needs the following arguments:
-* rasterurl, url to raster webservice (WMS/WMTS) with the aerial image.
-* vectorurl, url to the vector webservice (WFS) with the polygons.
+* **rasterurl**, *url* to raster webservice (WMS/WMTS) with the aerial image.
+* **vectorurl**, *url* to the vector webservice (WFS) with the polygons.
 
