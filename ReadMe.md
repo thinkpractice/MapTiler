@@ -45,7 +45,7 @@ The following options can be provided to the application:
 * **--address** *location*, the *location* (address/city name/region) for which the tiles should be downloaded.
 * **-a**, **--addressoption** *locationoption*, the location option to choose if the address gives back multiple option (default=first).
 * **-t**, **--target-directory** *directory*, copy all the tiles into *directory*.
-* **-c**, **--tilewidth** *width**, the *width* (number of columns) of the tiles to be written to disk.
+* **-c**, **--tilewidth** *width*, the *width* (number of columns) of the tiles to be written to disk.
 * **-r**, **--tileheight** *height*, the *height* (number of rows) of the tiles to be written to disk.
 
 ### Arguments
