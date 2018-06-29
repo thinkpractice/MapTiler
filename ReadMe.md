@@ -7,9 +7,9 @@ MapTiler is a program that helps downloading and preprocessing tiles from a geos
 ## Dependencies
 
 MapTiler has a number of dependencies that have to be installed before attempting to build the software.
-* **CMake** (*= 3.5),
-* **libgdal** (*= 2.2),
-* **Qt5** (*= 5.10), in specific the QLocation and QCoreApplication classes,
+* **CMake** (>= 3.5),
+* **libgdal** (>= 2.2),
+* **Qt5** (>= 5.10), in specific the QLocation and QCoreApplication classes,
 * **libpthread**
 * **libpng**
 * **libuuid**
