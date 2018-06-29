@@ -7,9 +7,9 @@ MapTiler is a program that helps downloading and preprocessing tiles from a geos
 ## Dependencies
 
 MapTiler has a number of dependencies that have to be installed before attempting to build the software.
-* **CMake** (>= 3.5),
-* **libgdal** (>= 2.2),
-* **Qt5** (>= 5.10), in specific the QLocation and QCoreApplication classes,
+* **CMake** (*= 3.5),
+* **libgdal** (*= 2.2),
+* **Qt5** (*= 5.10), in specific the QLocation and QCoreApplication classes,
 * **libpthread**
 * **libpng**
 * **libuuid**
@@ -41,12 +41,12 @@ To run MapTiler, several options have to specified first. The general syntax to 
 The following options can be provided to the application:
 * **-h**, **--help**, displays a help message.
 * **-v**, **--version**, displays version information.
-* **-d**, **--defaulturls**,  uses default urls for rasterurl and vectorurl.
-* **--address <location>**, the <location> (address/city name/region) for which the tiles should be downloaded.
-* **-a**, **--addressoption <locationoption>**, the location option to choose if the address gives back multiple option (default=first).
-* **-t**, **--target-directory <directory>**, copy all the tiles into <directory>.
-* **-c**, **--tilewidth <width>**, the <width> (number of columns) of the tiles to be written to disk.
-* **-r**, **--tileheight <height>**, the <height> (number of rows) of the tiles to be written to disk.
+* **-d**, **--defaulturls**, uses default urls for rasterurl and vectorurl.
+* **--address** *location*, the *location* (address/city name/region) for which the tiles should be downloaded.
+* **-a**, **--addressoption** *locationoption*, the location option to choose if the address gives back multiple option (default=first).
+* **-t**, **--target-directory** *directory*, copy all the tiles into *directory*.
+* **-c**, **--tilewidth** *width**, the *width* (number of columns) of the tiles to be written to disk.
+* **-r**, **--tileheight** *height*, the *height* (number of rows) of the tiles to be written to disk.
 
 ### Arguments
 
