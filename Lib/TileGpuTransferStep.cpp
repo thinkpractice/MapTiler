@@ -280,8 +280,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
                 }
                 tesselator.EndContour();
 
-			vector<Point> triangles = tesselator.Points();
-            DrawElements(shaderProgram, GL_TRIANGLES, triangles);
+				vector<Point> triangles = tesselator.Points();
+				DrawElements(shaderProgram, GL_TRIANGLES, triangles);
             tesselator.EndPolygon();
         }
         numberOfPolygons++;
