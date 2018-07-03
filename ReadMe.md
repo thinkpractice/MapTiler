@@ -17,6 +17,22 @@ MapTiler has a number of dependencies that have to be installed before attemptin
 
 In addition to that, MapTiler is implemented using the C++14 standard. To be compiled, it needs a compiler that support this standard. Any modern gcc or llvm/clang compiler should be sufficient. It has been successfully compiled using GCC 5.0 and GCC 7.0.
 
+## Ubuntu Installation
+
+To install the above dependencies in ubuntu type the following:
+
+~~~~
+sudo apt-get install cmake libpng-dev uuid libgl-dev libglew-dev libglu-dev libglfw3-dev libgdal-dev
+~~~~
+
+Also to install qt 5 download the latest (open-source) qt 5 package (>= 5.10) at:
+
+https://www.qt.io/download
+
+Follow the instructions there to install it. Make sure you install Qt under $HOME in the $HOME/Qt directory. For MapTiler to work out of the box install Qt 5.10.1 next to the current version. If you get an error about some SSL libs not being able to load, run the following command:
+
+sudo apt install libssl1.0-dev
+
 ## Compilation
 
 MapTiler can be compiled using CMake. In the location that you would like to save and build the code run the following in the terminal:

@@ -3,7 +3,8 @@
 
 Tesselator::Tesselator()
                 :	_currentIndex(0),
-                    _points(nullptr)
+                    _points(nullptr),
+                    _va(nullptr)
 {
 	_tesselator = gluNewTess(); // create a _tesselatorellator
 	
@@ -30,15 +31,16 @@ void Tesselator::BeginPolygon(int numberOfPoints)
     if (_points)
         delete[] _points;
 
-    _va = VA();
+    _va = new VA();
     _currentIndex = 0;
     _points = new GLdouble[numberOfPoints*3];
-	gluTessBeginPolygon(_tesselator, &_va);
+	gluTessBeginPolygon(_tesselator, _va);
 }
 
 void Tesselator::EndPolygon()
 {
     gluTessEndPolygon(_tesselator);
+	if (_va) delete _va;
 }
 
 void Tesselator::BeginContour()
@@ -64,7 +66,7 @@ void Tesselator::AddVertex(const Point& point)
 
 vector<Point> Tesselator::Points()
 {
-	return _va.points;
+	return _va->points;
 }
 
 void Tesselator::BeginVA(GLenum mode, VA *va)
@@ -93,7 +95,8 @@ void Tesselator::CombineCallback(GLdouble coords[3],
 										  GLfloat weight[4], GLdouble **dataOut, VA* va)
 {
 	//TODO need to free these?
-	GLdouble *vertex = (GLdouble *) malloc(3 * sizeof(GLdouble));
+	GLdouble *vertex = (GLdouble *)va->bufferFactory.CreateBuffer(3 * sizeof(GLdouble));
+	//GLdouble *vertex = (GLdouble *)malloc(3 * sizeof(GLdouble));
 	vertex[0] = coords[0];
 	vertex[1] = coords[1];
 	vertex[2] = coords[2];

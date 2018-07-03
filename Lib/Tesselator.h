@@ -2,6 +2,7 @@
 #define TESSELATOR_H
 
 #include "Point.h"
+#include "BufferFactory.h"
 #include <vector>
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -19,6 +20,7 @@ struct VA
 	Primitive currentPrimitive;
 	vector<Point> points;
 	vector<Primitive> primitives;
+	BufferFactory bufferFactory;
 };
 
 class Tesselator
@@ -47,7 +49,7 @@ private:
 	
 private:
 	GLUtesselator* _tesselator;
-	VA _va;	
+	VA *_va;	
     int _currentIndex;
     GLdouble* _points;
 };
