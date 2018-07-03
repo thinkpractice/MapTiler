@@ -63,7 +63,9 @@ void TileGpuTransferStep::Run()
             TileToTexture(geoTile, &textureId);
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+			glClearColor(0,0,0,1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 			
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
