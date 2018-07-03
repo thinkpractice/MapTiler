@@ -3,10 +3,9 @@
 
 Tesselator::Tesselator()
                 :	_currentIndex(0),
-                    _points(nullptr),
-                    _va(nullptr)
+                    _points(nullptr)
 {
-	_tesselator = gluNewTess(); // create a _tesselatorellator
+	_tesselator = gluNewTess();
 	
 	gluTessProperty(_tesselator, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
 	gluTessProperty(_tesselator, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
@@ -31,16 +30,14 @@ void Tesselator::BeginPolygon(int numberOfPoints)
     if (_points)
         delete[] _points;
 
-    _va = new VA();
     _currentIndex = 0;
     _points = new GLdouble[numberOfPoints*3];
-	gluTessBeginPolygon(_tesselator, _va);
+	gluTessBeginPolygon(_tesselator, this);
 }
 
 void Tesselator::EndPolygon()
 {
     gluTessEndPolygon(_tesselator);
-	if (_va) delete _va;
 }
 
 void Tesselator::BeginContour()
@@ -64,39 +61,41 @@ void Tesselator::AddVertex(const Point& point)
     _currentIndex += 3;
 }
 
-vector<Point> Tesselator::Points()
+vector< Primitive > Tesselator::Primitives()
 {
-	return _va->points;
+	return _primitives;
 }
 
-void Tesselator::BeginVA(GLenum mode, VA *va)
+vector<Point> Tesselator::Points()
+{
+	return _currentPrimitive.points;
+}
+
+void Tesselator::BeginVA(GLenum mode, Tesselator *tesselator)
 {
 	Primitive primitive;
 	primitive.mode = mode;
-	va->currentPrimitive = primitive;
+	tesselator->_currentPrimitive = primitive;
 }
 
-void Tesselator::EndVA(VA *va)
+void Tesselator::EndVA(Tesselator *tesselator)
 {
-	va->primitives.push_back(va->currentPrimitive);
+	tesselator->_primitives.push_back(tesselator->_currentPrimitive);
 }
 
-void Tesselator::VertexVA(void *p, VA *va)
+void Tesselator::VertexVA(void *p, Tesselator *tesselator)
 {
 	GLdouble* vertex = (GLdouble*)p;
 	
 	Point point = {vertex[0], vertex[1], vertex[2]};
-	va->points.push_back(point);
-	va->currentPrimitive.indices.push_back(va->points.size()-1);		
+	tesselator->_currentPrimitive.points.push_back(point);		
 }
 
 void Tesselator::CombineCallback(GLdouble coords[3],
 										  GLdouble *vertex_data[4],
-										  GLfloat weight[4], GLdouble **dataOut, VA* va)
+										  GLfloat weight[4], GLdouble **dataOut, Tesselator* tesselator)
 {
-	//TODO need to free these?
-	GLdouble *vertex = (GLdouble *)va->bufferFactory.CreateBuffer(3 * sizeof(GLdouble));
-	//GLdouble *vertex = (GLdouble *)malloc(3 * sizeof(GLdouble));
+	GLdouble *vertex = (GLdouble *)tesselator->_bufferFactory.CreateBuffer(3 * sizeof(GLdouble));
 	vertex[0] = coords[0];
 	vertex[1] = coords[1];
 	vertex[2] = coords[2];
@@ -104,7 +103,7 @@ void Tesselator::CombineCallback(GLdouble coords[3],
 	*dataOut = vertex;
 }
 
-void Tesselator::EdgeFlagCallback(GLboolean flag, VA* va)
+void Tesselator::EdgeFlagCallback(GLboolean flag, Tesselator* tesselator)
 {
 	// Indicates which edges lie on the polygon boundary
 	// (so to enable us to draw outlines), also
