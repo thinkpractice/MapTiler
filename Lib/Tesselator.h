@@ -20,6 +20,7 @@ struct VA
 	Primitive currentPrimitive;
 	vector<Point> points;
 	vector<Primitive> primitives;
+	BufferFactory bufferFactory;
 };
 
 class Tesselator
@@ -49,7 +50,6 @@ private:
 private:
 	GLUtesselator* _tesselator;
 	VA *_va;	
-	BufferFactory _bufferFactory;
     int _currentIndex;
     GLdouble* _points;
 };
