@@ -11,6 +11,7 @@ public:
 	virtual ~FrameBuffer();
 	
 	void Bind();
+	void Clear();
 	
 private:
 	GLuint _frameBufferId;

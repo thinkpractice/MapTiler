@@ -44,9 +44,7 @@ void TileGpuTransferStep::Run()
 
             FrameBuffer polygonBuffer;
             polygonBuffer.Bind();
-
-            glClearColor(0,0,0,1);
-            glClear(GL_COLOR_BUFFER_BIT);
+			polygonBuffer.Clear();
 
             polygonShaderProgram.Use();
 
@@ -57,6 +55,7 @@ void TileGpuTransferStep::Run()
             glBindVertexArray(maskingVao);
             FrameBuffer frameBuffer;
 			frameBuffer.Bind();
+			frameBuffer.Clear();
 			
 			maskingShaderProgram.Use();
 			
