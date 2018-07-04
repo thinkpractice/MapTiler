@@ -52,20 +52,19 @@ void TileGpuTransferStep::Run()
             auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
            
 			//Do onscreen drawing
-            glBindVertexArray(maskingVao);
             FrameBuffer frameBuffer;
 			frameBuffer.Bind();
 			frameBuffer.Clear();
 			
-			maskingShaderProgram.Use();
-			
             GLuint textureId;
             TileToTexture(geoTile, &textureId);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindVertexArray(maskingVao);
 			glClearColor(0,0,0,1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			
+			maskingShaderProgram.Use();
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 			
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
