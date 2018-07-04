@@ -21,9 +21,17 @@ void TileWriterStep::Run()
      while (auto stepData = InQueue()->dequeue())
 	 {
 		 string tileFilename = _tileDirectory + stepData->UniqueId();
-         SaveTile(stepData->Tile(), tileFilename + ".tiff");
-		 SaveTile(stepData->MaskTile(), tileFilename + "_mask.tiff");
-		 SaveTile(stepData->MaskedTile(), tileFilename +"_masked.tiff");
+		 for (auto geoTile : stepData->Tiles())
+		 {
+			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
+			 SaveTile(geoTile.second, filename);
+		 }
+		 
+		 for (auto geoTile : stepData->ProcessedTiles())
+		 {
+			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
+			 SaveTile(geoTile.second, filename);
+		 }
 	 }
 }
 

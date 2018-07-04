@@ -23,7 +23,7 @@ TileProcessor::~TileProcessor()
 void TileProcessor::StartProcessing(string outputDirectory, string polygonFilename)
 {
     _pipeline.AddProcessingStep(make_shared<TileProducerStep>(_tileGrid));
-    _pipeline.AddProcessingStep(make_shared<TileDownloadStep>(_mainRasterMap));
+    _pipeline.AddProcessingStep(make_shared<TileDownloadStep>("rgb", _mainRasterMap));
     _pipeline.AddProcessingStep(make_shared<TileGpuTransferStep>(make_shared<MappedVectorFile>(polygonFilename, _mainRasterMap->ProjectionReference(), _mainRasterMap->MapTransform()), 1, _tileGrid.TileWidth(), _tileGrid.TileHeight()));
     _pipeline.AddProcessingStep(make_shared<TileWriterStep>(outputDirectory));
     _pipeline.StartProcessing();

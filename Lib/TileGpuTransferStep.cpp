@@ -40,50 +40,53 @@ void TileGpuTransferStep::Run()
 
         while(auto stepData = InQueue()->dequeue())
         {
-			auto geoTile = stepData->Tile();
-            glBindVertexArray(polygonVao);
+			for (auto tilePair : stepData->Tiles())
+			{
+				auto geoTile = tilePair.second;
+				glBindVertexArray(polygonVao);
 
-            FrameBuffer polygonBuffer;
-            polygonBuffer.Bind();
-			polygonBuffer.Clear();
+				FrameBuffer polygonBuffer;
+				polygonBuffer.Bind();
+				polygonBuffer.Clear();
 
-            polygonShaderProgram.Use();
+				polygonShaderProgram.Use();
 
-            GLuint polygonTextureId;
-            auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
-           
-			//Do onscreen drawing
-            FrameBuffer frameBuffer;
-			frameBuffer.Bind();
-			frameBuffer.Clear();
+				GLuint polygonTextureId;
+				auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
 			
-            GLuint textureId;
-            TileToTexture(geoTile, &textureId);
+				//Do onscreen drawing
+				FrameBuffer frameBuffer;
+				frameBuffer.Bind();
+				frameBuffer.Clear();
+				
+				GLuint textureId;
+				TileToTexture(geoTile, &textureId);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glBindVertexArray(maskingVao);
-			glClearColor(0,0,0,1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			maskingShaderProgram.Use();
-            DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
-			
-            auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-            // Swap buffers
-            glfwSwapBuffers(window);
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glBindVertexArray(maskingVao);
+				glClearColor(0,0,0,1);
+				glClear(GL_COLOR_BUFFER_BIT);
+				
+				maskingShaderProgram.Use();
+				DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
+				
+				auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+				// Swap buffers
+				glfwSwapBuffers(window);
 
-            //Pass original and created tiles on to next step
-			stepData->SetMaskTile(maskTile);
-			stepData->SetMaskedTile(maskedTile);
-            OutQueue()->enqueue(stepData);
+				//Pass original and created tiles on to next step
+				stepData->AddProcessedTile(tilePair.first + "_mask", maskTile);
+				stepData->AddProcessedTile(tilePair.first + "_masked", maskedTile);
 
-            glDeleteTextures(1, &textureId);
-            glDeleteTextures(1, &polygonTextureId);
+				glDeleteTextures(1, &textureId);
+				glDeleteTextures(1, &polygonTextureId);
 
-            glfwPollEvents();
+				glfwPollEvents();
 
-            /*if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS || glfwWindowShouldClose(window) != 0)
-                break;*/
+				/*if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS || glfwWindowShouldClose(window) != 0)
+					break;*/
+			}
+			OutQueue()->enqueue(stepData);
         }
 
         glDeleteBuffers(1, &ebo);

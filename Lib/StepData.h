@@ -4,6 +4,7 @@
 #include "Rect.h"
 #include "GeoTile.h"
 #include <memory>
+#include <map>
 #include <string>
 
 using namespace std;
@@ -23,23 +24,20 @@ public:
 	void SetBoundingRect(const Rect& rect);
 	Rect BoundingRect();
 	
-	void SetTile(shared_ptr<GeoTile> geoTile);
-	shared_ptr<GeoTile> Tile();
+	void AddTile(string tileName, shared_ptr<GeoTile> geoTile);
+	shared_ptr<GeoTile> GetTile(string tileName);
+	map<string, shared_ptr<GeoTile>> Tiles();
 	
-	void SetMaskTile(shared_ptr<GeoTile> maskTile);
-	shared_ptr<GeoTile> MaskTile();
-	
-	void SetMaskedTile(shared_ptr<GeoTile> maskedTile);
-	shared_ptr<GeoTile> MaskedTile();
+	void AddProcessedTile(string tileName, shared_ptr<GeoTile> geoTile);
+	shared_ptr<GeoTile> GetProcessedTile(string tileName);
+	map<string, shared_ptr<GeoTile>> ProcessedTiles();
 	
 private:
 	string _uniqueId;
 	int _numberOfTiles;
 	Rect _boundingRect;
-	shared_ptr<GeoTile> _geoTile;
-	shared_ptr<GeoTile> _maskTile;
-	shared_ptr<GeoTile> _maskedTile;
-	
+	map<string, shared_ptr<GeoTile>> _tiles;
+	map<string, shared_ptr<GeoTile>> _processedTiles;
 };
 
 #endif

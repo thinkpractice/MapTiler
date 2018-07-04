@@ -1,7 +1,8 @@
 #include "TileDownloadStep.h"
 
-TileDownloadStep::TileDownloadStep(GeoMap* map)
+TileDownloadStep::TileDownloadStep(string tileName, GeoMap* map)
 					:	ProcessingStep(PreProcessing),
+						_tileName(tileName),
 						_map(map)
 {
 }
@@ -19,7 +20,7 @@ void TileDownloadStep::Run()
 		{
 			auto tile = shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
 			
-			stepData->SetTile(tile);
+			stepData->AddTile(_tileName, tile);
 			OutQueue()->enqueue(stepData);
 			numberOfTilesDownloaded++;
 			

@@ -40,38 +40,32 @@ Rect StepData::BoundingRect()
 	return _boundingRect;
 }
 
-void StepData::SetTile(shared_ptr< GeoTile > geoTile)
+void StepData::AddTile(string tileName, shared_ptr< GeoTile > geoTile)
 {
-	_geoTile = geoTile;
+	_tiles[tileName] = geoTile;
 }
 
-shared_ptr<GeoTile> StepData::Tile()
+shared_ptr< GeoTile > StepData::GetTile(string tileName)
 {
-	return _geoTile;
+	return _tiles[tileName];
 }
 
-void StepData::SetMaskTile(std::shared_ptr< GeoTile > maskTile)
+map< string, shared_ptr< GeoTile > > StepData::Tiles()
 {
-	_maskTile = maskTile;
+	return _tiles;
 }
 
-std::shared_ptr< GeoTile > StepData::MaskTile()
+void StepData::AddProcessedTile(string tileName, shared_ptr< GeoTile > geoTile)
 {
-	return _maskTile;
+	_processedTiles[tileName] = geoTile;
 }
 
-void StepData::SetMaskedTile(std::shared_ptr< GeoTile > maskedTile)
+shared_ptr< GeoTile > StepData::GetProcessedTile(string tileName)
 {
-	_maskedTile = maskedTile;
+	return _processedTiles[tileName];
 }
 
-std::shared_ptr< GeoTile > StepData::MaskedTile()
+map< string, shared_ptr< GeoTile > > StepData::ProcessedTiles()
 {
-	return _maskedTile;
+	return _processedTiles;
 }
-
-
-
-
-
-
