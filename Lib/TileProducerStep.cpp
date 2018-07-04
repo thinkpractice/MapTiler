@@ -27,10 +27,6 @@ void TileProducerStep::Run()
 			stepData->SetNumberOfTiles(_tileGrid.NumberOfTiles());
 			stepData->SetBoundingRect(tileRect);
             OutQueue()->enqueue(stepData);
-            numberOfTilesDownloaded++;
-
-            if (numberOfTilesDownloaded % 100 == 0)
-                cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(_tileGrid.NumberOfTiles()) << endl;
         }
         catch (...)
         {
