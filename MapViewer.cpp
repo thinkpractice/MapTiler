@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <regex>
 #include <vector>
+#include <map>
 #include <string>
 #include <chrono>
 #include <atomic>
@@ -28,11 +29,17 @@ struct MapTilerSettings
     MapTilerSettings()
         :   //rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
             rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"),
+            mapFilenames()/*{
+				{"ir_2016", u8""},
+				{"rgb_2017", u8""},
+				{"ir_2017", u8""}
+			})*/,
             polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs")
     {
     }
 
     string rasterFilename;
+	map<string, string> mapFilenames;
     string polygonFilename;
     string targetDirectory;
     string address;    
@@ -124,12 +131,60 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
     return CommandLineOk;
 }
 
-void DownloadTilesForArea(GeoMap* chosenMap, const Area& area, int tileWidth, int tileHeight, string tileDirectory, string polygonFilename)
+shared_ptr<GeoMap> GetMapForUrl(string url)
 {
+    GeoMapProvider mapProvider(url);
+    if (mapProvider.Maps().size() == 0)
+    {
+        cout << "No maps at url/in file" << endl;\
+        return nullptr;
+    }
+
+    auto chosenMap = mapProvider.Maps().front();
+    if (mapProvider.Maps().size() > 1)
+    {
+        cout << "Multiple Maps found at url, please choose the one you would like to use:" << endl;
+        chosenMap = Menu<shared_ptr<GeoMap>>::ShowMenu(mapProvider.Maps(), [&](int i, shared_ptr<GeoMap> dataset){
+                string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
+                return menuItem;
+            });
+    }
+
+    cout << "Starting MapTiler for map at: " << chosenMap->Title() << endl;
+
+    cout << "GeoTransform: (";
+    double geoTransform[6];
+    chosenMap->MapTransform().GetTransformMatrix(geoTransform);
+    for (int i = 0; i < 6; i++)
+    {
+        cout << geoTransform[i];
+        if (i < 5) cout << ",";
+    }
+    cout << ")" << endl;
+
+    cout << "Layer count: " << chosenMap->LayerCount() << endl;
+    cout << "Raster count: " << chosenMap->RasterCount() << endl;
+    cout << "Raster X size: " << chosenMap->WidthInPixels() << endl;
+    cout << "Raster Y size: " << chosenMap->HeightInPixels() << endl;
+	return chosenMap;
+}
+
+void DownloadTilesForArea(const MapTilerSettings& settings, const Area& area)
+{
+	auto mainRasterMap = GetMapForUrl(settings.rasterFilename);
+    Area mapArea = mainRasterMap->GetMapArea();
+    cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
+	
     Utils::TimeIt([&]
     {
-      TileProcessor processor(chosenMap, area, tileWidth, tileHeight);
-      processor.StartProcessing(tileDirectory, polygonFilename);
+      TileProcessor processor(mainRasterMap, area, settings.tileWidth, settings.tileHeight);
+	  for (auto mapPair : settings.mapFilenames)
+	  {
+		  auto map = GetMapForUrl(mapPair.second);
+		  processor.AddRasterMap(mapPair.first, map);
+	  }
+		  
+      processor.StartProcessing(settings.targetDirectory, settings.polygonFilename);
     });
     cout << "Finished" << endl;
 }
@@ -161,47 +216,11 @@ int main(int argc, char** argv)
             Q_UNREACHABLE();
     };
 
-    GeoMapProvider mapProvider(settings.rasterFilename);
-    if (mapProvider.Maps().size() == 0)
-    {
-        cout << "No maps at url/in file" << endl;\
-        return -1;
-    }
-
-    GeoMap* chosenMap = mapProvider.Maps().front();
-    if (mapProvider.Maps().size() > 1)
-    {
-        cout << "Multiple Maps found at url, please choose the one you would like to use:" << endl;
-        chosenMap = Menu<GeoMap*>::ShowMenu(mapProvider.Maps(), [&](int i, GeoMap* dataset){
-                string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
-                return menuItem;
-            });
-    }
-
-    cout << "Starting MapTiler for map at: " << chosenMap->Title() << endl;
     cout << "Polygon url: " << settings.polygonFilename << endl;
     cout << "Target directory: " << settings.targetDirectory << endl;
     cout << "Address: " << settings.address << endl;
     cout << "Tile width: " << settings.tileWidth << endl;
     cout << "Tile height: " << settings.tileHeight << endl;
-
-    cout << "GeoTransform: (";
-    double geoTransform[6];
-    chosenMap->MapTransform().GetTransformMatrix(geoTransform);
-    for (int i = 0; i < 6; i++)
-    {
-        cout << geoTransform[i];
-        if (i < 5) cout << ",";
-    }
-    cout << ")" << endl;
-
-    cout << "Layer count: " << chosenMap->LayerCount() << endl;
-    cout << "Raster count: " << chosenMap->RasterCount() << endl;
-    cout << "Raster X size: " << chosenMap->WidthInPixels() << endl;
-    cout << "Raster Y size: " << chosenMap->HeightInPixels() << endl;
-
-    Area mapArea = chosenMap->GetMapArea();
-    cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
@@ -218,7 +237,7 @@ int main(int argc, char** argv)
                                 return to_string(i) + ") " + area.Description();
                             });*/
                     }
-                    DownloadTilesForArea(chosenMap, chosenArea, settings.tileWidth, settings.tileHeight, settings.targetDirectory, settings.polygonFilename);
+                    DownloadTilesForArea(settings, chosenArea);
 					QCoreApplication::exit(0);
                 }
             });

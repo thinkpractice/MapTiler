@@ -1,6 +1,6 @@
 #include "TileDownloadStep.h"
 
-TileDownloadStep::TileDownloadStep(string tileName, GeoMap* map)
+TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map)
 					:	ProcessingStep(PreProcessing),
 						_tileName(tileName),
 						_map(map)

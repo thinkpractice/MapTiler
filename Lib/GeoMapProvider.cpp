@@ -8,20 +8,16 @@
 #define kDescriptionFieldKey "DESC"
 
 GeoMapProvider::GeoMapProvider(string filename)
-                   :   _filename(filename)
+					:	_filename(filename)
 {
     GDALAllRegister();
 }
 
 GeoMapProvider::~GeoMapProvider()
 {
-    for (GeoMap* map : _maps)
-    {
-        delete map;
-    }
 }
 
-vector<GeoMap*> GeoMapProvider::Maps()
+vector< shared_ptr< GeoMap > > GeoMapProvider::Maps()
 {
     if (_maps.size() == 0)
     {
@@ -30,9 +26,9 @@ vector<GeoMap*> GeoMapProvider::Maps()
     return _maps;
 }
 
-vector<GeoMap*> GeoMapProvider::RetrieveMaps()
+vector< shared_ptr< GeoMap > > GeoMapProvider::RetrieveMaps()
 {
-    vector<GeoMap*> maps;
+    vector<shared_ptr<GeoMap>> maps;
 
     GDALDataset  *dataset = (GDALDataset *) GDALOpen(_filename.c_str(), GA_ReadOnly );
     if(!dataset)
@@ -44,7 +40,7 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
     char** metadata = dataset->GetMetadata("SUBDATASETS");
     if (!metadata)
     {
-        maps.push_back(new GDALMap(_filename));
+        maps.push_back(make_shared<GDALMap>(_filename));
     }
     else
     {
@@ -56,11 +52,11 @@ vector<GeoMap*> GeoMapProvider::RetrieveMaps()
             string keyType = Utils::GetKeyType(key);
             if (keyType == kNameFieldKey)
             {
-                maps.push_back(new GDALMap(value));
+                maps.push_back(make_shared<GDALMap>(value));
             }
             else if (keyType  == kDescriptionFieldKey)
             {
-                GeoMap* map = maps.back();
+                auto map = maps.back();
                 map->SetTitle(value);
             }
         }

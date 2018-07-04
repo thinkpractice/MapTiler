@@ -72,7 +72,7 @@ int main(int argc, char** argv)
     */
 
     GeoMapProvider mapProvider(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml");
-    GeoMap* map = mapProvider.Maps()[1];
+    auto map = mapProvider.Maps()[1];
 
     MappedVectorFile mappedVectorFile(filename, map->ProjectionReference(), map->MapTransform());
     //auto layer = *vectorFile[1].get();

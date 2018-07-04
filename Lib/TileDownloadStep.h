@@ -10,14 +10,14 @@ using namespace std;
 class TileDownloadStep : public ProcessingStep
 {
 public:
-	TileDownloadStep(string tileName, GeoMap* map);
+	TileDownloadStep(string tileName, shared_ptr<GeoMap> map);
 	virtual ~TileDownloadStep();
 	
 	virtual void Run();
 	
 public:
 	string _tileName;
-	GeoMap* _map;
+	shared_ptr<GeoMap> _map;
 };
 
 #endif

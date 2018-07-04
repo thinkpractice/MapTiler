@@ -2,6 +2,7 @@
 #define GEOMAP_PROVIDER_H
 
 #include <string>
+#include <memory>
 #include "GeoMap.h"
 
 using namespace std;
@@ -9,17 +10,17 @@ using namespace std;
 class GeoMapProvider
 {
     public:
-        GeoMapProvider(string filename);
+		GeoMapProvider(string filename);		
         virtual ~GeoMapProvider();
-
-        vector<GeoMap*> Maps();
+		
+        vector<shared_ptr<GeoMap>> Maps();
 
     private:
-        vector<GeoMap*> RetrieveMaps();
+        vector<shared_ptr<GeoMap>> RetrieveMaps();
 
     private:
         string _filename;
-        vector<GeoMap*> _maps;
+        vector<shared_ptr<GeoMap>> _maps;
 
 };
 
