@@ -7,7 +7,6 @@ using namespace std;
 GeoTile::GeoTile(const Rect& rect, const Area& area, int numberOfLayers)
             :   _rect(rect),
                 _area(area),
-                _uniqueId(Utils::UUID()),
                 _numberOfLayers(numberOfLayers)
 {
     _data = new unsigned char[NumberOfBytes()];
@@ -16,16 +15,6 @@ GeoTile::GeoTile(const Rect& rect, const Area& area, int numberOfLayers)
 GeoTile::~GeoTile()
 {
     delete[] _data;
-}
-
-string GeoTile::UniqueId()
-{
-    return _uniqueId;
-}
-
-void GeoTile::SetUniqueId(string uniqueId)
-{
-    _uniqueId = uniqueId;
 }
 
 int GeoTile::NumberOfBytes()

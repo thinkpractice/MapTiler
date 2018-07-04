@@ -20,16 +20,16 @@ void TileWriterStep::Run()
 {
      while (auto stepData = InQueue()->dequeue())
 	 {
-         SaveTile(stepData->Tile());
-		 SaveTile(stepData->MaskTile());
-		 SaveTile(stepData->MaskedTile());
+		 string tileFilename = _tileDirectory + stepData->UniqueId();
+         SaveTile(stepData->Tile(), tileFilename + ".tiff");
+		 SaveTile(stepData->MaskTile(), tileFilename + "_mask.tiff");
+		 SaveTile(stepData->MaskedTile(), tileFilename +"_masked.tiff");
 	 }
 }
 
-void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)
+void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile, string tileFilename)
 {
     TileWriter tileWriter(make_shared<GdalWriter>());
-    string tileFilename = _tileDirectory + tile->UniqueId() + ".tiff";
     tileWriter.Save(tile, tileFilename);
 
     _numberOfTilesWritten++;

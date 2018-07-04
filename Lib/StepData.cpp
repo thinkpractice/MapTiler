@@ -1,11 +1,23 @@
 #include "StepData.h"
+#include "Utils.h"
 
 StepData::StepData()
+			:	_uniqueId(Utils::UUID())
 {
 }
 
 StepData::~StepData()
 {
+}
+
+string StepData::UniqueId()
+{
+	return _uniqueId;
+}
+
+void StepData::SetUniqueId(string uniqueId)
+{
+	_uniqueId = uniqueId;
 }
 
 int StepData::NumberOfTiles() const

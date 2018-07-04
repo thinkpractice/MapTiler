@@ -4,6 +4,7 @@
 #include "Rect.h"
 #include "GeoTile.h"
 #include <memory>
+#include <string>
 
 using namespace std;
 
@@ -12,6 +13,9 @@ class StepData
 public:
 	StepData();
 	virtual ~StepData();
+	
+	string UniqueId();
+	void SetUniqueId(string uniqueId);
 	
 	int NumberOfTiles() const;
 	void SetNumberOfTiles(int numberOfTiles);
@@ -29,6 +33,7 @@ public:
 	shared_ptr<GeoTile> MaskedTile();
 	
 private:
+	string _uniqueId;
 	int _numberOfTiles;
 	Rect _boundingRect;
 	shared_ptr<GeoTile> _geoTile;

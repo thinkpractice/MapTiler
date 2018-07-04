@@ -69,7 +69,6 @@ void TileGpuTransferStep::Run()
             DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 			
             auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-            maskedTile->SetUniqueId(geoTile->UniqueId() + "_masked");
             // Swap buffers
             glfwSwapBuffers(window);
 
@@ -289,8 +288,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
     }
 
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
-    maskTile->SetUniqueId(geoTile->UniqueId() + "_mask");
-
     return maskTile;
 }
 

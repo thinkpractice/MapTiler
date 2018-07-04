@@ -11,7 +11,7 @@ class TileWriterStep : public ProcessingStep
         virtual ~TileWriterStep();
 
         void Run();
-        void SaveTile(shared_ptr<GeoTile> tile);
+        void SaveTile(shared_ptr<GeoTile> tile, string tileFilename);
 
     private:
         string _tileDirectory;
