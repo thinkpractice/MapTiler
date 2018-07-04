@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "Rect.h"
-#include "GeoTile.h"
+#include "StepData.h"
 #include "SafeQueue.h"
 
 using namespace std;
@@ -13,8 +13,8 @@ class ProcessingStep
     public:
         enum ProcessingType { PreProcessing, PostProcessing };
 
-        using TileType = shared_ptr<GeoTile>;
-        using QueueType = SafeQueue<TileType>;
+        using StepDataType = shared_ptr<StepData>;
+        using QueueType = SafeQueue<StepDataType>;
     public:
         ProcessingStep(ProcessingType type);
         virtual ~ProcessingStep();

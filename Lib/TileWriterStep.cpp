@@ -18,8 +18,12 @@ TileWriterStep::~TileWriterStep()
 
 void TileWriterStep::Run()
 {
-     while (auto tileToProcess = InQueue()->dequeue())
-         SaveTile(tileToProcess);
+     while (auto stepData = InQueue()->dequeue())
+	 {
+         SaveTile(stepData->Tile());
+		 SaveTile(stepData->MaskTile());
+		 SaveTile(stepData->MaskedTile());
+	 }
 }
 
 void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile)

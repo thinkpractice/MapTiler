@@ -28,13 +28,13 @@ void ProcessingPipeline::AddProcessingStep(shared_ptr<ProcessingStep> step)
 
     if (previousStepIndex < 0)
     {
-        shared_ptr<SafeQueue<shared_ptr<GeoTile>>> inQueue(new SafeQueue<shared_ptr<GeoTile>>());
+        shared_ptr<ProcessingStep::QueueType> inQueue(new ProcessingStep::QueueType());
         _queues.push_back(inQueue);
     }
 
-    shared_ptr<SafeQueue<shared_ptr<GeoTile>>> outQueue(new SafeQueue<shared_ptr<GeoTile>>());
+    shared_ptr<ProcessingStep::QueueType> outQueue(new ProcessingStep::QueueType());
     _queues.push_back(outQueue);
 
-    shared_ptr<SafeQueue<shared_ptr<GeoTile>>> inQueue = _queues[previousStepIndex + 1];
+    shared_ptr<ProcessingStep::QueueType> inQueue = _queues[previousStepIndex + 1];
     step->InitQueues(inQueue, outQueue);
 }

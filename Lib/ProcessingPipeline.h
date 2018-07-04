@@ -20,7 +20,7 @@ public:
     void AddProcessingStep(shared_ptr<ProcessingStep> step);
 
 private:
-        vector< shared_ptr<SafeQueue<shared_ptr<GeoTile>>> > _queues;
+		vector< shared_ptr<ProcessingStep::QueueType> > _queues;
         vector< shared_ptr<ProcessingStep> > _processingSteps;
         vector<thread> _threads;
 };

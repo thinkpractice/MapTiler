@@ -1,10 +1,11 @@
 #include "TileProducerStep.h"
 #include "Utils.h"
+#include "StepData.h"
 #include <iostream>
+#include <memory>
 
-TileProducerStep::TileProducerStep(GeoMap* map, const TileGrid& tileGrid)
+TileProducerStep::TileProducerStep(const TileGrid& tileGrid)
                 :   ProcessingStep(PreProcessing),
-                    _map(map),
                     _tileGrid(tileGrid)
 {
 }
@@ -22,11 +23,10 @@ void TileProducerStep::Run()
     {
         try
         {
-            //cout << "downloading tile (" << tileRect.Left() << "," << tileRect.Top() << "," << tileRect.Right() << "," << tileRect.Bottom() << ")" << endl;
-            auto tile = shared_ptr<GeoTile>(_map->GetTileForRect(tileRect));
-            //TODO implement ProcessingState object with common variables? like the GeoTile being processed?
-
-            OutQueue()->enqueue(tile);
+			auto stepData = make_shared<StepData>();
+			stepData->SetNumberOfTiles(_tileGrid.NumberOfTiles());
+			stepData->SetBoundingRect(tileRect);
+            OutQueue()->enqueue(stepData);
             numberOfTilesDownloaded++;
 
             if (numberOfTilesDownloaded % 100 == 0)

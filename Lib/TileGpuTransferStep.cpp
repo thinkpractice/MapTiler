@@ -38,8 +38,9 @@ void TileGpuTransferStep::Run()
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
 		polygonShaderProgram.Create();
 
-        while(auto geoTile = InQueue()->dequeue())
+        while(auto stepData = InQueue()->dequeue())
         {
+			auto geoTile = stepData->Tile();
             glBindVertexArray(polygonVao);
 
             FrameBuffer polygonBuffer;
@@ -73,10 +74,10 @@ void TileGpuTransferStep::Run()
             glfwSwapBuffers(window);
 
             //Pass original and created tiles on to next step
-            OutQueue()->enqueue(geoTile);
-            OutQueue()->enqueue(maskTile);
-            OutQueue()->enqueue(maskedTile);
-			
+			stepData->SetMaskTile(maskTile);
+			stepData->SetMaskedTile(maskedTile);
+            OutQueue()->enqueue(stepData);
+
             glDeleteTextures(1, &textureId);
             glDeleteTextures(1, &polygonTextureId);
 
