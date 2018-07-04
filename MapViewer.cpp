@@ -29,11 +29,11 @@ struct MapTilerSettings
     MapTilerSettings()
         :   //rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
             rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"),
-            mapFilenames()/*{
-				{"ir_2016", u8""},
-				{"rgb_2017", u8""},
-				{"ir_2017", u8""}
-			})*/,
+            mapFilenames({
+				{"ir_2016", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"},
+				{"rgb_2017", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"},
+				{"ir_2017", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25IR,tilematrixset=EPSG:3857"}
+			}),
             polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs")
     {
     }
@@ -42,7 +42,8 @@ struct MapTilerSettings
 	map<string, string> mapFilenames;
     string polygonFilename;
     string targetDirectory;
-    string address;    
+    string address;
+	string displayUrl;
     int addressOption;
     int tileWidth;
     int tileHeight;
@@ -70,6 +71,7 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
     const QCommandLineOption versionOption = parser.addVersionOption();
 
     parser.addOptions({
+		{"display_datasets", QCoreApplication::translate("main", "Displays the datasets available at <url>, the ends the app."), "url", ""},
         {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
         {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},              
         {{"t", "target-directory"},
@@ -91,6 +93,13 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
     if (parser.isSet(helpOption))
         return CommandLineHelpRequested;
 
+    QString displayUrl = parser.value("display_datasets");
+    if (!displayUrl.isEmpty())
+	{
+        settings->displayUrl = displayUrl.toStdString();
+		return CommandLineOk;
+	}
+	
     QString address = parser.value("address");
     if (!address.isEmpty())
         settings->address = address.toStdString();
@@ -177,14 +186,13 @@ void DownloadTilesForArea(const MapTilerSettings& settings, const Area& area)
 	
     Utils::TimeIt([&]
     {
-      TileProcessor processor(mainRasterMap, area, settings.tileWidth, settings.tileHeight);
-	  for (auto mapPair : settings.mapFilenames)
-	  {
-		  auto map = GetMapForUrl(mapPair.second);
-		  processor.AddRasterMap(mapPair.first, map);
-	  }
-		  
-      processor.StartProcessing(settings.targetDirectory, settings.polygonFilename);
+		TileProcessor processor(mainRasterMap, area, settings.tileWidth, settings.tileHeight);
+		for (auto mapPair : settings.mapFilenames)
+		{
+			auto map = GetMapForUrl(mapPair.second);
+			processor.AddRasterMap(mapPair.first, map);
+		}
+		processor.StartProcessing(settings.targetDirectory, settings.polygonFilename);
     });
     cout << "Finished" << endl;
 }
@@ -216,6 +224,18 @@ int main(int argc, char** argv)
             Q_UNREACHABLE();
     };
 
+	if (settings.displayUrl != "")
+	{
+		GeoMapProvider mapProvider(settings.displayUrl);
+		for (auto map : mapProvider.Maps())
+		{
+			cout << "title=" + map->Title() + ", url=" + map->Filename() << endl;	
+		}
+		
+		QCoreApplication::exit(0);
+		return 0;
+	}
+	
     cout << "Polygon url: " << settings.polygonFilename << endl;
     cout << "Target directory: " << settings.targetDirectory << endl;
     cout << "Address: " << settings.address << endl;
