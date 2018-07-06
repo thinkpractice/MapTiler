@@ -1,10 +1,9 @@
 #include "AddMetadataStep.h"
 
-AddMetadataStep::AddMetadataStep(string metadataName, string metadataUrl, int layerIndex)
+AddMetadataStep::AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex)
                     :	ProcessingStep(PreProcessing),
                         _metadataName(metadataName),
-                        _metadataUrl(metadataUrl),
-                        _vectorFile(_metadataUrl),
+                        _vectorFile(vectorFile),
                         _layerIndex(layerIndex)
 {
 }
@@ -18,11 +17,6 @@ string AddMetadataStep::MetadataName()
     return _metadataName;
 }
 
-string AddMetadataStep::MetadataUrl()
-{
-    return _metadataUrl;
-}
-
 int AddMetadataStep::LayerIndex()
 {
     return _layerIndex;
@@ -30,7 +24,7 @@ int AddMetadataStep::LayerIndex()
 
 void AddMetadataStep::Run()
 {
-    auto layer = _vectorFile[_layerIndex];
+    auto layer = _vectorFile->Layers()[_layerIndex];
     while (auto stepData = InQueue()->dequeue())
     {
         layer->SetSpatialFilter(stepData->BoundingArea());
@@ -39,8 +33,10 @@ void AddMetadataStep::Run()
         for (auto it = layer->begin(); it != layer->end(); ++it)
         {
             auto feature = *it;
-            metadataFeature.push_back(feature);
+            metadataFeatures.push_back(feature);
         }
         stepData->AddMetadataFeatures(_metadataName, metadataFeatures);
+        OutQueue()->enqueue(stepData);
     }
+    DoneProcessing();
 }

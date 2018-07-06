@@ -42,6 +42,4 @@ void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile, string tileFilename)
 {
     TileWriter tileWriter(make_shared<GdalWriter>());
     tileWriter.Save(tile, tileFilename);
-
-
 }

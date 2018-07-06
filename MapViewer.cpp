@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include <atomic>
+#include "Lib/MapTilerSettings.h"
 #include "Lib/GLWindow.h"
 #include "Lib/Menu.h"
 #include "Lib/GeoMapProvider.h"
@@ -23,31 +24,6 @@
 #include "Lib/Utils.h"
 
 using namespace std;
-
-struct MapTilerSettings
-{
-    MapTilerSettings()
-        :   //rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml"),
-            rasterFilename(u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"),
-            /*mapFilenames({
-				{"ir_2016", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"},
-				{"rgb_2017", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"},
-				{"ir_2017", u8"WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25IR,tilematrixset=EPSG:3857"}
-            }),*/
-            polygonFilename(u8"WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs")
-    {
-    }
-
-    string rasterFilename;
-	map<string, string> mapFilenames;
-    string polygonFilename;
-    string targetDirectory;
-    string address;
-	string displayUrl;
-    int addressOption;
-    int tileWidth;
-    int tileHeight;
-};
 
 enum CommandLineParseResult
 {
@@ -134,8 +110,8 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
         *errorMessage = "An url argument is missing.";
         return CommandLineError;
     }
-    settings->rasterFilename = positionalArguments[0].toStdString();
-    settings->polygonFilename = positionalArguments[1].toStdString();
+    settings->mainRasterFilename = positionalArguments[0].toStdString();
+    settings->metadataFilenames["polygons"] = {positionalArguments[1].toStdString(), 1};
 
     return CommandLineOk;
 }
@@ -183,18 +159,17 @@ shared_ptr<GeoMap> GetMapForUrl(string url)
 
 void DownloadTilesForArea(const MapTilerSettings& settings, const Area& area)
 {
-	auto mainRasterMap = GetMapForUrl(settings.rasterFilename);
-   
-	
+    auto mainRasterMap = GetMapForUrl(settings.mainRasterFilename);
+
     Utils::TimeIt([&]
     {
-		TileProcessor processor(mainRasterMap, area, settings.tileWidth, settings.tileHeight);
+        TileProcessor processor(mainRasterMap, area, settings);
 		for (auto mapPair : settings.mapFilenames)
 		{
 			auto map = GetMapForUrl(mapPair.second);
 			processor.AddRasterMap(mapPair.first, map);
 		}
-		processor.StartProcessing(settings.targetDirectory, settings.polygonFilename);
+        processor.StartProcessing();
     });
     cout << "Finished" << endl;
 }
@@ -238,7 +213,8 @@ int main(int argc, char** argv)
 		return 0;
 	}
 	
-    cout << "Polygon url: " << settings.polygonFilename << endl;
+    for (auto metadataPair : settings.metadataFilenames)
+        cout << "Metadata: " << metadataPair.first << " url: " << metadataPair.second.metadataFilename << " layerIndex: " << metadataPair.second.layerIndex << endl;
     cout << "Target directory: " << settings.targetDirectory << endl;
     cout << "Address: " << settings.address << endl;
     cout << "Tile width: " << settings.tileWidth << endl;

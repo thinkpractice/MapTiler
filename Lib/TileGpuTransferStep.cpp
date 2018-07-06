@@ -6,10 +6,8 @@
 
 using namespace std;
 
-TileGpuTransferStep::TileGpuTransferStep(shared_ptr<VectorFile> vectorFile, int layerIndex, int tileWidth, int tileHeight)
+TileGpuTransferStep::TileGpuTransferStep(int tileWidth, int tileHeight)
                         :   ProcessingStep(PreProcessing),
-                            _vectorFile(vectorFile),
-                            _layerIndex(layerIndex),
                             _tileWidth(tileWidth),
                             _tileHeight(tileHeight)
 {
@@ -23,7 +21,6 @@ void TileGpuTransferStep::Run()
 {
     GLWindow window(_tileWidth, _tileHeight);
 
-    auto layer = _vectorFile->Layers()[_layerIndex];
     window.StartRendering([&](GLFWwindow* window)
     {
         GLuint maskingVao;
@@ -40,11 +37,10 @@ void TileGpuTransferStep::Run()
 
         while(auto stepData = InQueue()->dequeue())
         {
+            vector<Feature> polygonFeatures = stepData->GetMetadataFeatures("polygons");
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;
-                //Get geometries for this tile
-                layer->SetSpatialFilter(geoTile->BoundingArea());
                 glBindVertexArray(polygonVao);
 
 				FrameBuffer polygonBuffer;
@@ -54,7 +50,7 @@ void TileGpuTransferStep::Run()
 				polygonShaderProgram.Use();
 
 				GLuint polygonTextureId;
-				auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
+                auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, polygonFeatures, &polygonTextureId);
 			
 				//Do onscreen drawing
                 glBindVertexArray(maskingVao);
@@ -97,7 +93,7 @@ void TileGpuTransferStep::Run()
 		glDeleteVertexArrays(1, &polygonVao);
 		
     });
-    OutQueue()->enqueue(nullptr);
+    DoneProcessing();
 }
 
 ShaderProgram TileGpuTransferStep::SetupPolygonShaders(GLuint* vao)
@@ -248,7 +244,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* tex
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *textureId, 0);
 }
 
-shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, shared_ptr<Layer> layer, GLuint* textureId)
+shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures, GLuint* textureId)
 {
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, textureId);
@@ -264,9 +260,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 
 	Tesselator tesselator;
 	int numberOfPolygons = 0;
-    for (auto it = layer->begin(); it != layer->end(); ++it)
+    for (auto feature : polygonFeatures)
     {
-        auto feature = *it;
         auto multiPolygon = feature.Geometry().GetMultiPolygon();
 
         for (auto polygon : multiPolygon)

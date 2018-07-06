@@ -26,6 +26,8 @@ class ProcessingStep
         shared_ptr<QueueType> InQueue() { return _inQueue; };
         shared_ptr<QueueType> OutQueue() { return _outQueue; };
 
+        void DoneProcessing();
+
     private:
         ProcessingType _type;
         shared_ptr<QueueType> _inQueue;

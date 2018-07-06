@@ -31,7 +31,6 @@ void TileDownloadStep::Run()
 		{
 		}
 	}
-	//Notify process is ended
-	OutQueue()->enqueue(nullptr);
+    DoneProcessing();
 }
 

@@ -2,6 +2,7 @@
 #define ADDMETADATASTEP_H
 
 #include <string>
+#include <memory>
 #include "ProcessingStep.h"
 #include "VectorFile.h"
 
@@ -10,18 +11,16 @@ using namespace std;
 class AddMetadataStep : public ProcessingStep
 {
 public:
-    AddMetadataStep(string metadataName, string metadataUrl, int layerIndex = 0);
+    AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex = 0);
     virtual ~AddMetadataStep();
 
     string MetadataName();
-    string MetadataUrl();
     int LayerIndex();
     virtual void Run();
 
 private:
     string _metadataName;
-    string _metadataUrl;
-    VectorFile _vectorFile;
+    shared_ptr<VectorFile> _vectorFile;
     int _layerIndex;
 };
 

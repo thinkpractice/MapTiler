@@ -4,9 +4,9 @@
 #include <iostream>
 #include <memory>
 
-TileProducerStep::TileProducerStep(const TileGrid& tileGrid)
+TileProducerStep::TileProducerStep(const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight)
                 :   ProcessingStep(PreProcessing),
-                    _tileGrid(tileGrid)
+                    _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight)
 {
 }
 
@@ -32,6 +32,5 @@ void TileProducerStep::Run()
         {
         }
     }
-    //Notify process is ended
-    OutQueue()->enqueue(nullptr);
+    DoneProcessing();
 }

@@ -20,3 +20,7 @@ void ProcessingStep::InitQueues(shared_ptr<QueueType> inQueue, shared_ptr<QueueT
     _outQueue = outQueue;
 }
 
+void ProcessingStep::DoneProcessing()
+{
+    OutQueue()->enqueue(nullptr);
+}

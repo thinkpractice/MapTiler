@@ -40,6 +40,8 @@ Lib/Layer.h
 Lib/Lib_autogen/EWIEGA46WW/moc_AreaLookup.cpp
 Lib/Lib_autogen/moc_predefs.h
 Lib/Lib_autogen/mocs_compilation.cpp
+Lib/MapTilerSettings.cpp
+Lib/MapTilerSettings.h
 Lib/MapViewer_autogen/EWIEGA46WW/moc_AreaLookup.cpp
 Lib/MapViewer_autogen/include/moc_AreaLookup.cpp
 Lib/MapViewer_autogen/moc_predefs.h
