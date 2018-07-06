@@ -175,14 +175,16 @@ shared_ptr<GeoMap> GetMapForUrl(string url)
     cout << "Raster count: " << chosenMap->RasterCount() << endl;
     cout << "Raster X size: " << chosenMap->WidthInPixels() << endl;
     cout << "Raster Y size: " << chosenMap->HeightInPixels() << endl;
+	
+	Area mapArea = chosenMap->GetMapArea();
+	cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
 	return chosenMap;
 }
 
 void DownloadTilesForArea(const MapTilerSettings& settings, const Area& area)
 {
 	auto mainRasterMap = GetMapForUrl(settings.rasterFilename);
-    Area mapArea = mainRasterMap->GetMapArea();
-    cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
+   
 	
     Utils::TimeIt([&]
     {

@@ -95,6 +95,7 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
     GByte *rasterData[RasterCount()];
     for (int i = 0; i < RasterCount(); i++)
     {
+		//cout << "Getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << endl;
         rasterData[i] = GetDataForBand(i+1, rectangle.Left(), rectangle.Top(), rectangle.Width(), rectangle.Height());
     }
 
