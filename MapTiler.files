@@ -5,6 +5,8 @@ CMakeFiles/feature_tests.cxx
 GLTest.cpp
 GLTest_autogen/moc_predefs.h
 GLTest_autogen/mocs_compilation.cpp
+Lib/AddMetadataStep.cpp
+Lib/AddMetadataStep.h
 Lib/AffineTransform.cpp
 Lib/AffineTransform.h
 Lib/Area.cpp
@@ -68,6 +70,8 @@ Lib/StepData.h
 Lib/Tesselator.cpp
 Lib/Tesselator.h
 Lib/ThreadPool.h
+Lib/TileDownloadStep.cpp
+Lib/TileDownloadStep.h
 Lib/TileGpuTransferStep.cpp
 Lib/TileGpuTransferStep.h
 Lib/TileGrid.cpp

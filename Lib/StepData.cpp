@@ -30,9 +30,16 @@ void StepData::SetNumberOfTiles(int numberOfTiles)
 	_numberOfTiles = numberOfTiles;
 }
 
+Area StepData::BoundingArea()
+{
+    //TODO find out how to refactor this, undefined if Tiles() is empty.
+    auto geoTile = Tiles().begin()->second;
+    return geoTile->BoundingArea();
+}
+
 void StepData::SetBoundingRect(const Rect& rect)
 {
-	_boundingRect = rect;
+    _boundingRect = rect;
 }
 
 Rect StepData::BoundingRect()
@@ -68,4 +75,19 @@ shared_ptr< GeoTile > StepData::GetProcessedTile(string tileName)
 map< string, shared_ptr< GeoTile > > StepData::ProcessedTiles()
 {
 	return _processedTiles;
+}
+
+void StepData::AddMetadataFeatures(string metadataName, const vector<Feature> &features)
+{
+    _metadataFeatures[metadataName] = features;
+}
+
+map<string, vector<Feature>> StepData::MetadataFeatures()
+{
+    return _metadataFeatures;
+}
+
+vector<Feature> StepData::GetMetadataFeatures(string metadataName)
+{
+    return _metadataFeatures[metadataName];
 }

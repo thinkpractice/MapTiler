@@ -3,6 +3,7 @@
 
 #include "Rect.h"
 #include "GeoTile.h"
+#include "Feature.h"
 #include <memory>
 #include <map>
 #include <string>
@@ -21,6 +22,8 @@ public:
 	int NumberOfTiles() const;
 	void SetNumberOfTiles(int numberOfTiles);
 	
+    Area BoundingArea();
+
 	void SetBoundingRect(const Rect& rect);
 	Rect BoundingRect();
 	
@@ -32,12 +35,18 @@ public:
 	shared_ptr<GeoTile> GetProcessedTile(string tileName);
 	map<string, shared_ptr<GeoTile>> ProcessedTiles();
 	
+
+    void AddMetadataFeatures(string metadataName, const vector<Feature>& features);
+    vector<Feature> GetMetadataFeatures(string metadataName);
+    map<string, vector<Feature>> MetadataFeatures();
+
 private:
 	string _uniqueId;
 	int _numberOfTiles;
-	Rect _boundingRect;
+    Rect _boundingRect;
 	map<string, shared_ptr<GeoTile>> _tiles;
 	map<string, shared_ptr<GeoTile>> _processedTiles;
+    map<string, vector<Feature>> _metadataFeatures;
 };
 
 #endif
