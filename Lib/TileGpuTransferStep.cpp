@@ -43,7 +43,9 @@ void TileGpuTransferStep::Run()
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;
-				glBindVertexArray(polygonVao);
+                //Get geometries for this tile
+                layer->SetSpatialFilter(geoTile->BoundingArea());
+                glBindVertexArray(polygonVao);
 
 				FrameBuffer polygonBuffer;
 				polygonBuffer.Bind();
@@ -55,17 +57,17 @@ void TileGpuTransferStep::Run()
 				auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, layer, &polygonTextureId);
 			
 				//Do onscreen drawing
-				FrameBuffer frameBuffer;
+                glBindVertexArray(maskingVao);
+                FrameBuffer frameBuffer;
 				frameBuffer.Bind();
-				frameBuffer.Clear();
+                frameBuffer.Clear();
 				
 				GLuint textureId;
 				TileToTexture(geoTile, &textureId);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-				glBindVertexArray(maskingVao);
-				glClearColor(0,0,0,1);
-				glClear(GL_COLOR_BUFFER_BIT);
+                /*glClearColor(0,0,0,1);
+                glClear(GL_COLOR_BUFFER_BIT);*/
 				
 				maskingShaderProgram.Use();
 				DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
@@ -172,7 +174,7 @@ ShaderProgram TileGpuTransferStep::SetupMaskingShaders(GLuint* vao)
     {
         vec4 aerialColor = texture(aerialTex, Texcoord);
         vec4 polygonColor = texture(polygonTex, Texcoord);
-        outColor = polygonColor * aerialColor;
+        outColor = aerialColor * polygonColor;
     }
     )glsl";
     Shader fragmentShader(GL_FRAGMENT_SHADER, fragmentSource);
@@ -260,9 +262,6 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *textureId, 0);
 
-    //Get geometries for this tile
-    layer->SetSpatialFilter(geoTile->BoundingArea());
-
 	Tesselator tesselator;
 	int numberOfPolygons = 0;
     for (auto it = layer->begin(); it != layer->end(); ++it)
@@ -289,6 +288,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
         }
         numberOfPolygons++;
     }
+    if (numberOfPolygons > 0)
+        cout << "number of polygons drawn = " << numberOfPolygons << endl;
 
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     return maskTile;

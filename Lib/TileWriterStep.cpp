@@ -32,6 +32,9 @@ void TileWriterStep::Run()
 			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
 			 SaveTile(geoTile.second, filename);
 		 }
+         _numberOfTilesWritten++;
+         if (_numberOfTilesWritten % 100 == 0)
+             cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << endl;
 	 }
 }
 
@@ -40,7 +43,5 @@ void TileWriterStep::SaveTile(shared_ptr<GeoTile> tile, string tileFilename)
     TileWriter tileWriter(make_shared<GdalWriter>());
     tileWriter.Save(tile, tileFilename);
 
-    _numberOfTilesWritten++;
-    if (_numberOfTilesWritten % 100 == 0)
-        cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << endl;
+
 }

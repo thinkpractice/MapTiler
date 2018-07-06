@@ -63,6 +63,8 @@ Lib/ShaderProgram.cpp
 Lib/ShaderProgram.h
 Lib/SpatialReference.cpp
 Lib/SpatialReference.h
+Lib/StepData.cpp
+Lib/StepData.h
 Lib/Tesselator.cpp
 Lib/Tesselator.h
 Lib/ThreadPool.h
