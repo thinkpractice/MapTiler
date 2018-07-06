@@ -41,6 +41,7 @@ void TileGpuTransferStep::Run()
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;
+
                 glBindVertexArray(polygonVao);
 
 				FrameBuffer polygonBuffer;

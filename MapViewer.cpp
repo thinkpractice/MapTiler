@@ -35,10 +35,8 @@ enum CommandLineParseResult
 
 CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSettings *settings, string *errorMessage)
 {
-    //parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
     parser.setApplicationDescription("MapTiler downloads tiles of a given size from a geo raster webservice (WMS/WTMS) and masks them with a polygon layer.");
     parser.addPositionalArgument("rasterurl", QCoreApplication::translate("main", "Url to raster webservice (WMS/WMTS) with the aerial image."));
-    parser.addPositionalArgument("vectorurl", QCoreApplication::translate("main", "Url to the vector webservice (WFS) with the polygons."));
 
     QCommandLineOption useDefaultUrls({"d", "defaulturls"}, QCoreApplication::translate("main", "Uses default urls for rasterurl and vectorurl"));
     parser.addOption(useDefaultUrls);
@@ -46,7 +44,7 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
     const QCommandLineOption helpOption = parser.addHelpOption();
     const QCommandLineOption versionOption = parser.addVersionOption();
 
-    parser.addOptions({
+    parser.addOptions({{"vectorurl", QCoreApplication::translate("main", "<url>,<layerIndex> to the vector webservice (WFS) with the polygons. If layerIndex is not provided layerIndex=0 is assumed."), "url", ""},
 		{"display_datasets", QCoreApplication::translate("main", "Displays the datasets available at <url>, the ends the app."), "url", ""},
         {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
         {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},              
@@ -76,6 +74,18 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
 		return CommandLineOk;
 	}
 	
+    QString vectorUrl = parser.value("vectorurl");
+    if (!vectorUrl.isEmpty())
+    {
+        QStringList vectorParts = vectorUrl.split(",");
+        int layerIndex = 0;
+        QString	url = vectorParts[0];
+        if (vectorParts.size() > 1)
+            layerIndex = vectorParts[1].toInt();
+
+        settings->metadataFilenames["polygons"] = {url.toStdString(), layerIndex};
+    }
+
     QString address = parser.value("address");
     if (!address.isEmpty())
         settings->address = address.toStdString();
@@ -102,16 +112,10 @@ CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSett
     const QStringList positionalArguments = parser.positionalArguments();
     if (positionalArguments.isEmpty())
     {
-        *errorMessage = "Raster url and vector url arguments missing.";
-        return CommandLineError;
-    }
-    if (positionalArguments.size() <= 1)
-    {
-        *errorMessage = "An url argument is missing.";
+        *errorMessage = "Raster url argument is missing.";
         return CommandLineError;
     }
     settings->mainRasterFilename = positionalArguments[0].toStdString();
-    settings->metadataFilenames["polygons"] = {positionalArguments[1].toStdString(), 1};
 
     return CommandLineOk;
 }

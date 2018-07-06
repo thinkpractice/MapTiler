@@ -34,7 +34,9 @@ void TileProcessor::StartProcessing()
         auto metadataSettings = metadataPair.second;
         _pipeline.AddProcessingStep(make_shared<AddMetadataStep>(metadataPair.first, make_shared<MappedVectorFile>(metadataSettings.metadataFilename, _mainRasterMap->ProjectionReference(), _mainRasterMap->MapTransform()), metadataSettings.layerIndex));
     }
-    _pipeline.AddProcessingStep(make_shared<TileGpuTransferStep>(_settings.tileWidth, _settings.tileHeight));
+
+    if (_settings.metadataFilenames.count("polygons") > 0)
+        _pipeline.AddProcessingStep(make_shared<TileGpuTransferStep>(_settings.tileWidth, _settings.tileHeight));
     _pipeline.AddProcessingStep(make_shared<TileWriterStep>(_settings.targetDirectory));
     _pipeline.StartProcessing();
 }
