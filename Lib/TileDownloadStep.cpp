@@ -1,4 +1,6 @@
 #include "TileDownloadStep.h"
+#include <chrono>
+#include <thread>
 
 TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map)
 					:	ProcessingStep(PreProcessing),
@@ -26,6 +28,11 @@ void TileDownloadStep::Run()
 			
 			if (numberOfTilesDownloaded % 100 == 0)
 				cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(stepData->NumberOfTiles()) << endl;
+			if (numberOfTilesDownloaded > 0 && numberOfTilesDownloaded % 100 == 0)
+			{
+				cout << "Download of " << _tileName << " is sleeping for a while" << endl;
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+			}
 		}
 		catch (...)
 		{
