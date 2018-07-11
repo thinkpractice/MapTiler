@@ -4,8 +4,9 @@
 #include <iostream>
 #include <memory>
 
-TileProducerStep::TileProducerStep(const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight)
+TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight)
                 :   ProcessingStep(PreProcessing),
+					_map(map),
                     _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight)
 {
 }
@@ -23,9 +24,11 @@ void TileProducerStep::Run()
     {
         try
         {
-			auto stepData = make_shared<StepData>();
-			stepData->SetNumberOfTiles(_tileGrid.NumberOfTiles());
-			stepData->SetBoundingRect(tileRect);
+			Area area = _map->AreaForRect(tileRect);
+			auto stepData = make_shared<StepData>(tileRect, area);
+			
+			StepData::SetNumberOfTiles(_tileGrid.NumberOfTiles());
+			
             OutQueue()->enqueue(stepData);
         }
         catch (...)

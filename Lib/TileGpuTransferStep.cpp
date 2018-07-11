@@ -284,8 +284,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
         }
         numberOfPolygons++;
     }
-    if (numberOfPolygons > 0)
-        cout << "number of polygons drawn = " << numberOfPolygons << endl;
+    /*if (numberOfPolygons > 0)
+        cout << "number of polygons drawn = " << numberOfPolygons << endl;*/
 
     auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
     return maskTile;

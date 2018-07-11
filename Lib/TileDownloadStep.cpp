@@ -1,4 +1,5 @@
 #include "TileDownloadStep.h"
+#include "StepData.h"
 #include <chrono>
 #include <thread>
 
@@ -27,7 +28,8 @@ void TileDownloadStep::Run()
 			numberOfTilesDownloaded++;
 			
 			if (numberOfTilesDownloaded % 100 == 0)
-				cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(stepData->NumberOfTiles()) << endl;
+				cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(StepData::NumberOfTiles()) << endl;
+			
 			if (numberOfTilesDownloaded > 0 && numberOfTilesDownloaded % 100 == 0)
 			{
 				cout << "Download of " << _tileName << " is sleeping for a while" << endl;

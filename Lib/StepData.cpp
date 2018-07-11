@@ -1,8 +1,12 @@
 #include "StepData.h"
 #include "Utils.h"
 
-StepData::StepData()
-			:	_uniqueId(Utils::UUID())
+int StepData::numberOfTiles;
+
+StepData::StepData(const Rect& boundingRect, const Area& boundingArea)
+			:	_uniqueId(Utils::UUID()),
+				_boundingRect(boundingRect),
+				_boundingArea(boundingArea)
 {
 }
 
@@ -20,21 +24,19 @@ void StepData::SetUniqueId(string uniqueId)
 	_uniqueId = uniqueId;
 }
 
-int StepData::NumberOfTiles() const
+int StepData::NumberOfTiles()
 {
-	return _numberOfTiles;
+	return StepData::numberOfTiles;
 }
 
 void StepData::SetNumberOfTiles(int numberOfTiles)
 {
-	_numberOfTiles = numberOfTiles;
+	StepData::numberOfTiles = numberOfTiles;
 }
 
 Area StepData::BoundingArea()
 {
-    //TODO find out how to refactor this, undefined if Tiles() is empty.
-    auto geoTile = Tiles().begin()->second;
-    return geoTile->BoundingArea();
+    return _boundingArea;
 }
 
 void StepData::SetBoundingRect(const Rect& rect)

@@ -2,6 +2,7 @@
 #define STEP_DATA_H
 
 #include "Rect.h"
+#include "Area.h"
 #include "GeoTile.h"
 #include "Feature.h"
 #include <memory>
@@ -13,14 +14,14 @@ using namespace std;
 class StepData
 {
 public:
-	StepData();
+	StepData(const Rect& boundingRect, const Area& boundingArea);
 	virtual ~StepData();
 	
 	string UniqueId();
 	void SetUniqueId(string uniqueId);
 	
-	int NumberOfTiles() const;
-	void SetNumberOfTiles(int numberOfTiles);
+	static int NumberOfTiles();
+	static void SetNumberOfTiles(int numberOfTiles);
 	
     Area BoundingArea();
 
@@ -42,8 +43,9 @@ public:
 
 private:
 	string _uniqueId;
-	int _numberOfTiles;
+	static int numberOfTiles;
     Rect _boundingRect;
+	Area _boundingArea;
 	map<string, shared_ptr<GeoTile>> _tiles;
 	map<string, shared_ptr<GeoTile>> _processedTiles;
     map<string, vector<Feature>> _metadataFeatures;
