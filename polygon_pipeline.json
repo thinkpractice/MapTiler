@@ -6,6 +6,21 @@
     },
     "tile_width" : 256,
     "tile_height" : 256,
+    "area" :
+    {
+        "description" : "Heerlen",
+        "wkt" : "epsg:4326",
+        "top_left" :
+        {
+            "lat" : 5,
+            "lon" : 55
+        },
+        "bottom_right" :
+        {
+            "lat" : 5,
+            "lon" : 55
+        },
+    },
     "steps" : [
         {
             "name" : "Step 1: Produces Tiles for Map",
