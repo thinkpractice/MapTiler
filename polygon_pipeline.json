@@ -1,8 +1,8 @@
 {
     "mainRaster" :
     {
-        "raster_name" : "rgb_2016",
-        "raster_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
+        "layer_name" : "rgb_2016",
+        "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
     },
     "tile_width" : 256,
     "tile_height" : 256,
@@ -29,15 +29,15 @@
         {
             "name" : "Step 2a: Add BAG House Polygons",
             "type" : "AddMetadataStep",
-            "metadata_name" : "polygons",
-            "metadata_url" : "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs",
+            "layer_name" : "polygons",
+            "layer_url" : "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs",
             "layer_index" : 1
         },
         {
             "name" : "Step 2b: Add BAG House Polygons",
             "type" : "AddMetadataStep",
-            "metadata_name" : "addresses",
-            "metadata_url" : "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs",
+            "layer_name" : "addresses",
+            "layer_url" : "WFS:https://geodata.nationaalgeoregister.nl/inspireadressen/wfs?SERVICE=wfs",
             "layer_index" : 0
         },
         {
@@ -47,14 +47,14 @@
         {
             "name" : "Step 4b: Download IR tiles for 2016",
             "type" : "TileDownloadStep",
-            "raster_name" : "ir_2016",
-            "raster_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"
+            "layer_name" : "ir_2016",
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"
         },
         {
             "name" : "Step 4c: Download RGB tiles for 2017",
             "type" : "TileDownloadStep",
-            "raster_name" : "rgb_2017",
-            "raster_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"
+            "layer_name" : "rgb_2017",
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"
         },
         {
             "name" : "Step 5: Mask tiles with polygon layer",
