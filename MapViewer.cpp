@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include <atomic>
+#include <fstream>
 #include "Lib/MapTilerSettings.h"
 #include "Lib/GLWindow.h"
 #include "Lib/Menu.h"
@@ -22,6 +23,7 @@
 #include "Lib/SafeQueue.h"
 #include "Lib/TileProcessor.h"
 #include "Lib/Utils.h"
+#include "Lib/Settings.h"
 
 using namespace std;
 
@@ -185,6 +187,14 @@ int main(int argc, char** argv)
     QCoreApplication::setApplicationVersion("0.1");
 
     QCommandLineParser parser;
+
+    string filename =  "/home/tjadejong/Documents/CBS/MapViewer/polygon_pipeline.json";
+    Settings pipelineSettings = Settings::Open(filename);
+    for (auto& stepSettings : pipelineSettings.StepSettingsCollection())
+    {
+        cout << stepSettings.Name() << "-" << stepSettings.Type() << endl;
+    }
+
     MapTilerSettings settings;
     string errorMessage;
     switch (ParseCommandLine(parser, &settings, &errorMessage))

@@ -9,7 +9,7 @@
     "area" :
     {
         "description" : "Heerlen",
-        "wkt" : "epsg:4326",
+        "epsg" : "epsg:4326",
         "top_left" :
         {
             "lat" : 5,
@@ -19,7 +19,7 @@
         {
             "lat" : 5,
             "lon" : 55
-        },
+        }
     },
     "steps" : [
         {

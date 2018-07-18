@@ -1,5 +1,10 @@
 #include "Area.h"
 
+Area::Area()
+        : Area(0.0, 0.0, 0.0, 0.0)
+{
+}
+
 Area::Area(const SpatialReference& projectionReference, const Point& leftTop, const Point& bottomRight, string description)
         :   _spatialReference(projectionReference),
             _leftTop(leftTop),
@@ -25,14 +30,34 @@ SpatialReference Area::ProjectionReference() const
     return _spatialReference;
 }
 
+void Area::SetProjectionReference(const SpatialReference &projectionReference)
+{
+    _spatialReference = projectionReference;
+}
+
+void Area::SetEPSG(string epsg)
+{
+    SetProjectionReference(SpatialReference::FromEPSG(epsg));
+}
+
 Point Area::LeftTop() const
 {
     return _leftTop;
 }
 
+void Area::SetLeftTop(const Point &leftTop)
+{
+    _leftTop = leftTop;
+}
+
 Point Area::BottomRight() const
 {
     return _bottomRight;
+}
+
+void Area::SetBottomRight(const Point &bottomRight)
+{
+    _bottomRight = bottomRight;
 }
 
 void Area::SetDescription(string description)
