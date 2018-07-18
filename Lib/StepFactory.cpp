@@ -35,7 +35,7 @@ StepFactory::StepFactory()
             "TileDownloadStep",
             std::shared_ptr<ProcessingStep> (const StepSettings& stepSettings)
             {
-                return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), LoadRasterMap(stepSettings.LayerUrl()));
+                return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), LoadRasterMap(stepSettings));
             }
         },
         {
@@ -69,9 +69,22 @@ std::shared_ptr<ProcessingStep> StepFactory::StepFor(const StepSettings &stepSet
     return nullptr;
 }
 
-std::shared_ptr<GeoMap> StepFactory::LoadRasterMap(std::string rasterUrl)
+std::shared_ptr<GeoMap> StepFactory::LoadRasterMap(const StepSettings& stepSettings)
 {
+    GeoMapProvider mapProvider(stepSettings.LayerUrl());
+    if (mapProvider.Maps().size() == 0)
+    {
+        cerr << "No maps at url/in file" << endl;
+        return nullptr;
+    }
 
+    int layerIndex = 0;
+    if (mapProvider.Maps().size() >= 1)
+    {
+        layerIndex = stepSettings.LayerIndex();
+        cout << "Multiple Maps found at url, continuing with map at layerIndex: " << layerIndex << endl;
+    }
+    return mapProvider.Maps()[layerIndex];
 }
 
 std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const StepSettings& stepSettings)

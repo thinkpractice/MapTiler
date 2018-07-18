@@ -41,8 +41,8 @@ private:
     };
 
 private:
-    std::shared_ptr<GeoMap> LoadRasterMap(std::string rasterUrl);
-    std::shared_ptr<VectorFile> LoadVectorMap(std::string vectorUrl);
+    std::shared_ptr<GeoMap> LoadRasterMap(const StepSettings& stepSettings);
+    std::shared_ptr<VectorFile> LoadVectorFile(const StepSettings& stepSettings);
 
 private:
     std::vector< StepCreator > _steps;
