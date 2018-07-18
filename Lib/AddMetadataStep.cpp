@@ -1,7 +1,7 @@
 #include "AddMetadataStep.h"
 
 AddMetadataStep::AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex)
-                    :	ProcessingStep(PreProcessing),
+                    :	ProcessingStep(Processing),
                         _metadataName(metadataName),
                         _vectorFile(vectorFile),
                         _layerIndex(layerIndex)

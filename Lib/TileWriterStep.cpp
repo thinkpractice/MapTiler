@@ -6,7 +6,7 @@
 using namespace std;
 
 TileWriterStep::TileWriterStep(string tileDirectory)
-                    :   ProcessingStep(PreProcessing),
+                    :   ProcessingStep(Sink),
                         _tileDirectory(tileDirectory),
                         _numberOfTilesWritten(0)
 {

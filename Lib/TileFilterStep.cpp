@@ -3,7 +3,7 @@
 #include "StepData.h"
 
 TileFilterStep::TileFilterStep()
-					:	ProcessingStep(PreProcessing)
+                    :	ProcessingStep(Processing)
 {
 }
 

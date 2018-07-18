@@ -7,7 +7,7 @@
 using namespace std;
 
 TileGpuTransferStep::TileGpuTransferStep(int tileWidth, int tileHeight)
-                        :   ProcessingStep(PreProcessing),
+                        :   ProcessingStep(Processing),
                             _tileWidth(tileWidth),
                             _tileHeight(tileHeight)
 {

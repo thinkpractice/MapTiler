@@ -5,7 +5,7 @@
 #include <memory>
 
 TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight)
-                :   ProcessingStep(PreProcessing),
+                :   ProcessingStep(Source),
 					_map(map),
                     _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight)
 {

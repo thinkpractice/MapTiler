@@ -11,10 +11,11 @@ using namespace std;
 class ProcessingStep
 {
     public:
-        enum ProcessingType { PreProcessing, PostProcessing };
+        enum ProcessingType { Source, Processing, Sink };
 
         using StepDataType = shared_ptr<StepData>;
         using QueueType = SafeQueue<StepDataType>;
+
     public:
         ProcessingStep(ProcessingType type);
         virtual ~ProcessingStep();

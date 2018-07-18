@@ -4,7 +4,7 @@
 #include <thread>
 
 TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map)
-					:	ProcessingStep(PreProcessing),
+                    :	ProcessingStep(Source),
 						_tileName(tileName),
 						_map(map)
 {
