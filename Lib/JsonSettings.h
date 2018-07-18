@@ -66,12 +66,12 @@ void from_json(const json &j, StepSettings &stepSettings)
 {
     stepSettings.SetName(j.at("name").get<std::string>());
     stepSettings.SetType(j.at("type").get<std::string>());
-    stepSettings.SetLayerName(j.at("layer_name").get<std::string>());
-    stepSettings.SetLayerUrl(j.at("layer_url").get<std::string>());
-    stepSettings.SetLayerIndex(j.at("layer_index").get<int>());
-    stepSettings.SetMaskingLayerName(j.at("masking_layer_name").get<std::string>());
-    stepSettings.SetFileType(j.at("file_type").get<std::string>());
-    stepSettings.SetOutputDirectory(j.at("output_directory").get<std::string>());
+    stepSettings.SetLayerName(j.value("layer_name", ""));
+    stepSettings.SetLayerUrl(j.value("layer_url", ""));
+    stepSettings.SetLayerIndex(j.value("layer_index", -1));
+    stepSettings.SetMaskingLayerName(j.value("masking_layer_name", ""));
+    stepSettings.SetFileType(j.value("file_type", "GTiff"));
+    stepSettings.SetOutputDirectory(j.value("output_directory", ""));
 }
 
 void from_json(const json& j, Settings& settings)
