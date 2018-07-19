@@ -56,6 +56,36 @@ Settings Settings::Open(std::string filename)
     return settings;
 }
 
+std::string Settings::Address() const
+{
+    return _address;
+}
+
+void Settings::SetAddress(const std::string &address)
+{
+    _address = address;
+}
+
+int Settings::AddressOption() const
+{
+    return _addressOption;
+}
+
+void Settings::SetAddressOption(int addressOption)
+{
+    _addressOption = addressOption;
+}
+
+std::string Settings::OutputDirectory() const
+{
+    return _outputDirectory;
+}
+
+void Settings::SetOutputDirectory(const std::string &outputDirectory)
+{
+    _outputDirectory = outputDirectory;
+}
+
 std::string Settings::MainRasterName() const
 {
     return _mainRasterName;

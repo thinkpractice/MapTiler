@@ -17,6 +17,7 @@ struct MapTilerSettings
 {
     MapTilerSettings();
 
+    string pipelineSettingsFilename;
     string mainRasterFilename;
     map<string, string> mapFilenames;
     map<string, MetadataSetting> metadataFilenames;

@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QCommandLineParser>
 #include <QCoreApplication>
 #include <iostream>
 #include <iomanip>
@@ -24,103 +23,10 @@
 #include "Lib/TileProcessor.h"
 #include "Lib/Utils.h"
 #include "Lib/Settings.h"
+#include "Lib/StepFactory.h"
+#include "Lib/CommandLineParser.h"
 
 using namespace std;
-
-enum CommandLineParseResult
-{
-    CommandLineOk,
-    CommandLineError,
-    CommandLineVersionRequested,
-    CommandLineHelpRequested
-};
-
-CommandLineParseResult ParseCommandLine(QCommandLineParser &parser, MapTilerSettings *settings, string *errorMessage)
-{
-    parser.setApplicationDescription("MapTiler downloads tiles of a given size from a geo raster webservice (WMS/WTMS) and masks them with a polygon layer.");
-    parser.addPositionalArgument("rasterurl", QCoreApplication::translate("main", "Url to raster webservice (WMS/WMTS) with the aerial image."));
-
-    QCommandLineOption useDefaultUrls({"d", "defaulturls"}, QCoreApplication::translate("main", "Uses default urls for rasterurl and vectorurl"));
-    parser.addOption(useDefaultUrls);
-
-    const QCommandLineOption helpOption = parser.addHelpOption();
-    const QCommandLineOption versionOption = parser.addVersionOption();
-
-    parser.addOptions({{"vectorurl", QCoreApplication::translate("main", "<url>,<layerIndex> to the vector webservice (WFS) with the polygons. If layerIndex is not provided layerIndex=0 is assumed."), "url", ""},
-		{"display_datasets", QCoreApplication::translate("main", "Displays the datasets available at <url>, the ends the app."), "url", ""},
-        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
-        {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},              
-        {{"t", "target-directory"},
-            QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
-            QCoreApplication::translate("main", "directory"), "/media/tim/Data/Work/CBS/Tiles/"},
-        {{"c","tilewidth"}, QCoreApplication::translate("main","The <width> (number of columns) of the tiles to be written to disk"), "width", "256"},
-        {{"r","tileheight"}, QCoreApplication::translate("main","The <height> (number of rows) of the tiles to be written to disk"), "height", "256"}
-    });
-
-    if (!parser.parse(QCoreApplication::arguments()))
-    {
-        *errorMessage = parser.errorText().toStdString();
-        return CommandLineError;
-    }
-
-    if (parser.isSet(versionOption))
-        return CommandLineVersionRequested;
-
-    if (parser.isSet(helpOption))
-        return CommandLineHelpRequested;
-
-    QString displayUrl = parser.value("display_datasets");
-    if (!displayUrl.isEmpty())
-	{
-        settings->displayUrl = displayUrl.toStdString();
-		return CommandLineOk;
-	}
-	
-    QString vectorUrl = parser.value("vectorurl");
-    if (!vectorUrl.isEmpty())
-    {
-        QStringList vectorParts = vectorUrl.split(",");
-        int layerIndex = 0;
-        QString	url = vectorParts[0];
-        if (vectorParts.size() > 1)
-            layerIndex = vectorParts[1].toInt();
-
-        settings->metadataFilenames["polygons"] = {url.toStdString(), layerIndex};
-    }
-
-    QString address = parser.value("address");
-    if (!address.isEmpty())
-        settings->address = address.toStdString();
-
-    QString addressOption = parser.value("addressoption");
-    if (!addressOption.isEmpty())
-        settings->addressOption = addressOption.toInt();
-    
-    QString targetDirectory = parser.value("t");
-    if (!targetDirectory.isEmpty())
-        settings->targetDirectory = targetDirectory.toStdString();
-
-    QString tileWidth = parser.value("c");
-    if (!tileWidth.isEmpty())
-        settings->tileWidth = tileWidth.toInt();
-
-    QString tileHeight = parser.value("r");
-    if (!tileHeight.isEmpty())
-        settings->tileHeight = tileHeight.toInt();
-
-    if (parser.isSet(useDefaultUrls))
-        return CommandLineOk;
-
-    const QStringList positionalArguments = parser.positionalArguments();
-    if (positionalArguments.isEmpty())
-    {
-        *errorMessage = "Raster url argument is missing.";
-        return CommandLineError;
-    }
-    settings->mainRasterFilename = positionalArguments[0].toStdString();
-
-    return CommandLineOk;
-}
 
 shared_ptr<GeoMap> GetMapForUrl(string url)
 {
@@ -163,19 +69,13 @@ shared_ptr<GeoMap> GetMapForUrl(string url)
 	return chosenMap;
 }
 
-void DownloadTilesForArea(const MapTilerSettings& settings, const Area& area)
+void DownloadTilesForArea(const Settings& settings)
 {
-    auto mainRasterMap = GetMapForUrl(settings.mainRasterFilename);
-
     Utils::TimeIt([&]
     {
-        TileProcessor processor(mainRasterMap, area, settings);
-		for (auto mapPair : settings.mapFilenames)
-		{
-			auto map = GetMapForUrl(mapPair.second);
-			processor.AddRasterMap(mapPair.first, map);
-		}
-        processor.StartProcessing();
+        StepFactory stepFactory;
+        auto processingPipeline = stepFactory.PipelineFor(settings);
+        processingPipeline->StartProcessing();
     });
     cout << "Finished" << endl;
 }
@@ -186,53 +86,23 @@ int main(int argc, char** argv)
     QCoreApplication::setApplicationName("MapTiler");
     QCoreApplication::setApplicationVersion("0.1");
 
-    QCommandLineParser parser;
-
-    string filename =  "/home/tjadejong/Documents/CBS/MapViewer/polygon_pipeline.json";
-    Settings pipelineSettings = Settings::Open(filename);
-    for (auto& stepSettings : pipelineSettings.StepSettingsCollection())
+    CommandLineParser parser;
+    switch (parser.Parse())
     {
-        cout << stepSettings.Name() << "-" << stepSettings.Type() << endl;
-    }
-
-    MapTilerSettings settings;
-    string errorMessage;
-    switch (ParseCommandLine(parser, &settings, &errorMessage))
-    {
-        case CommandLineOk:
+        case CommandLineParser::CommandLineOk:
             break;
-        case CommandLineError:
-            cerr << errorMessage << endl;
-            fputs("\n\n", stderr);
-            fputs(qPrintable(parser.helpText()), stderr);
+        case CommandLineParser::CommandLineError:
             return 1;
-        case CommandLineVersionRequested:
-            printf("%s %s\n", qPrintable(QCoreApplication::applicationName()),
-                   qPrintable(QCoreApplication::applicationVersion()));
+        default:
             return 0;
-        case CommandLineHelpRequested:
-            parser.showHelp();
-            Q_UNREACHABLE();
     };
 
-	if (settings.displayUrl != "")
-	{
-		GeoMapProvider mapProvider(settings.displayUrl);
-		for (auto map : mapProvider.Maps())
-		{
-			cout << "title=" + map->Title() + ", url=" + map->Filename() << endl;	
-		}
-		
-		QCoreApplication::exit(0);
-		return 0;
-	}
+    Settings settings = parser.GetSettings();
 	
-    for (auto metadataPair : settings.metadataFilenames)
-        cout << "Metadata: " << metadataPair.first << " url: " << metadataPair.second.metadataFilename << " layerIndex: " << metadataPair.second.layerIndex << endl;
-    cout << "Target directory: " << settings.targetDirectory << endl;
-    cout << "Address: " << settings.address << endl;
-    cout << "Tile width: " << settings.tileWidth << endl;
-    cout << "Tile height: " << settings.tileHeight << endl;
+    cout << "Target directory: " << settings.OutputDirectory() << endl;
+    cout << "Address: " << settings.Address() << endl;
+    cout << "Tile width: " << settings.TileWidth() << endl;
+    cout << "Tile height: " << settings.TileHeight() << endl;
 
     AreaLookup areaLookup;
     areaLookup.AddListener([&](vector<Area> areas){
@@ -242,18 +112,18 @@ int main(int argc, char** argv)
                     Area chosenArea = areas.front();
                     if (areas.size() > 1)
                     {
-                            chosenArea = areas[settings.addressOption];
-                            
-                            /*chosenArea = Menu<Area>::ShowMenu(areas, [](int i, Area area)
-                            {
-                                return to_string(i) + ") " + area.Description();
-                            });*/
+                            chosenArea = areas[settings.AddressOption()];
                     }
-                    DownloadTilesForArea(settings, chosenArea);
+                    settings.SetChosenArea(chosenArea);
+                    DownloadTilesForArea(settings);
 					QCoreApplication::exit(0);
                 }
             });
-    areaLookup.GetAreaForAddress(settings.address);
+
+    if (settings.Address().empty())
+        DownloadTilesForArea(settings);
+    else
+        areaLookup.GetAreaForAddress(settings.Address());
 
     return app.exec();
 }

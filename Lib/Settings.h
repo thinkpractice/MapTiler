@@ -33,6 +33,15 @@ public:
     int MainRasterLayerIndex() const;
     void SetMainRasterLayerIndex(int mainRasterLayerIndex);
 
+    std::string Address() const;
+    void SetAddress(const std::string &Address);
+
+    int AddressOption() const;
+    void SetAddressOption(int AddressOption);
+
+    std::string OutputDirectory() const;
+    void SetOutputDirectory(const std::string &OutputDirectory);
+
 public:
     static Settings Open(std::string filename);
 
@@ -42,6 +51,11 @@ private:
     int _mainRasterLayerIndex;
     int _tileWidth;
     int _tileHeight;
+
+    std::string _address;
+    int _addressOption;
+    std::string _outputDirectory;
+
     Area _chosenArea;
     std::vector<StepSettings> _stepSettings;
 
