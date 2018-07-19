@@ -9,7 +9,7 @@ Settings::~Settings()
 {
 }
 
-int Settings::TileWidth()
+int Settings::TileWidth() const
 {
     return _tileWidth;
 }
@@ -19,7 +19,7 @@ void Settings::SetTileWidth(int width)
     _tileWidth = width;
 }
 
-int Settings::TileHeight()
+int Settings::TileHeight() const
 {
     return _tileHeight;
 }
@@ -29,7 +29,7 @@ void Settings::SetTileHeight(int height)
     _tileHeight = height;
 }
 
-Area Settings::ChosenArea()
+Area Settings::ChosenArea() const
 {
     return _chosenArea;
 }
@@ -39,12 +39,12 @@ void Settings::SetChosenArea(const Area &area)
     _chosenArea = area;
 }
 
-vector<StepSettings> Settings::StepSettingsCollection()
+std::vector<StepSettings> Settings::StepSettingsCollection() const
 {
     return _stepSettings;
 }
 
-void Settings::SetStepSettingsCollection(std::vector<StepSettings> stepSettings)
+void Settings::SetStepSettingsCollection(const std::vector<StepSettings>& stepSettings)
 {
     _stepSettings = stepSettings;
 }

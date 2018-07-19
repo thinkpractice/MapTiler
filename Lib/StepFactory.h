@@ -16,7 +16,7 @@ public:
     StepFactory(const Settings& settings);
     virtual ~StepFactory();
 
-    ProcessingPipeline PipelineFor(const Settings& settings);
+    std::shared_ptr<ProcessingPipeline> PipelineFor(const Settings& settings);
     std::shared_ptr<ProcessingStep> StepFor(const StepSettings& stepSettings);
 
 private:

@@ -12,17 +12,17 @@ public:
     Settings();
     virtual ~Settings();
 
-    int TileWidth();
+    int TileWidth() const;
     void SetTileWidth(int width);
 
-    int TileHeight();
+    int TileHeight() const;
     void SetTileHeight(int height);
 
-    Area ChosenArea();
+    Area ChosenArea() const;
     void SetChosenArea(const Area& area);
 
-    std::vector<StepSettings> StepSettingsCollection();
-    void SetStepSettingsCollection(std::vector<StepSettings> stepSettings);
+    std::vector<StepSettings> StepSettingsCollection() const;
+    void SetStepSettingsCollection(const std::vector<StepSettings>& stepSettings);
 
     std::string MainRasterName() const;
     void SetMainRasterName(const std::string &mainRasterName);

@@ -1,8 +1,16 @@
 #include "TileDownloadStep.h"
 #include "StepData.h"
+#include "GeoMapProvider.h"
+#include "Utils.h"
 #include <chrono>
 #include <thread>
 
+TileDownloadStep::TileDownloadStep(string layerName, string layerUrl, int layerIndex)
+                    :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex))
+{
+}
+
+//TODO remove later
 TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map)
                     :	ProcessingStep(Source),
 						_tileName(tileName),
@@ -42,4 +50,3 @@ void TileDownloadStep::Run()
 	}
     DoneProcessing();
 }
-

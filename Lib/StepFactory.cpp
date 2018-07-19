@@ -7,11 +7,12 @@
 #include "TileWriterStep.h"
 #include "GeoMapProvider.h"
 #include "MappedVectorFile.h"
+#include "Utils.h"
 
 StepFactory::StepFactory(const Settings& settings)
                 :	_settings(settings)
 {
-    _mainRasterMap = LoadRasterMap(_settings.MainRasterUrl(), _settings.MainRasterLayerIndex());
+    _mainRasterMap = Utils::LoadRasterMap(_settings.MainRasterUrl(), _settings.MainRasterLayerIndex());
     _steps =
     {
         {
@@ -39,7 +40,7 @@ StepFactory::StepFactory(const Settings& settings)
             "TileDownloadStep",
             [&] (const StepSettings& stepSettings)
             {
-                return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), LoadRasterMap(stepSettings.LayerName(), stepSettings.LayerIndex()));
+                return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex());
             }
         },
         {
@@ -63,12 +64,12 @@ StepFactory::~StepFactory()
 {
 }
 
-ProcessingPipeline StepFactory::PipelineFor(const Settings &settings)
+std::shared_ptr<ProcessingPipeline> StepFactory::PipelineFor(const Settings &settings)
 {
-    ProcessingPipeline pipeline;
+    auto pipeline = make_shared<ProcessingPipeline>();
     for (auto& stepSettings : settings.StepSettingsCollection())
     {
-        pipeline.AddProcessingStep(StepFor(stepSettings));
+        pipeline->AddProcessingStep(StepFor(stepSettings));
     }
     return pipeline;
 }
@@ -81,22 +82,6 @@ std::shared_ptr<ProcessingStep> StepFactory::StepFor(const StepSettings &stepSet
             return step.Create(stepSettings);
     }
     return nullptr;
-}
-
-std::shared_ptr<GeoMap> StepFactory::LoadRasterMap(std::string layerUrl, int layerIndex)
-{
-    GeoMapProvider mapProvider(layerUrl);
-    if (mapProvider.Maps().size() == 0)
-    {
-        cerr << "No maps at url/in file" << endl;
-        return nullptr;
-    }
-
-    if (mapProvider.Maps().size() >= 1)
-    {
-        cout << "Multiple Maps found at url, continuing with map at layerIndex: " << layerIndex << endl;
-    }
-    return mapProvider.Maps()[layerIndex];
 }
 
 std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const StepSettings& stepSettings)
