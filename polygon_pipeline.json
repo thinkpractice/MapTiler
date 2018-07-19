@@ -49,7 +49,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2016",
             "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
-        },,
+        },
         {
             "name" : "Step 4b: Download IR tiles for 2016",
             "type" : "TileDownloadStep",

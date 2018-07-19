@@ -47,7 +47,7 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
     }
 
     std::string displayUrl = GetStringValue("display_datasets");
-    if (!displayUrl.empty());
+    if (!displayUrl.empty())
     {
         DisplayUrl(displayUrl);
         return CommandLineDisplayUrl;
