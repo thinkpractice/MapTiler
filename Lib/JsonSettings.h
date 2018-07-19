@@ -78,8 +78,8 @@ void from_json(const json &j, StepSettings &stepSettings)
 
 void from_json(const json& j, Settings& settings)
 {
-    settings.SetMainRasterName(j.at("layer_name").get<std::string>());
-    settings.SetMainRasterUrl(j.at("layer_url").get<std::string>());
+    settings.SetMainRasterName(j.at("mainRaster").at("layer_name").get<std::string>());
+    settings.SetMainRasterUrl(j.at("mainRaster").at("layer_url").get<std::string>());
     settings.SetMainRasterLayerIndex(j.value("layer_index", 0));
     settings.SetTileWidth(j.at("tile_width").get<int>());
     settings.SetTileHeight(j.at("tile_height").get<int>());

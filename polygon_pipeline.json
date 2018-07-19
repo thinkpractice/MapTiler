@@ -24,7 +24,7 @@
     "steps" : [
         {
             "name" : "Step 1: Produces Tiles for Map",
-            "type" : "TileProducerType"
+            "type" : "TileProducerStep"
         },
         {
             "name" : "Step 2a: Add BAG House Polygons",

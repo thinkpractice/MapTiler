@@ -67,7 +67,10 @@ std::shared_ptr<ProcessingPipeline> StepFactory::PipelineFor(const Settings &set
     auto pipeline = make_shared<ProcessingPipeline>();
     for (auto& stepSettings : settings.StepSettingsCollection())
     {
-        pipeline->AddProcessingStep(StepFor(settings, stepSettings));
+        auto processingStep = StepFor(settings, stepSettings);
+        if (!processingStep)
+            continue;
+        pipeline->AddProcessingStep(processingStep);
     }
     return pipeline;
 }

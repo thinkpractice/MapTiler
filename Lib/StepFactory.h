@@ -33,7 +33,7 @@ private:
 
         bool IsStepFor(const StepSettings& stepSettings)
         {
-            return _name == stepSettings.Name();
+            return _name == stepSettings.Type();
         }
 
         std::shared_ptr<ProcessingStep> Create(const Settings& settings, const StepSettings& stepSettings)
