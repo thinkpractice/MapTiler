@@ -9,50 +9,48 @@
 #include "MappedVectorFile.h"
 #include "Utils.h"
 
-StepFactory::StepFactory(const Settings& settings)
-                :	_settings(settings)
+StepFactory::StepFactory()
 {
-    _mainRasterMap = Utils::LoadRasterMap(_settings.MainRasterUrl(), _settings.MainRasterLayerIndex());
     _steps =
     {
         {
             "TileProducerStep",
-            [&](const StepSettings& stepSettings)
+            [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileProducerStep>(_mainRasterMap, _settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight());
+                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight());
             }
         },
         {
             "AddMetadataStep",
-            [&] (const StepSettings& stepSettings)
+            [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(stepSettings), stepSettings.LayerIndex());
+                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex());
             }
         },
         {
             "TileFilterStep",
-            [&](const StepSettings& stepSettings)
+            [&](const Settings& settings, const StepSettings& stepSettings)
             {
                 return std::make_shared<TileFilterStep>();
             }
         },
         {
             "TileDownloadStep",
-            [&] (const StepSettings& stepSettings)
+            [&] (const Settings& settings, const StepSettings& stepSettings)
             {
                 return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex());
             }
         },
         {
             "TileGpuTransferStep",
-            [&] (const StepSettings& stepSettings)
+            [&] (const Settings& settings, const StepSettings& stepSettings)
             {
                 return std::make_shared<TileGpuTransferStep>(stepSettings.TileWidth(), stepSettings.TileHeight());
             }
         },
         {
             "TileWriterStep",
-            [&] (const StepSettings& stepSettings)
+            [&] (const Settings& settings, const StepSettings& stepSettings)
             {
                 return std::make_shared<TileWriterStep>(stepSettings.OutputDirectory());
             }
@@ -69,22 +67,23 @@ std::shared_ptr<ProcessingPipeline> StepFactory::PipelineFor(const Settings &set
     auto pipeline = make_shared<ProcessingPipeline>();
     for (auto& stepSettings : settings.StepSettingsCollection())
     {
-        pipeline->AddProcessingStep(StepFor(stepSettings));
+        pipeline->AddProcessingStep(StepFor(settings, stepSettings));
     }
     return pipeline;
 }
 
-std::shared_ptr<ProcessingStep> StepFactory::StepFor(const StepSettings &stepSettings)
+std::shared_ptr<ProcessingStep> StepFactory::StepFor(const Settings& settings, const StepSettings &stepSettings)
 {
     for (auto& step : _steps)
     {
         if (step.IsStepFor(stepSettings))
-            return step.Create(stepSettings);
+            return step.Create(settings, stepSettings);
     }
     return nullptr;
 }
 
-std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const StepSettings& stepSettings)
+std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const Settings& settings, const StepSettings& stepSettings)
 {
-    return std::make_shared<MappedVectorFile>(stepSettings.LayerUrl(), _mainRasterMap->ProjectionReference(), _mainRasterMap->MapTransform());
+    auto mainRasterMap = Utils::LoadRasterMap(settings.MainRasterUrl(), settings.MainRasterLayerIndex());
+    return std::make_shared<MappedVectorFile>(stepSettings.LayerUrl(), mainRasterMap->ProjectionReference(), mainRasterMap->MapTransform());
 }

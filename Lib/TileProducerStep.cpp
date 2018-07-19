@@ -4,6 +4,11 @@
 #include <iostream>
 #include <memory>
 
+TileProducerStep::TileProducerStep(std::string layerUrl, int layerIndex, const Area &area, int tileWidth, int tileHeight)
+                    :	TileProducerStep(Utils::LoadRasterMap(layerUrl, layerIndex), area, tileWidth, tileHeight)
+{
+}
+
 TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area, int tileWidth, int tileHeight)
                     :	TileProducerStep(map, map->RectForArea(area), area, tileWidth, tileHeight)
 {

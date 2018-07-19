@@ -11,7 +11,8 @@
 class TileProducerStep : public ProcessingStep
 {
 public:
-    TileProducerStep(std::shared_ptr<GeoMap> map, const Area& area, int tileWidth, int tileHeight);
+    TileProducerStep(std::string layerUrl, int layerIndex, const Area& area, int tileWidth, int tileHeight);
+    TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area, int tileWidth, int tileHeight);
     TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight);
     virtual ~TileProducerStep();
 

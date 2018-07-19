@@ -13,17 +13,17 @@
 class StepFactory
 {
 public:
-    StepFactory(const Settings& settings);
+    StepFactory();
     virtual ~StepFactory();
 
     std::shared_ptr<ProcessingPipeline> PipelineFor(const Settings& settings);
-    std::shared_ptr<ProcessingStep> StepFor(const StepSettings& stepSettings);
+    std::shared_ptr<ProcessingStep> StepFor(const Settings& settings, const StepSettings& stepSettings);
 
 private:
     class StepCreator
     {
     public:
-        using FunctionType = std::function< std::shared_ptr<ProcessingStep>(const StepSettings&) >;
+        using FunctionType = std::function< std::shared_ptr<ProcessingStep>(const Settings&, const StepSettings&) >;
 
         StepCreator(std::string name, FunctionType createFunction)
                     :	_name(name),
@@ -36,9 +36,9 @@ private:
             return _name == stepSettings.Name();
         }
 
-        std::shared_ptr<ProcessingStep> Create(const StepSettings& stepSettings)
+        std::shared_ptr<ProcessingStep> Create(const Settings& settings, const StepSettings& stepSettings)
         {
-            return _createFunction(stepSettings);
+            return _createFunction(settings, stepSettings);
         }
 
     private:
@@ -47,8 +47,7 @@ private:
     };
 
 private:
-    std::shared_ptr<GeoMap> LoadRasterMap(std::string layerUrl, int layerIndex);
-    std::shared_ptr<VectorFile> LoadVectorFile(const StepSettings& stepSettings);
+    std::shared_ptr<VectorFile> LoadVectorFile(const Settings& settings, const StepSettings& stepSettings);
 
 private:
     Settings _settings;
