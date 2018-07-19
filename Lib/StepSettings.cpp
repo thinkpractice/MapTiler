@@ -1,5 +1,8 @@
 #include "StepSettings.h"
 
+int StepSettings::TileWidthNotSet = 0;
+int StepSettings::TileHeightNotSet = 0;
+
 StepSettings::StepSettings()
 {
 }
@@ -8,7 +11,7 @@ StepSettings::~StepSettings()
 {
 }
 
-std::string StepSettings::Name()
+std::string StepSettings::Name() const
 {
     return _name;
 }
@@ -18,7 +21,7 @@ void StepSettings::SetName(std::string name)
     _name = name;
 }
 
-std::string StepSettings::Type()
+std::string StepSettings::Type() const
 {
     return _type;
 }
@@ -28,7 +31,7 @@ void StepSettings::SetType(std::string type)
     _type = type;
 }
 
-std::string StepSettings::LayerName()
+std::string StepSettings::LayerName() const
 {
     return _layerName;
 }
@@ -38,7 +41,7 @@ void StepSettings::SetLayerName(std::string layerName)
     _layerName = layerName;
 }
 
-std::string StepSettings::LayerUrl()
+std::string StepSettings::LayerUrl() const
 {
     return _layerUrl;
 }
@@ -48,7 +51,7 @@ void StepSettings::SetLayerUrl(std::string url)
     _layerUrl = url;
 }
 
-int StepSettings::LayerIndex()
+int StepSettings::LayerIndex() const
 {
     return _layerIndex;
 }
@@ -86,4 +89,24 @@ std::string StepSettings::OutputDirectory() const
 void StepSettings::SetOutputDirectory(const std::string &outputDirectory)
 {
     _outputDirectory = outputDirectory;
+}
+
+int StepSettings::TileWidth() const
+{
+    return _tileWidth;
+}
+
+void StepSettings::SetTileWidth(int tileWidth)
+{
+    _tileWidth = tileWidth;
+}
+
+int StepSettings::TileHeight() const
+{
+    return _tileHeight;
+}
+
+void StepSettings::SetTileHeight(int tileHeight)
+{
+    _tileHeight = tileHeight;
 }

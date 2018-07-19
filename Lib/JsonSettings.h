@@ -68,18 +68,32 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetType(j.at("type").get<std::string>());
     stepSettings.SetLayerName(j.value("layer_name", ""));
     stepSettings.SetLayerUrl(j.value("layer_url", ""));
-    stepSettings.SetLayerIndex(j.value("layer_index", -1));
+    stepSettings.SetLayerIndex(j.value("layer_index", 0));
     stepSettings.SetMaskingLayerName(j.value("masking_layer_name", ""));
     stepSettings.SetFileType(j.value("file_type", "GTiff"));
     stepSettings.SetOutputDirectory(j.value("output_directory", ""));
+    stepSettings.SetTileWidth(j.value("tile_width", StepSettings::TileWidthNotSet));
+    stepSettings.SetTileHeight(j.value("tile_height", StepSettings::TileHeightNotSet));
 }
 
 void from_json(const json& j, Settings& settings)
 {
+    settings.SetMainRasterName(j.at("layer_name").get<std::string>());
+    settings.SetMainRasterUrl(j.at("layer_url").get<std::string>());
+    settings.SetMainRasterLayerIndex(j.value("layer_index", 0));
     settings.SetTileWidth(j.at("tile_width").get<int>());
     settings.SetTileHeight(j.at("tile_height").get<int>());
     settings.SetChosenArea(j.at("area").get<Area>());
-    settings.SetStepSettingsCollection(j.at("steps").get<std::vector<StepSettings>>());
+
+    vector<StepSettings> stepSettingsCollection = j.at("steps").get<std::vector<StepSettings>>();
+    for (auto& stepSettings : stepSettingsCollection)
+    {
+        if (stepSettings.TileWidth() == StepSettings::TileWidthNotSet)
+            stepSettings.SetTileWidth(settings.TileWidth());
+        if (stepSettings.TileHeight() == StepSettings::TileHeightNotSet)
+            stepSettings.SetTileHeight(settings.TileHeight());
+    }
+    settings.SetStepSettingsCollection(stepSettingsCollection);
 }
 
 #endif // JSONSETTINGS_H

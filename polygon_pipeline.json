@@ -45,6 +45,12 @@
             "type" : "TileFilterStep"
         },
         {
+            "name" : "Step 4a: Download RGB tiles for 2016",
+            "type" : "TileDownloadStep",
+            "layer_name" : "rgb_2016",
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
+        },,
+        {
             "name" : "Step 4b: Download IR tiles for 2016",
             "type" : "TileDownloadStep",
             "layer_name" : "ir_2016",
@@ -65,7 +71,7 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "{output_directory}"
+            "output_directory" : "/home/tjadejong/Documents/CBS/ZonnePanelen/Heerlen/"
         }
     ]
 }

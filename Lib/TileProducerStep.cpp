@@ -4,6 +4,12 @@
 #include <iostream>
 #include <memory>
 
+TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area, int tileWidth, int tileHeight)
+                    :	TileProducerStep(map, map->RectForArea(area), area, tileWidth, tileHeight)
+{
+
+}
+
 TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight)
                 :   ProcessingStep(Source),
 					_map(map),

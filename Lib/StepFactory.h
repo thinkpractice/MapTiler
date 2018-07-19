@@ -4,13 +4,19 @@
 #include <memory>
 #include <functional>
 #include "StepSettings.h"
+#include "ProcessingStep.h"
+#include "ProcessingPipeline.h"
+#include "GeoMap.h"
+#include "VectorFile.h"
+#include "Settings.h"
 
 class StepFactory
 {
 public:
-    StepFactory();
+    StepFactory(const Settings& settings);
     virtual ~StepFactory();
 
+    ProcessingPipeline PipelineFor(const Settings& settings);
     std::shared_ptr<ProcessingStep> StepFor(const StepSettings& stepSettings);
 
 private:
@@ -41,10 +47,12 @@ private:
     };
 
 private:
-    std::shared_ptr<GeoMap> LoadRasterMap(const StepSettings& stepSettings);
+    std::shared_ptr<GeoMap> LoadRasterMap(std::string layerUrl, int layerIndex);
     std::shared_ptr<VectorFile> LoadVectorFile(const StepSettings& stepSettings);
 
 private:
+    Settings _settings;
+    std::shared_ptr<GeoMap> _mainRasterMap;
     std::vector< StepCreator > _steps;
 };
 

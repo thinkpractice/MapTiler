@@ -23,6 +23,7 @@ void TileProcessor::AddRasterMap(string mapName, shared_ptr<GeoMap> map)
 	_rasterMaps[mapName] = map;
 }
 
+
 void TileProcessor::StartProcessing()
 {
 	_pipeline.AddProcessingStep(make_shared<TileProducerStep>(_mainRasterMap, _mainRasterMap->RectForArea(_areaToProcess), _areaToProcess, _settings.tileWidth, _settings.tileHeight));

@@ -9,19 +9,19 @@ public:
     StepSettings();
     virtual ~StepSettings();
 
-    std::string Name();
+    std::string Name() const;
     void SetName(std::string name);
 
-    std::string Type();
+    std::string Type() const;
     void SetType(std::string type);
 
-    std::string LayerName();
+    std::string LayerName() const;
     void SetLayerName(std::string layerName);
 
-    std::string LayerUrl();
+    std::string LayerUrl() const;
     void SetLayerUrl(std::string layerUrl);
 
-    int LayerIndex();
+    int LayerIndex() const;
     void SetLayerIndex(int layerIndex);
 
     std::string MaskingLayerName() const;
@@ -33,6 +33,16 @@ public:
     std::string OutputDirectory() const;
     void SetOutputDirectory(const std::string &outputDirectory);
 
+    int TileWidth() const;
+    void SetTileWidth(int TileWidth);
+
+    int TileHeight() const;
+    void SetTileHeight(int TileHeight);
+
+public:
+    static int TileWidthNotSet;
+    static int TileHeightNotSet;
+
 private:
     std::string _name;
     std::string _type;
@@ -43,6 +53,9 @@ private:
     std::string _maskingLayerName;
     std::string _fileType;
     std::string _outputDirectory;
+
+    int _tileWidth;
+    int _tileHeight;
 };
 
 #endif // STEPSETTINGS_H

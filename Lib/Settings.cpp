@@ -55,3 +55,33 @@ Settings Settings::Open(std::string filename)
     Settings settings = jsonSettings;
     return settings;
 }
+
+std::string Settings::MainRasterName() const
+{
+    return _mainRasterName;
+}
+
+void Settings::SetMainRasterName(const std::string &mainRasterName)
+{
+    _mainRasterName = mainRasterName;
+}
+
+int Settings::MainRasterLayerIndex() const
+{
+    return _mainRasterLayerIndex;
+}
+
+void Settings::SetMainRasterLayerIndex(int mainRasterLayerIndex)
+{
+    _mainRasterLayerIndex = mainRasterLayerIndex;
+}
+
+std::string Settings::MainRasterUrl() const
+{
+    return _mainRasterUrl;
+}
+
+void Settings::SetMainRasterUrl(const std::string &mainRasterUrl)
+{
+    _mainRasterUrl = mainRasterUrl;
+}
