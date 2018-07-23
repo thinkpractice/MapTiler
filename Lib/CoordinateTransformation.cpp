@@ -40,7 +40,7 @@ vector<Point> CoordinateTransformation::MapCoordinates(vector<Point> sourceCoord
         yCoordinates[i] = sourceCoordinates[i].Y;
     }
 
-    Transformation()->Transform(sourceCoordinates.size(), xCoordinates, yCoordinates); 
+    Transformation()->Transform(sourceCoordinates.size(), xCoordinates, yCoordinates);
 
     vector<Point> destinationCoordinates;
     for (size_t i = 0; i < sourceCoordinates.size(); i++)

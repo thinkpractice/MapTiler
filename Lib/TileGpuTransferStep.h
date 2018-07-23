@@ -30,6 +30,8 @@ private:
    
 	Point MapGeoTileCoordinateToGL(shared_ptr<GeoTile> geoTile, const Point& point);
 
+    GLenum ColorFormatForTile(shared_ptr<GeoTile> geoTile);
+
 private:
     int _tileWidth;
     int _tileHeight;

@@ -69,7 +69,7 @@ void TileGpuTransferStep::Run()
 				maskingShaderProgram.Use();
 				DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 				
-				auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+                auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
 				// Swap buffers
 				glfwSwapBuffers(window);
 
@@ -238,7 +238,8 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* tex
     int textureWidth = geoTile->BoundingRect().Width();
     int textureHeight = geoTile->BoundingRect().Height();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
+    GLenum colorFormat = ColorFormatForTile(geoTile);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, colorFormat, GL_UNSIGNED_BYTE, geoTile->Data());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -287,7 +288,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
     /*if (numberOfPolygons > 0)
         cout << "number of polygons drawn = " << numberOfPolygons << endl;*/
 
-    auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), geoTile->NumberOfLayers());
+    auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
     return maskTile;
 }
 
@@ -337,3 +338,7 @@ Point TileGpuTransferStep::MapGeoTileCoordinateToGL(shared_ptr< GeoTile > geoTil
 	return Point(x, y);
 }
 
+GLenum TileGpuTransferStep::ColorFormatForTile(shared_ptr<GeoTile> geoTile)
+{
+    return geoTile->NumberOfLayers() == 4 ? GL_RGBA8 : GL_RGB8;
+}
