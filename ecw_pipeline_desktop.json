@@ -57,10 +57,10 @@
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_CIR_lrl.ecw"
         },
         {
-            "name" : "Step 4c: Download RGB tiles for 2017",
+            "name" : "Step 4c: Download IR tiles for 2017",
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2017",
-            "layer_url" : "/media/tim/Data/Work/CBS/NL/2017_totaalmozaiek_RGB_lrl.ecw"
+            "layer_url" : "/media/tim/Data/Work/CBS/NL/2017_totaalmozaiek_CIR_lrl.ecw"
         },
         {
             "name" : "Step 5: Mask tiles with polygon layer",
