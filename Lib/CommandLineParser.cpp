@@ -16,7 +16,7 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
 
     _parser.addOptions({{"display_datasets", QCoreApplication::translate("main", "Displays the datasets available at <url>, the ends the app."), "url", ""},
         {{"p", "pipeline_settings"}, QCoreApplication::translate("main", "Loads a Json file with a pipeline settings, with the filename <pipeline_settings>"), "pipeline_settings", ""},
-        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", "Heerlen"},
+        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", ""},
         {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},
         {{"t", "target-directory"},
             QCoreApplication::translate("main", "Copy all the tiles into <directory>."),

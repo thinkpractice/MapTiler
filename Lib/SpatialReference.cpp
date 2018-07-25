@@ -12,7 +12,8 @@ SpatialReference::SpatialReference(const char* wktProjectionRef)
 
 SpatialReference::SpatialReference(const OGRSpatialReference* reference)
 {
-    _spatialReference = *reference;
+    if (reference)
+        _spatialReference = *reference;
 }
 
 void SpatialReference::SetWellKnownGeogCS(const char* geoCs)

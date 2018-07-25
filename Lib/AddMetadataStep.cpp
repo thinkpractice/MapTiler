@@ -22,12 +22,20 @@ int AddMetadataStep::LayerIndex()
     return _layerIndex;
 }
 
+shared_ptr<Layer> AddMetadataStep::GetLayer()
+{
+    if (LayerIndex() >= 0)
+        return _vectorFile->Layers()[LayerIndex()];
+    return _vectorFile->operator[](MetadataName().c_str());
+}
+
 void AddMetadataStep::Run()
 {
-    auto layer = _vectorFile->Layers()[_layerIndex];
+    auto layer = GetLayer();
     while (auto stepData = InQueue()->dequeue())
     {
         layer->SetSpatialFilter(stepData->BoundingArea());
+        cout << "adding metadata from " << layer->Name() << endl;
 
         vector<Feature> metadataFeatures;
         for (auto it = layer->begin(); it != layer->end(); ++it)

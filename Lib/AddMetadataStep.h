@@ -16,6 +16,7 @@ public:
 
     string MetadataName();
     int LayerIndex();
+    shared_ptr<Layer> GetLayer();
     virtual void Run();
 
 private:

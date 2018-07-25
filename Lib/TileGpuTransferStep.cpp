@@ -340,5 +340,5 @@ Point TileGpuTransferStep::MapGeoTileCoordinateToGL(shared_ptr< GeoTile > geoTil
 
 GLenum TileGpuTransferStep::ColorFormatForTile(shared_ptr<GeoTile> geoTile)
 {
-    return geoTile->NumberOfLayers() == 4 ? GL_RGBA8 : GL_RGB8;
+    return geoTile->NumberOfLayers() == 4 ? GL_RGBA : GL_RGB;
 }

@@ -115,6 +115,7 @@ int main(int argc, char** argv)
                             chosenArea = areas[settings.AddressOption()];
                     }
                     settings.SetChosenArea(chosenArea);
+                    cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << endl;
                     DownloadTilesForArea(settings);
 					QCoreApplication::exit(0);
                 }
