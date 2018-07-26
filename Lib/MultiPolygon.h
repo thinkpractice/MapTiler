@@ -1,19 +1,23 @@
 #ifndef MULTI_POLYGON_H
 #define MULTI_POLYGON_H 
 
+#include "ogrsf_frmts.h"
 #include "Polygon.h"
 #include <vector>
 
 using namespace std;
 
-class MultiPolygon
+class MultiPolygon : public Geometry
 {
     public:
         MultiPolygon();
         MultiPolygon(vector<Polygon> polygons);
         virtual ~MultiPolygon();
 
-        MultiPolygon Transform(Polygon::TransformFunction transformFunction);
+        OGRGeometry* ToGdal();
+        void FromGdal(OGRGeometry* geometry);
+
+        MultiPolygon Transform(Ring::TransformFunction transformFunction);
         void AddPolygon(Polygon polygon);
         vector<Polygon>& Polygons() { return _polygons; };
 

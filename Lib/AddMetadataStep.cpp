@@ -35,8 +35,6 @@ void AddMetadataStep::Run()
     while (auto stepData = InQueue()->dequeue())
     {
         layer->SetSpatialFilter(stepData->BoundingArea());
-        cout << "adding metadata from " << layer->Name() << endl;
-
         vector<Feature> metadataFeatures;
         for (auto it = layer->begin(); it != layer->end(); ++it)
         {

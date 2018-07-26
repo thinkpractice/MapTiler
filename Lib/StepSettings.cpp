@@ -110,3 +110,13 @@ void StepSettings::SetTileHeight(int tileHeight)
 {
     _tileHeight = tileHeight;
 }
+
+int StepSettings::MapYear() const
+{
+    return _mapYear;
+}
+
+void StepSettings::SetMapYear(int mapYear)
+{
+    _mapYear = mapYear;
+}

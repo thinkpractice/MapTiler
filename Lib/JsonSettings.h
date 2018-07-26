@@ -74,6 +74,7 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetOutputDirectory(j.value("output_directory", ""));
     stepSettings.SetTileWidth(j.value("tile_width", StepSettings::TileWidthNotSet));
     stepSettings.SetTileHeight(j.value("tile_height", StepSettings::TileHeightNotSet));
+    stepSettings.SetMapYear(j.value("year", 0));
 }
 
 void from_json(const json& j, Settings& settings)

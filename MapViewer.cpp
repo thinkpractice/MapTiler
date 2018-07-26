@@ -28,47 +28,6 @@
 
 using namespace std;
 
-shared_ptr<GeoMap> GetMapForUrl(string url)
-{
-    GeoMapProvider mapProvider(url);
-    if (mapProvider.Maps().size() == 0)
-    {
-        cout << "No maps at url/in file" << endl;\
-        return nullptr;
-    }
-
-    auto chosenMap = mapProvider.Maps().front();
-    if (mapProvider.Maps().size() > 1)
-    {
-        cout << "Multiple Maps found at url, please choose the one you would like to use:" << endl;
-        chosenMap = Menu<shared_ptr<GeoMap>>::ShowMenu(mapProvider.Maps(), [&](int i, shared_ptr<GeoMap> dataset){
-                string menuItem = to_string(i) + ") title=" + dataset->Title() + ", url=" + dataset->Filename() + "\n";
-                return menuItem;
-            });
-    }
-
-    cout << "Starting MapTiler for map at: " << chosenMap->Title() << endl;
-
-    cout << "GeoTransform: (";
-    double geoTransform[6];
-    chosenMap->MapTransform().GetTransformMatrix(geoTransform);
-    for (int i = 0; i < 6; i++)
-    {
-        cout << geoTransform[i];
-        if (i < 5) cout << ",";
-    }
-    cout << ")" << endl;
-
-    cout << "Layer count: " << chosenMap->LayerCount() << endl;
-    cout << "Raster count: " << chosenMap->RasterCount() << endl;
-    cout << "Raster X size: " << chosenMap->WidthInPixels() << endl;
-    cout << "Raster Y size: " << chosenMap->HeightInPixels() << endl;
-	
-	Area mapArea = chosenMap->GetMapArea();
-	cout << "MapArea: (" << mapArea.LeftTop().X << "," << mapArea.LeftTop().Y << "," << mapArea.BottomRight().X << "," << mapArea.BottomRight().Y << ")" << endl;
-	return chosenMap;
-}
-
 void DownloadTilesForArea(const Settings& settings)
 {
     Utils::TimeIt([&]

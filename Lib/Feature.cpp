@@ -25,6 +25,16 @@ Feature::~Feature()
     OGRFeature::DestroyFeature(_feature);
 }
 
+OGRFeature *Feature::InternalFeature() const
+{
+    return _feature;
+}
+
+long long Feature::FeatureId()
+{
+    return _feature->GetFID();
+}
+
 string Feature::Name() const
 {
     return string(FeatureDefinition()->GetName());
@@ -68,6 +78,26 @@ bool Feature::operator==(const Feature& other) const
     _feature == other._feature;
 }
 
+void Feature::SetField(const Field &field)
+{
+   SetField(field.Name(), field.Value());
+}
+
+void Feature::SetField(std::string fieldName, string value)
+{
+    _feature->SetField(fieldName.c_str(), value.c_str());
+}
+
+void Feature::SetField(std::string fieldName, int value)
+{
+    _feature->SetField(fieldName.c_str(), value);
+}
+
+void Feature::SetField(std::string fieldName, double value)
+{
+    _feature->SetField(fieldName.c_str(), value);
+}
+
 Feature::FeatureGeometry::FeatureGeometry()
                             :   FeatureGeometry(nullptr)
 {
@@ -108,50 +138,14 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
     }
     else if (Type() == PolygonType)
     {
-        OGRPolygon* polygon = (OGRPolygon*)geometry;
-        _polygon = ParsePolygon(polygon);
+        _polygon.FromGdal(geometry);
         _hasPolygon = true;
     }
     else if (Type() == MultiPolygonType)
     {
-        OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;
-        for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
-        {
-            OGRPolygon* ogrPolygon = (OGRPolygon*)multiPolygon->getGeometryRef(i);
-            Polygon polygon = ParsePolygon(ogrPolygon);
-            _multiPolygon.AddPolygon(polygon);
-        }
+        _multiPolygon.FromGdal(geometry);
         _hasMultiPolygon = true;
     }
-}
-
-Polygon Feature::FeatureGeometry::ParsePolygon(OGRPolygon* ogrPolygon)
-{
-    //TODO Refactor to prevent code duplication
-    Polygon polygon;
-
-    OGRLinearRing* ring = ogrPolygon->getExteriorRing();
-    for (int i = 0; i < ring->getNumPoints(); i++)
-    {
-        OGRPoint point;
-        ring->getPoint(i, &point);
-
-        polygon.ExternalRing().AddPoint(Point(point.getX(), point.getY()));
-    }
-
-    for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
-    {
-        OGRLinearRing* internalRing = ogrPolygon->getInteriorRing(i);
-        Polygon::Ring newInternalRing;
-        for (int i = 0; i < internalRing->getNumPoints(); i++)
-        {
-            OGRPoint point;
-            ring->getPoint(i, &point);
-            newInternalRing.AddPoint(Point(point.getX(), point.getY()));
-        }
-        polygon.InternalRings().push_back(newInternalRing);
-    }
-    return polygon;
 }
 
 Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::ParseGeometryType(OGRGeometry *geometry)

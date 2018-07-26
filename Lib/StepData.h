@@ -41,14 +41,23 @@ public:
     vector<Feature> GetMetadataFeatures(string metadataName);
     map<string, vector<Feature>> MetadataFeatures();
 
+    int AreaId() const;
+    void SetAreaId(int AreaId);
+
+    int TileId() const;
+    void SetTileId(int TileId);
+
 private:
-	string _uniqueId;
-	static int numberOfTiles;
+    string _uniqueId;
+    static int numberOfTiles;
     Rect _boundingRect;
 	Area _boundingArea;
 	map<string, shared_ptr<GeoTile>> _tiles;
 	map<string, shared_ptr<GeoTile>> _processedTiles;
     map<string, vector<Feature>> _metadataFeatures;
+
+    int _areaId;
+    int _tileId;
 };
 
 #endif

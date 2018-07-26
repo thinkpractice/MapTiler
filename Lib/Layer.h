@@ -22,6 +22,9 @@ class Layer
         void ClearSpatialFilter();
         void SetSpatialFilter(const Area& area);
 
+        Feature NewFeature();
+        void AddFeature(const Feature& feature);
+
         class FeatureIterator
         {
             public:

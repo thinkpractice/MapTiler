@@ -21,6 +21,9 @@ class Feature
         Feature(const Feature& other);
         virtual ~Feature();
 
+        OGRFeature* InternalFeature() const;
+
+        long long FeatureId();
         string Name() const;
         size_t NumberOfFields() const;
 
@@ -29,6 +32,11 @@ class Feature
         const Field operator[](size_t index) const;
 
         bool operator==(const Feature& other) const;
+
+        void SetField(const Field& field);
+        void SetField(string fieldName, string value);
+        void SetField(string fieldName, int value);
+        void SetField(string fieldName, double value);
 
         class FeatureGeometry
         {

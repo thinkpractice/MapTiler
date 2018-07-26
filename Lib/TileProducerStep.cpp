@@ -26,6 +26,12 @@ TileProducerStep::~TileProducerStep()
 {
 }
 
+shared_ptr<StepData> TileProducerStep::CreateStepData(const Rect& tileRect)
+{
+    Area area = _map->AreaForRect(tileRect);
+    return make_shared<StepData>(tileRect, area);
+}
+
 void TileProducerStep::Run()
 {
     int numberOfTilesDownloaded = 0;
@@ -36,9 +42,7 @@ void TileProducerStep::Run()
     {
         try
         {
-			Area area = _map->AreaForRect(tileRect);
-			auto stepData = make_shared<StepData>(tileRect, area);
-			
+            auto stepData = CreateStepData(tileRect);
 			StepData::SetNumberOfTiles(_tileGrid.NumberOfTiles());
 			
             OutQueue()->enqueue(stepData);

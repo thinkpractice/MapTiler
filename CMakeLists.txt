@@ -23,3 +23,6 @@ target_link_libraries(ShapeFileExample Lib)
 
 add_executable(GLTest GLTest.cpp)
 target_link_libraries(GLTest Lib)
+
+add_executable(DatabaseExample databaseexample.cpp)
+target_link_libraries(DatabaseExample Lib)

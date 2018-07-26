@@ -18,6 +18,11 @@ public:
 
     void Run();
 
+    void CreateStepData();
+
+protected:
+    shared_ptr<StepData> CreateStepData(const Rect& area);
+
 private:
     TileGrid _tileGrid;
 	std::shared_ptr<GeoMap> _map;

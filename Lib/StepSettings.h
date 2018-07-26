@@ -39,6 +39,9 @@ public:
     int TileHeight() const;
     void SetTileHeight(int TileHeight);
 
+    int MapYear() const;
+    void SetMapYear(int mapYear);
+
 public:
     static int TileWidthNotSet;
     static int TileHeightNotSet;
@@ -56,6 +59,7 @@ private:
 
     int _tileWidth;
     int _tileHeight;
+    int _mapYear;
 };
 
 #endif // STEPSETTINGS_H

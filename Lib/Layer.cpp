@@ -39,6 +39,17 @@ void Layer::SetSpatialFilter(const Area& area)
     _layer->SetSpatialFilterRect(minX, minY, maxX, maxY);
 }
 
+Feature Layer::NewFeature()
+{
+    OGRFeature* feature = new OGRFeature(FeatureDefinition());
+    return Feature(feature);
+}
+
+void Layer::AddFeature(const Feature &feature)
+{
+    _layer->CreateFeature(feature.InternalFeature());
+}
+
 void Layer::ResetReading() const
 {
     _layer->ResetReading();

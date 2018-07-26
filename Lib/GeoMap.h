@@ -6,10 +6,12 @@
 #include "GeoTile.h"
 #include "SpatialReference.h"
 #include "AffineTransform.h"
+#include "Layer.h"
 #include <tuple>
 #include <vector>
 #include <string>
 #include <functional>
+#include <memory>
 
 using namespace std;
 
@@ -50,6 +52,7 @@ class GeoMap
         virtual Rect RectForArea(const Area& area) = 0;
         virtual Area AreaForRect(const Rect& rect) = 0;
 
+        virtual shared_ptr<Layer> ExecuteQuery(string query) = 0;
     private:
         string _title;
         string _filename;

@@ -2,12 +2,12 @@
 #include <iostream>
 #include "CoordinateTransformation.h"
 
-GDALMap::GDALMap(string filename)
+GDALMap::GDALMap(std::string filename)
             :   GDALMap(filename, nullptr)
 {
 }
 
-GDALMap::GDALMap(string filename, GDALDataset* dataset)
+GDALMap::GDALMap(std::string filename, GDALDataset* dataset)
             :   GeoMap(filename),
                 _dataset(dataset)
 {
@@ -146,6 +146,14 @@ Area GDALMap::AreaForRect(const Rect& rect)
     return Area(ProjectionReference(), leftTop, bottomRight);
 }
 
+std::shared_ptr<Layer> GDALMap::ExecuteQuery(std::string query)
+{
+    OGRLayer* layer = Dataset()->ExecuteSQL(query.c_str(), nullptr, nullptr);
+    if (!layer)
+        return nullptr;
+    return make_shared<Layer>(layer);
+}
+
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
@@ -153,7 +161,7 @@ GDALDataset* GDALMap::Dataset()
     return _dataset;
 }
 
-tuple<int, int> GDALMap::GetTileSize()
+std::tuple<int, int> GDALMap::GetTileSize()
 {
     int width, height = 0;
     GDALRasterBand* band = Dataset()->GetRasterBand(1);

@@ -21,7 +21,7 @@ string VectorFile::Filename()
 GDALDataset* VectorFile::Dataset()
 {
     if (!_dataset)
-        _dataset = (GDALDataset*) GDALOpenEx( Filename().c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL );
+        _dataset = (GDALDataset*) GDALOpenEx( Filename().c_str(), GDAL_OF_VECTOR | GDAL_OF_VERBOSE_ERROR, NULL, NULL, NULL );
     return _dataset;
 }
 

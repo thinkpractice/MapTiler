@@ -17,55 +17,50 @@ Polygon::~Polygon()
 {
 }
 
-Polygon::Ring::Ring()
+OGRGeometry *Polygon::ToGdal()
 {
+
 }
 
-Polygon::Ring::Ring(vector<Point> points)
-                :   _points(points)
+void Polygon::FromGdal(OGRGeometry *geometry)
 {
+    OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
+    OGRLinearRing* ring = ogrPolygon->getExteriorRing();
+    _externalRing = GetRingFromGdal(ring);
+
+    for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
+    {
+        OGRLinearRing* internalRing = ogrPolygon->getInteriorRing(i);
+        Ring newInternalRing = GetRingFromGdal(internalRing);
+        _internalRings.push_back(newInternalRing);
+    }
 }
 
-Polygon::Ring::~Ring()
-{
-}
-
-Polygon::Ring Polygon::Ring::Transform(TransformFunction transformFunction)
-{
-    vector<Point> mappedPoints = transformFunction(Points());
-    return Polygon::Ring(mappedPoints);
-}
-
-void Polygon::Ring::AddPoint(const Point point)
-{
-    _points.push_back(point);
-}
-
-Polygon::Ring& Polygon::ExternalRing()
+Ring& Polygon::ExternalRing()
 {
     return _externalRing;
 }
 
-vector<Polygon::Ring>& Polygon::InternalRings()
+vector<Ring>& Polygon::InternalRings()
 {
     return _internalRings;
 }
 
-Polygon::Ring Polygon::GetExternalRing() const
+Ring Polygon::GetExternalRing() const
 {
     return _externalRing;
 }
 
-vector<Polygon::Ring> Polygon::GetInternalRings() const
+vector<Ring> Polygon::GetInternalRings() const
 {
     return _internalRings;
 }
 
-Polygon Polygon::Transform(TransformFunction transformFunction)
+Polygon Polygon::Transform(Ring::TransformFunction transformFunction)
 {
-    Polygon::Ring mappedExternalRing = ExternalRing().Transform(transformFunction);
+    Ring mappedExternalRing = ExternalRing().Transform(transformFunction);
     
-    vector<Polygon::Ring> mappedInternalRings;
+    vector<Ring> mappedInternalRings;
     for (auto internalRing : InternalRings())
     {
         mappedInternalRings.push_back(internalRing.Transform(transformFunction));

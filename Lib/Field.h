@@ -12,8 +12,8 @@ class Field
         Field(OGRFieldDefn* fieldDefinition,string value);
         virtual ~Field();
 
-        string Name();
-        string Value();
+        string Name() const;
+        string Value() const;
 
     private:
         OGRFieldDefn* _fieldDefinition;

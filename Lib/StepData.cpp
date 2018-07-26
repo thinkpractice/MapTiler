@@ -89,6 +89,26 @@ map<string, vector<Feature>> StepData::MetadataFeatures()
     return _metadataFeatures;
 }
 
+int StepData::AreaId() const
+{
+    return _areaId;
+}
+
+void StepData::SetAreaId(int areaId)
+{
+    _areaId = areaId;
+}
+
+int StepData::TileId() const
+{
+    return _tileId;
+}
+
+void StepData::SetTileId(int tileId)
+{
+    _tileId = tileId;
+}
+
 vector<Feature> StepData::GetMetadataFeatures(string metadataName)
 {
     return _metadataFeatures[metadataName];

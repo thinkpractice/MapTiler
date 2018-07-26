@@ -3,19 +3,19 @@
 
 #include <string>
 #include <tuple>
-#include "gdal_priv.h"
+#include <memory>
 #include "GeoTile.h"
 #include "GeoMap.h"
 #include "SpatialReference.h"
 #include "Point.h"
-
-using namespace std;
+#include "Layer.h"
+#include "gdal_priv.h"
 
 class GDALMap : public GeoMap
 {
     public:
-        GDALMap(string filename);
-        GDALMap(string filename, GDALDataset* dataset);
+        GDALMap(std::string filename);
+        GDALMap(std::string filename, GDALDataset* dataset);
         virtual ~GDALMap();
 
         GeoMap* Clone();
@@ -34,9 +34,11 @@ class GDALMap : public GeoMap
         GeoTile* GetTileForRect(const Rect& rectangle);
         void WriteTile(shared_ptr<GeoTile> tile);
 
-        tuple<int, int> GetTileSize();
+        std::tuple<int, int> GetTileSize();
         Rect RectForArea(const Area& area);
         Area AreaForRect(const Rect& rect);
+
+        std::shared_ptr<Layer> ExecuteQuery(std::string query);
 
     private:
         GDALDataset* Dataset();

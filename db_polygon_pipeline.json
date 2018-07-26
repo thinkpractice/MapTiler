@@ -41,6 +41,13 @@
             "layer_index" : -1
         },
         {
+            "name" : "Step 2c: Add Solar Panel Addresses",
+            "type" : "AddMetadataStep",
+            "layer_name" : "pv_2017_nl",
+            "layer_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_index" : -1
+        },
+        {
             "name" : "Step 3: Filter Tiles to those with polygons",
             "type" : "TileFilterStep"
         },
@@ -48,19 +55,22 @@
             "name" : "Step 4a: Download RGB tiles for 2016",
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2016",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857",
+	    "year" : 2016
         },
         {
             "name" : "Step 4b: Download IR tiles for 2016",
             "type" : "TileDownloadStep",
             "layer_name" : "ir_2016",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857",
+	    "year" : 2016
         },
         {
             "name" : "Step 4c: Download RGB tiles for 2017",
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2017",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857",
+	    "year" : 2017
         },
         {
             "name" : "Step 5: Mask tiles with polygon layer",
