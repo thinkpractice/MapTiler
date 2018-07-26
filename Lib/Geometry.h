@@ -13,8 +13,7 @@ public:
     Geometry();
     virtual ~Geometry();
 
-    virtual OGRGeometry* ToGdal() = 0;
-    virtual void FromGdal(OGRGeometry* geometry) = 0;
+    virtual operator OGRGeometry*() const = 0;
 
     Ring GetRingFromGdal(OGRLinearRing* ring);
 };

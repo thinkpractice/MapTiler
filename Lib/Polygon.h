@@ -19,8 +19,8 @@ class Polygon : public Geometry
         Polygon(Ring externalRing, vector<Ring> internalRings);
         virtual ~Polygon();
 
-        OGRGeometry* ToGdal();
-        void FromGdal(OGRGeometry* geometry);
+        operator OGRGeometry*() const {};
+        Polygon& operator=(const OGRGeometry* geometry);
 
         Ring& ExternalRing();
         vector<Ring>& InternalRings();

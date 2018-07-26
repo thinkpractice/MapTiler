@@ -14,23 +14,16 @@ MultiPolygon::~MultiPolygon()
 {
 }
 
-OGRGeometry *MultiPolygon::ToGdal()
-{
-
-}
-
-void MultiPolygon::FromGdal(OGRGeometry *geometry)
+MultiPolygon& MultiPolygon::operator=(const OGRGeometry *geometry)
 {
     OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;
     for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
     {
-        OGRPolygon* ogrPolygon = (OGRPolygon*)multiPolygon->getGeometryRef(i);
-
         Polygon polygon;
-        polygon.FromGdal(ogrPolygon);
-
+        polygon = multiPolygon->getGeometryRef(i);
         AddPolygon(polygon);
     }
+    return *this;
 }
 
 void MultiPolygon::AddPolygon(Polygon polygon)

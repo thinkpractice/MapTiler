@@ -138,12 +138,12 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
     }
     else if (Type() == PolygonType)
     {
-        _polygon.FromGdal(geometry);
+        _polygon = geometry;
         _hasPolygon = true;
     }
     else if (Type() == MultiPolygonType)
     {
-        _multiPolygon.FromGdal(geometry);
+        _multiPolygon = geometry;
         _hasMultiPolygon = true;
     }
 }

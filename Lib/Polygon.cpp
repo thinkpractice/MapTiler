@@ -17,12 +17,7 @@ Polygon::~Polygon()
 {
 }
 
-OGRGeometry *Polygon::ToGdal()
-{
-
-}
-
-void Polygon::FromGdal(OGRGeometry *geometry)
+Polygon& Polygon::operator=(const OGRGeometry *geometry)
 {
     OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
     OGRLinearRing* ring = ogrPolygon->getExteriorRing();
@@ -34,6 +29,7 @@ void Polygon::FromGdal(OGRGeometry *geometry)
         Ring newInternalRing = GetRingFromGdal(internalRing);
         _internalRings.push_back(newInternalRing);
     }
+    return *this;
 }
 
 Ring& Polygon::ExternalRing()
