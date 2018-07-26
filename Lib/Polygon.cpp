@@ -17,6 +17,23 @@ Polygon::~Polygon()
 {
 }
 
+Polygon::operator OGRGeometry *() const
+{
+    OGRPolygon* ogrPolygon = new OGRPolygon();
+
+    OGRGeometry* externalRing = _externalRing;
+    ogrPolygon->addRing((OGRCurve*) externalRing);
+    delete externalRing;
+
+    for (auto& ring : _internalRings)
+    {
+        OGRGeometry* internalRing = ring;
+        ogrPolygon->addRing((OGRCurve*) internalRing);
+        delete internalRing;
+    }
+    return ogrPolygon;
+}
+
 Polygon& Polygon::operator=(const OGRGeometry *geometry)
 {
     OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;

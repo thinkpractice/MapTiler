@@ -13,6 +13,14 @@ Ring::~Ring()
 {
 }
 
+Ring::operator OGRGeometry *() const
+{
+    OGRLinearRing* ogrRing = new OGRLinearRing();
+    for (auto& point : _points)
+       ogrRing->addPoint(point.X, point.Y);
+    return ogrRing;
+}
+
 Ring Ring::Transform(TransformFunction transformFunction)
 {
     vector<Point> mappedPoints = transformFunction(Points());

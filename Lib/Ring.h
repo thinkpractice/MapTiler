@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 #include "Point.h"
+#include "ogrsf_frmts.h"
 
 class Ring
 {
@@ -16,6 +17,8 @@ class Ring
         Ring();
         Ring(vector<Point> points);
         virtual ~Ring();
+
+        operator OGRGeometry*() const;
 
         Ring Transform(TransformFunction transformFunction);
         void AddPoint(Point point);

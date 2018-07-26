@@ -19,7 +19,7 @@ class Polygon : public Geometry
         Polygon(Ring externalRing, vector<Ring> internalRings);
         virtual ~Polygon();
 
-        operator OGRGeometry*() const {};
+        operator OGRGeometry*() const;
         Polygon& operator=(const OGRGeometry* geometry);
 
         Ring& ExternalRing();
