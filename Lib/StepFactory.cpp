@@ -17,7 +17,7 @@ StepFactory::StepFactory()
             "TileProducerStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight());
+                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl(), stepSettings.PersistenceLayerName());
             }
         },
         {

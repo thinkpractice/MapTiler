@@ -7,6 +7,10 @@ DatabaseWrapper::DatabaseWrapper(std::shared_ptr<Layer> layer)
 {
 }
 
+DatabaseWrapper::~DatabaseWrapper()
+{
+}
+
 int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
 {
     return SaveFeature([&](Feature& feature)
@@ -37,11 +41,13 @@ int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string 
     });
 }
 
-DatabaseWrapper DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename, std::string layerName)
+shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename, std::string layerName)
 {
+    if (vectorFilename.empty())
+        return nullptr;
     auto vectorFile = Utils::LoadVectorFile(vectorFilename);
     auto layer = vectorFile->operator[](layerName.c_str());
-    return DatabaseWrapper(layer);
+    return make_shared<DatabaseWrapper>(layer);
 }
 
 int DatabaseWrapper::SaveFeature(std::function<void (Feature &)> saveFunction)

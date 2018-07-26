@@ -18,7 +18,7 @@ public:
     int SaveTile(int parentAreaId, std::string uuid, const Area& tileArea);
     int SaveTileFile(int tileId, std::string filename, std::string layerName, int year);
 
-    static DatabaseWrapper DatabaseWrapperFor(std::string vectorFilename, std::string LayerName);
+    static shared_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename, std::string LayerName);
 
 private:
     int SaveFeature(std::function<void(Feature&)> saveFunction);
