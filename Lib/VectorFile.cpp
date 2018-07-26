@@ -1,8 +1,9 @@
 #include "VectorFile.h"
 #include <iostream>
 
-VectorFile::VectorFile(string filename)
+VectorFile::VectorFile(string filename, OpenMode mode)
                 :   _filename(filename),
+                    _mode(mode),
                     _dataset(nullptr)
 {
 }
@@ -21,7 +22,7 @@ string VectorFile::Filename()
 GDALDataset* VectorFile::Dataset()
 {
     if (!_dataset)
-        _dataset = (GDALDataset*) GDALOpenEx( Filename().c_str(), GDAL_OF_VECTOR | GDAL_OF_VERBOSE_ERROR, NULL, NULL, NULL );
+        _dataset = (GDALDataset*) GDALOpenEx( Filename().c_str(), GDAL_OF_VECTOR | GDAL_OF_VERBOSE_ERROR | _mode, NULL, NULL, NULL );
     return _dataset;
 }
 

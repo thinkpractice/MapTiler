@@ -14,6 +14,18 @@ MultiPolygon::~MultiPolygon()
 {
 }
 
+MultiPolygon::operator OGRGeometry *() const
+{
+    OGRMultiPolygon *ogrMultiPolygon = new OGRMultiPolygon();
+    for (auto& polygon : _polygons)
+    {
+        OGRGeometry* ogrPolygon = polygon;
+        ogrMultiPolygon->addGeometry(ogrPolygon);
+        delete ogrPolygon;
+    }
+    return ogrMultiPolygon;
+}
+
 MultiPolygon& MultiPolygon::operator=(const OGRGeometry *geometry)
 {
     OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;

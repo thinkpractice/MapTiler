@@ -25,6 +25,8 @@ class Layer
         Feature NewFeature();
         void AddFeature(const Feature& feature);
 
+        void Save();
+
         class FeatureIterator
         {
             public:

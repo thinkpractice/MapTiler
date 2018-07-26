@@ -9,6 +9,12 @@ Ring::Ring(vector<Point> points)
 {
 }
 
+Ring::Ring(std::initializer_list<Point> list)
+                :	_points(list)
+{
+
+}
+
 Ring::~Ring()
 {
 }

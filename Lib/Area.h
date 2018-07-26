@@ -4,6 +4,7 @@
 #include <string>
 #include "SpatialReference.h"
 #include "Point.h"
+#include "Polygon.h"
 
 class Area
 {
@@ -12,6 +13,21 @@ class Area
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight, string description);
         Area(double minX, double minY, double maxX, double maxY, string wellKnownGeogCS = "EPSG:4326", string description="");
+
+        operator Polygon() const
+        {
+            Polygon polygon;
+            vector<Point> externalRing =
+            {
+                LeftTop(),
+                Point(BottomRight().X, LeftTop().Y),
+                BottomRight(),
+                Point(LeftTop().X, BottomRight().Y),
+                LeftTop()
+            };
+            polygon.ExternalRing() = externalRing;
+            return polygon;
+        };
 
         SpatialReference ProjectionReference() const;
         void SetProjectionReference(const SpatialReference& projectionReference);

@@ -13,7 +13,13 @@ using namespace std;
 class VectorFile
 {
     public:
-        VectorFile(string filename);
+        enum OpenMode
+        {
+            ReadOnly = GDAL_OF_READONLY,
+            Update = GDAL_OF_UPDATE
+        };
+
+        VectorFile(string filename, OpenMode mode = ReadOnly);
         virtual ~VectorFile();
     
         string Filename();
@@ -32,6 +38,7 @@ class VectorFile
     private:
         string _filename;
         GDALDataset* _dataset;
+        OpenMode _mode;
         vector<shared_ptr<Layer>> _layers;
 };
 

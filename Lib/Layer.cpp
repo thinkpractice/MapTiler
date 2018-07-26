@@ -50,6 +50,11 @@ void Layer::AddFeature(const Feature &feature)
     _layer->CreateFeature(feature.InternalFeature());
 }
 
+void Layer::Save()
+{
+    _layer->SyncToDisk();
+}
+
 void Layer::ResetReading() const
 {
     _layer->ResetReading();

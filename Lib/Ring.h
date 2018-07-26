@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <functional>
+#include <initializer_list>
 #include "Point.h"
 #include "ogrsf_frmts.h"
 
@@ -16,6 +17,7 @@ class Ring
 
         Ring();
         Ring(vector<Point> points);
+        Ring(std::initializer_list<Point> list);
         virtual ~Ring();
 
         operator OGRGeometry*() const;

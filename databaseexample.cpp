@@ -5,11 +5,12 @@
 #include "Lib/Layer.h"
 #include "Lib/Feature.h"
 #include "Lib/GeoMapProvider.h"
+#include "Lib/Area.h"
 
 int main(int argc, char** argv)
 {
     GDALAllRegister();
-    VectorFile databaseFile("PG:host=localhost port=5432 dbname=addresses user=postgres password=tim2839");
+    VectorFile databaseFile("PG:host=localhost port=5432 dbname=addresses user=postgres password=tim2839", VectorFile::OpenMode::Update);
     for (auto layer : databaseFile.Layers())
     {
         std::cout << "layer: " << layer->Name() << std::endl;
@@ -40,5 +41,13 @@ int main(int argc, char** argv)
             std::cout << feature.GetGeometry().GetMultiPolygon() << std::endl;
         }
     }
+
+    Area landgraaf(5.9906272, 50.8702199, 6.094184, 50.9347014);
+    auto feature = layer->NewFeature();
+    feature.SetField("description", "Landgraaf");
+    feature.SetGeometry(landgraaf);
+    layer->AddFeature(feature);
+    layer->Save();
+
     return 0;
 }

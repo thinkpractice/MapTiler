@@ -14,7 +14,7 @@ class MultiPolygon : public Geometry
         MultiPolygon(vector<Polygon> polygons);
         virtual ~MultiPolygon();
 
-        operator OGRGeometry*() const {};
+        operator OGRGeometry*() const;
         MultiPolygon& operator=(const OGRGeometry* geometry);
 
         MultiPolygon Transform(Ring::TransformFunction transformFunction);
