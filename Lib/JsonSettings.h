@@ -75,6 +75,8 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetTileWidth(j.value("tile_width", StepSettings::TileWidthNotSet));
     stepSettings.SetTileHeight(j.value("tile_height", StepSettings::TileHeightNotSet));
     stepSettings.SetMapYear(j.value("year", 0));
+    stepSettings.SetPersistenceUrl(j.value("persistence_url", ""));
+    stepSettings.SetPersistenceLayerName(j.value("persistence_layer_name",""));
 }
 
 void from_json(const json& j, Settings& settings)

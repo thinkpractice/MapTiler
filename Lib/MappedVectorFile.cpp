@@ -3,8 +3,8 @@
 
 using namespace std;
 
-MappedVectorFile::MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform)
-                    :   VectorFile(filename),
+MappedVectorFile::MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode)
+                    :   VectorFile(filename, mode),
                         _destinationReference(destinationReference),
                         _rasterCoordinateTransform(rasterCoordinateTransform)
 {

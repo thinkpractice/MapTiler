@@ -9,7 +9,7 @@
 class MappedVectorFile : public VectorFile
 {
 public:
-    MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform);
+    MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode = ReadOnly);
     virtual ~MappedVectorFile();
 
     virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);

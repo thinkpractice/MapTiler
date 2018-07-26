@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include "GeoMap.h"
+#include "VectorFile.h"
 
 class Utils
 {
@@ -16,6 +17,7 @@ class Utils
         static void TimeIt(std::function<void()> function);
         static std::string GetFileExtension(const std::string& fileName);
         static std::shared_ptr<GeoMap> LoadRasterMap(std::string layerUrl, int layerIndex);
+        static std::shared_ptr<VectorFile> LoadVectorFile(std::string filename);
 };
 
 #endif

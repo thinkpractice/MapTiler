@@ -42,6 +42,12 @@ public:
     int MapYear() const;
     void SetMapYear(int mapYear);
 
+    std::string PersistenceUrl() const;
+    void SetPersistenceUrl(const std::string &persistenceUrl);
+
+    std::string PersistenceLayerName() const;
+    void SetPersistenceLayerName(const std::string &PersistenceLayerName);
+
 public:
     static int TileWidthNotSet;
     static int TileHeightNotSet;
@@ -56,6 +62,9 @@ private:
     std::string _maskingLayerName;
     std::string _fileType;
     std::string _outputDirectory;
+
+    std::string _persistenceUrl;
+    std::string _persistenceLayerName;
 
     int _tileWidth;
     int _tileHeight;

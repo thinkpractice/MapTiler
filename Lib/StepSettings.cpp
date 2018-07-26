@@ -120,3 +120,23 @@ void StepSettings::SetMapYear(int mapYear)
 {
     _mapYear = mapYear;
 }
+
+std::string StepSettings::PersistenceUrl() const
+{
+    return _persistenceUrl;
+}
+
+void StepSettings::SetPersistenceUrl(const std::string &persistenceUrl)
+{
+    _persistenceUrl = persistenceUrl;
+}
+
+std::string StepSettings::PersistenceLayerName() const
+{
+    return _persistenceLayerName;
+}
+
+void StepSettings::SetPersistenceLayerName(const std::string &persistenceLayerName)
+{
+    _persistenceLayerName = persistenceLayerName;
+}
