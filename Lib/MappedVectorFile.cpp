@@ -36,7 +36,7 @@ Feature MappedLayer::NextFeature() const
 {
     Feature feature = Layer::NextFeature();
     Feature newFeature = feature;
-    newFeature.Geometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
+    newFeature.GetGeometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
 
     return newFeature;
 }

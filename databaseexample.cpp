@@ -26,18 +26,18 @@ int main(int argc, char** argv)
             std::cout << field.Name() << "=" << field.Value() << ",";
         }
 
-        std::cout << "type=" << feature.Geometry().Type() << std::endl;
-        if (feature.Geometry().HasPoint())
+        std::cout << "type=" << feature.GetGeometry().Type() << std::endl;
+        if (feature.GetGeometry().HasPoint())
         {
-            std::cout << feature.Geometry().GetPoint() << std::endl;
+            std::cout << feature.GetGeometry().GetPoint() << std::endl;
         }
-        else if (feature.Geometry().HasPolygon())
+        else if (feature.GetGeometry().HasPolygon())
         {
-            std::cout << feature.Geometry().GetPolygon() << std::endl;
+            std::cout << feature.GetGeometry().GetPolygon() << std::endl;
         }
-        else if (feature.Geometry().HasMultiPolygon())
+        else if (feature.GetGeometry().HasMultiPolygon())
         {
-            std::cout << feature.Geometry().GetMultiPolygon() << std::endl;
+            std::cout << feature.GetGeometry().GetMultiPolygon() << std::endl;
         }
     }
     return 0;

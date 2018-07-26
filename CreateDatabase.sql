@@ -99,6 +99,15 @@ select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.ye
 inner join addresses_bag as ab 
 on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer
 
+create table tile_files
+(
+	file_id serial primary key,
+	tile_id int references tiles(tile_id),
+	filename varchar(255),
+	layerName varchar(255),
+	year int
+);
+
 -- number of panels in solarpanel_addresses_orig
 select count(*) from solarpanel_addresses_orig
 select count(*) from pv_2017_nl
@@ -122,3 +131,10 @@ select count(building_id) from solarpanel_addresses_orig as sao
 inner join addresses_bag as ab 
 on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer
 
+select * from address_bag as ab
+inner join cbs_provincies_2012 as cp
+on ST_Intersects(cp.wkb_geometry, ab.geom)
+where cp.objectid = 1 and cp.provincien = 'Limburg';
+
+insert into areaofinterest(description, area)
+values ('Heerlen', ST_GeomFromText('POLYGON((50.8184032 5.9163049, 50.9342223 5.9163049, 50.9342223 6.0263794, 50.8184032 6.0263794, 50.8184032 5.9163049))', 4326));

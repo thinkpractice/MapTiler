@@ -1,5 +1,5 @@
-#include "Feature.h"
 #include <iostream>
+#include "Feature.h"
 
 Feature::Feature(OGRFeature* feature)
             :   _feature(feature)
@@ -96,6 +96,11 @@ void Feature::SetField(std::string fieldName, int value)
 void Feature::SetField(std::string fieldName, double value)
 {
     _feature->SetField(fieldName.c_str(), value);
+}
+
+void Feature::SetGeometry(const Geometry& geometry)
+{
+    _feature->SetGeometry(geometry);
 }
 
 Feature::FeatureGeometry::FeatureGeometry()
@@ -306,7 +311,7 @@ Feature::iterator Feature::end() const
     return {this, false};
 }
 
-Feature::FeatureGeometry& Feature::Geometry()
+Feature::FeatureGeometry& Feature::GetGeometry()
 {
     return _featureGeometry;
 }

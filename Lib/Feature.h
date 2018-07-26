@@ -37,6 +37,7 @@ class Feature
         void SetField(string fieldName, string value);
         void SetField(string fieldName, int value);
         void SetField(string fieldName, double value);
+        void SetGeometry(const Geometry& geometry);
 
         class FeatureGeometry
         {
@@ -119,7 +120,7 @@ class Feature
         iterator begin() const;
         iterator end() const;
         
-        FeatureGeometry& Geometry();
+        FeatureGeometry& GetGeometry();
 
     private:
         Field GetFieldAtIndex(size_t index) const;

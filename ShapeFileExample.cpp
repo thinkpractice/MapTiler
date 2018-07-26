@@ -93,18 +93,18 @@ int main(int argc, char** argv)
             cout << field.Name() << "=" << field.Value() << ",";
         }
         
-        cout << "type=" << feature.Geometry().Type() << endl;
-        if (feature.Geometry().HasPoint())
+        cout << "type=" << feature.GetGeometry().Type() << endl;
+        if (feature.GetGeometry().HasPoint())
         {
-            cout << feature.Geometry().GetPoint() << endl;
+            cout << feature.GetGeometry().GetPoint() << endl;
         }
-        else if (feature.Geometry().HasPolygon())
+        else if (feature.GetGeometry().HasPolygon())
         {
-            cout << feature.Geometry().GetPolygon() << endl;
+            cout << feature.GetGeometry().GetPolygon() << endl;
         }
-        else if (feature.Geometry().HasMultiPolygon())
+        else if (feature.GetGeometry().HasMultiPolygon())
         {
-            cout << feature.Geometry().GetMultiPolygon() << endl;
+            cout << feature.GetGeometry().GetMultiPolygon() << endl;
         }
 
         cout << endl;

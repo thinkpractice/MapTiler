@@ -9,7 +9,6 @@
 class Geometry
 {
 public:
-
     Geometry();
     virtual ~Geometry();
 
