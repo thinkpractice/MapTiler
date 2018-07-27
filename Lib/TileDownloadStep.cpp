@@ -5,16 +5,17 @@
 #include <chrono>
 #include <thread>
 
-TileDownloadStep::TileDownloadStep(string layerName, string layerUrl, int layerIndex)
-                    :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex))
+TileDownloadStep::TileDownloadStep(string layerName, string layerUrl, int layerIndex, int year)
+                    :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex), year)
 {
 }
 
 //TODO remove later
-TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map)
+TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map, int year)
                     :	ProcessingStep(Source),
 						_tileName(tileName),
-						_map(map)
+                        _map(map),
+                        _year(year)
 {
 }
 
@@ -30,8 +31,8 @@ void TileDownloadStep::Run()
 		try
 		{
 			auto tile = shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
-			
 			stepData->AddTile(_tileName, tile);
+
 			OutQueue()->enqueue(stepData);
 			numberOfTilesDownloaded++;
 			

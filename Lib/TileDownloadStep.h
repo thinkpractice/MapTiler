@@ -10,8 +10,8 @@ using namespace std;
 class TileDownloadStep : public ProcessingStep
 {
 public:
-    TileDownloadStep(string layerName, string layerUrl, int layerIndex);
-    TileDownloadStep(string tileName, shared_ptr<GeoMap> map);
+    TileDownloadStep(string layerName, string layerUrl, int layerIndex, int year);
+    TileDownloadStep(string tileName, shared_ptr<GeoMap> map, int year);
 	virtual ~TileDownloadStep();
 	
 	virtual void Run();
@@ -19,6 +19,7 @@ public:
 public:
 	string _tileName;
 	shared_ptr<GeoMap> _map;
+    int _year;
 };
 
 #endif

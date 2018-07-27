@@ -56,7 +56,7 @@ create table AreaOfInterest
 
 CREATE INDEX area_of_interest_gix ON AreaOfInterest USING GIST ( area );
 
-drop table Tiles;
+drop table Tiles cascade;
 create table Tiles
 (
 	tile_id serial primary key,
