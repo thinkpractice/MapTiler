@@ -24,7 +24,8 @@
     "steps" : [
         {
             "name" : "Step 1: Produces Tiles for Map",
-            "type" : "TileProducerStep"
+            "type" : "TileProducerStep",
+            "persistence_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'"
         },
         {
             "name" : "Step 2a: Add BAG House Polygons",
@@ -81,7 +82,8 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "/home/tjadejong/Documents/CBS/ZonnePanelen/Heerlen/"
+            "output_directory" : "/home/tjadejong/Documents/CBS/ZonnePanelen/Heerlen/",
+            "persistence_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'"
         }
     ]
 }

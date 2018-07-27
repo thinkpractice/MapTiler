@@ -1,13 +1,15 @@
 #include "TileWriterStep.h"
 #include "TileWriter.h"
+#include "DatabaseWrapper.h"
 #include <iostream>
 #include "Utils.h"
 
 using namespace std;
 
-TileWriterStep::TileWriterStep(string tileDirectory)
+TileWriterStep::TileWriterStep(string tileDirectory, string persistenceUrl)
                     :   ProcessingStep(Sink),
                         _tileDirectory(tileDirectory),
+                        _persistenceUrl(persistenceUrl),
                         _numberOfTilesWritten(0)
 {
 }
@@ -18,6 +20,7 @@ TileWriterStep::~TileWriterStep()
 
 void TileWriterStep::Run()
 {
+     shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
      while (auto stepData = InQueue()->dequeue())
 	 {
 		 string tileFilename = _tileDirectory + stepData->UniqueId();
@@ -25,12 +28,16 @@ void TileWriterStep::Run()
 		 {
 			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
 			 SaveTile(geoTile.second, filename);
+             if (databasePersistence)
+                 databasePersistence->SaveTileFile(stepData->TileId(), filename, "", 0);
 		 }
 		 
 		 for (auto geoTile : stepData->ProcessedTiles())
 		 {
 			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
 			 SaveTile(geoTile.second, filename);
+             if (databasePersistence)
+                 databasePersistence->SaveTileFile(stepData->TileId(), filename, "", 0);
 		 }
          _numberOfTilesWritten++;
          if (_numberOfTilesWritten % 100 == 0)

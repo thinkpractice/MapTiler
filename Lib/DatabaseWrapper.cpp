@@ -2,8 +2,8 @@
 #include "VectorFile.h"
 #include "Utils.h"
 
-DatabaseWrapper::DatabaseWrapper(std::shared_ptr<Layer> layer)
-                    :	_layer(layer)
+DatabaseWrapper::DatabaseWrapper(std::shared_ptr<VectorFile> vectorFile)
+                    :	_vectorFile(vectorFile)
 {
 }
 
@@ -13,7 +13,7 @@ DatabaseWrapper::~DatabaseWrapper()
 
 int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
 {
-    return SaveFeature([&](Feature& feature)
+    return SaveFeature("areaofinterest", [&](Feature& feature)
     {
         feature.SetField("description", areaOfInterest.Description());
         feature.SetGeometry(areaOfInterest);
@@ -22,7 +22,7 @@ int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
 
 int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
 {
-    return SaveFeature([&](Feature& feature)
+    return SaveFeature("tiles", [&](Feature& feature)
     {
         feature.SetField("area_id", parentAreaId);
         feature.SetField("uuid", uuid);
@@ -32,7 +32,7 @@ int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &ti
 
 int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
 {
-    return SaveFeature([&](Feature& feature)
+    return SaveFeature("tile_files", [&](Feature& feature)
     {
         feature.SetField("tile_id", tileId);
         feature.SetField("filename", filename);
@@ -41,20 +41,20 @@ int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string 
     });
 }
 
-shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename, std::string layerName)
+shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
 {
     if (vectorFilename.empty())
         return nullptr;
-    auto vectorFile = Utils::LoadVectorFile(vectorFilename);
-    auto layer = vectorFile->operator[](layerName.c_str());
-    return make_shared<DatabaseWrapper>(layer);
+    auto vectorFile = Utils::LoadVectorFile(vectorFilename, VectorFile::OpenMode::Update);
+    return make_shared<DatabaseWrapper>(vectorFile);
 }
 
-int DatabaseWrapper::SaveFeature(std::function<void (Feature &)> saveFunction)
+int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)
 {
-    auto feature = _layer->NewFeature();
+    auto layer = _vectorFile->operator[](tableName.c_str());
+    auto feature = layer->NewFeature();
     saveFunction(feature);
-    _layer->AddFeature(feature);
-    _layer->Save();
+    layer->AddFeature(feature);
+    layer->Save();
     return feature.FeatureId();
 }

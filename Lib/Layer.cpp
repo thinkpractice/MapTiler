@@ -41,7 +41,8 @@ void Layer::SetSpatialFilter(const Area& area)
 
 Feature Layer::NewFeature()
 {
-    OGRFeature* feature = new OGRFeature(FeatureDefinition());
+    auto featureDefinition = FeatureDefinition();
+    OGRFeature* feature = new OGRFeature(featureDefinition);
     return Feature(feature);
 }
 

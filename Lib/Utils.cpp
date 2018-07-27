@@ -77,7 +77,7 @@ std::shared_ptr<GeoMap> Utils::LoadRasterMap(std::string layerUrl, int layerInde
     return mapProvider.Maps()[layerIndex];
 }
 
-std::shared_ptr<VectorFile> Utils::LoadVectorFile(std::string filename)
+std::shared_ptr<VectorFile> Utils::LoadVectorFile(std::string filename, VectorFile::OpenMode mode)
 {
-    return std::make_shared<VectorFile>(filename);
+    return std::make_shared<VectorFile>(filename, mode);
 }

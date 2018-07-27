@@ -36,8 +36,9 @@ void TileProducerStep::Run()
     cout << "TileGrid dimensions=(" << _tileGrid.WidthInTiles() << "," << _tileGrid.HeightInTiles() << ")" << endl;
     cout << "Tile Dimensions=(" << _tileGrid.TileWidth() << "," << _tileGrid.TileHeight() << ")" << endl;
 
-    shared_ptr<DatabaseWrapper> databaseWrapper = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl, _persistenceLayerName);
-    int areaId = databaseWrapper ? databaseWrapper->SaveAreaOfInterest(_tileGrid.GridArea()) : 0;
+    shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
+    int areaId = databasePersistence ? databasePersistence->SaveAreaOfInterest(_tileGrid.GridArea()) : 0;
+
     for (auto& tileRect : _tileGrid)
     {
         try
@@ -46,7 +47,7 @@ void TileProducerStep::Run()
             auto stepData = make_shared<StepData>(tileRect, area);
             stepData->SetAreaId(areaId);
 
-            int tileId = databaseWrapper ? databaseWrapper->SaveTile(areaId, stepData->UniqueId(), area) : 0;
+            int tileId = databasePersistence ? databasePersistence->SaveTile(areaId, stepData->UniqueId(), area) : 0;
             stepData->SetTileId(tileId);
 
 			StepData::SetNumberOfTiles(_tileGrid.NumberOfTiles());
