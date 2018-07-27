@@ -27,17 +27,17 @@ void TileWriterStep::Run()
 		 for (auto geoTile : stepData->Tiles())
 		 {
 			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
-			 SaveTile(geoTile.second, filename);
+             SaveTile(geoTile.second.tile, filename);
              if (databasePersistence)
-                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, 0);
+                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
 		 }
 		 
 		 for (auto geoTile : stepData->ProcessedTiles())
 		 {
 			 string filename = tileFilename + "_" + geoTile.first + ".tiff";
-			 SaveTile(geoTile.second, filename);
+             SaveTile(geoTile.second.tile, filename);
              if (databasePersistence)
-                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, 0);
+                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
 		 }
          _numberOfTilesWritten++;
          if (_numberOfTilesWritten % 100 == 0)

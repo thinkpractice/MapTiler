@@ -51,7 +51,7 @@ void TileGpuTransferStep::Run()
 				polygonShaderProgram.Use();
 
 				GLuint polygonTextureId;
-                auto maskTile = DrawPolygons(polygonShaderProgram, geoTile, polygonFeatures, &polygonTextureId);
+                auto maskTile = DrawPolygons(polygonShaderProgram, geoTile.tile, polygonFeatures, &polygonTextureId);
 			
 				//Do onscreen drawing
                 glBindVertexArray(maskingVao);
@@ -60,7 +60,7 @@ void TileGpuTransferStep::Run()
                 frameBuffer.Clear();
 				
 				GLuint textureId;
-				TileToTexture(geoTile, &textureId);
+                TileToTexture(geoTile.tile, &textureId);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 /*glClearColor(0,0,0,1);
@@ -69,13 +69,13 @@ void TileGpuTransferStep::Run()
 				maskingShaderProgram.Use();
 				DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
 				
-                auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
+                auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile.tile->BoundingRect(), geoTile.tile->BoundingArea(), 4);
 				// Swap buffers
 				glfwSwapBuffers(window);
 
 				//Pass original and created tiles on to next step
-				stepData->AddProcessedTile(tilePair.first + "_mask", maskTile);
-				stepData->AddProcessedTile(tilePair.first + "_masked", maskedTile);
+                stepData->AddProcessedTile(tilePair.first + "_mask", maskTile, geoTile.year);
+                stepData->AddProcessedTile(tilePair.first + "_masked", maskedTile, geoTile.year);
 
 				glDeleteTextures(1, &textureId);
 				glDeleteTextures(1, &polygonTextureId);
