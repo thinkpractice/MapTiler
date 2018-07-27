@@ -27,9 +27,25 @@ Ring::operator OGRGeometry *() const
     return ogrRing;
 }
 
-Ring Ring::Transform(TransformFunction transformFunction)
+Ring& Ring::operator=(OGRGeometry* ring)
 {
-    vector<Point> mappedPoints = transformFunction(Points());
+    return operator=((OGRLinearRing*) ring);
+}
+
+Ring& Ring::operator=(OGRLinearRing* ring)
+{
+    for (int i = 0; i < ring->getNumPoints(); i++)
+    {
+        OGRPoint point;
+        ring->getPoint(i, &point);
+        AddPoint(Point(point.getX(), point.getY()));
+    }
+    return *this;
+}
+
+Ring Ring::Transform(Geometry<Ring>::TransformFunction transformFunction) const
+{
+    vector<Point> mappedPoints = transformFunction(_points);
     return Ring(mappedPoints);
 }
 

@@ -43,13 +43,12 @@ Polygon::operator OGRGeometry *() const
 Polygon& Polygon::operator=(const OGRGeometry *geometry)
 {
     OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
-    OGRLinearRing* ring = ogrPolygon->getExteriorRing();
-    _externalRing = GetRingFromGdal(ring);
+    _externalRing = ogrPolygon->getExteriorRing();
 
     for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
     {
-        OGRLinearRing* internalRing = ogrPolygon->getInteriorRing(i);
-        Ring newInternalRing = GetRingFromGdal(internalRing);
+        Ring newInternalRing;
+        newInternalRing = ogrPolygon->getInteriorRing(i);
         _internalRings.push_back(newInternalRing);
     }
     return *this;
@@ -75,12 +74,12 @@ vector<Ring> Polygon::GetInternalRings() const
     return _internalRings;
 }
 
-Polygon Polygon::Transform(Ring::TransformFunction transformFunction)
+Polygon Polygon::Transform(Geometry<Polygon>::TransformFunction transformFunction) const
 {
-    Ring mappedExternalRing = ExternalRing().Transform(transformFunction);
+    Ring mappedExternalRing = GetExternalRing().Transform(transformFunction);
     
     vector<Ring> mappedInternalRings;
-    for (auto internalRing : InternalRings())
+    for (auto internalRing : GetInternalRings())
     {
         mappedInternalRings.push_back(internalRing.Transform(transformFunction));
     }

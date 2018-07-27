@@ -6,6 +6,7 @@
 #include "Lib/Feature.h"
 #include "Lib/GeoMapProvider.h"
 #include "Lib/Area.h"
+#include "Lib/Polygon.h"
 
 int main(int argc, char** argv)
 {
@@ -45,7 +46,7 @@ int main(int argc, char** argv)
     Area landgraaf(5.9906272, 50.8702199, 6.094184, 50.9347014);
     auto feature = layer->NewFeature();
     feature.SetField("description", "Landgraaf");
-    feature.SetGeometry(landgraaf);
+    feature.SetGeometry<Polygon>(landgraaf);
     layer->AddFeature(feature);
     layer->Save();
 

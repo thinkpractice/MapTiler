@@ -5,12 +5,12 @@
 #include <functional>
 #include <initializer_list>
 #include "Point.h"
+#include "Geometry.h"
 #include "ogrsf_frmts.h"
 
-class Ring
+class Ring : public Geometry<Ring>
 {
     public:
-        using TransformFunction = function< vector<Point>(vector<Point>&)>;
 
         using iterator = vector<Point>::iterator;
         using const_iterator = vector<Point>::const_iterator;
@@ -21,8 +21,10 @@ class Ring
         virtual ~Ring();
 
         operator OGRGeometry*() const;
+        Ring& operator=(OGRGeometry* ring);
+        Ring& operator=(OGRLinearRing* ring);
 
-        Ring Transform(TransformFunction transformFunction);
+        Ring Transform(Geometry<Ring>::TransformFunction transformFunction) const;
         void AddPoint(Point point);
         void SetPoints(vector<Point> points) { _points = points; }
         vector<Point>& Points() { return _points; }

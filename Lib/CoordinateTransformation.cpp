@@ -6,7 +6,6 @@ CoordinateTransformation::CoordinateTransformation(const SpatialReference& sourc
                                 _destinationReference(destinationReference),
                                 _transformation(nullptr)
 {
-
 }
 
 CoordinateTransformation::~CoordinateTransformation()
@@ -56,20 +55,6 @@ Area CoordinateTransformation::MapArea(Area other)
     Point convertedBottomRight = MapCoordinate(other.BottomRight());
 
     return Area(_destinationReference, convertedLeftTop, convertedBottomRight);
-}
-
-Polygon CoordinateTransformation::MapPolygon(Polygon polygon)
-{
-    return polygon.Transform([&](vector<Point>& points) -> vector<Point> {
-            return MapCoordinates(points);
-            });
-}
-
-MultiPolygon CoordinateTransformation::MapMultiPolygon(MultiPolygon multiPolygon)
-{
-    return multiPolygon.Transform([&](vector<Point>& points) -> vector<Point> {
-            return MapCoordinates(points);
-            });
 }
 
 Point CoordinateTransformation::MapCoordinate(SpatialReference sourceReference,

@@ -43,7 +43,7 @@ void MultiPolygon::AddPolygon(Polygon polygon)
     _polygons.push_back(polygon);
 }
 
-MultiPolygon MultiPolygon::Transform(Ring::TransformFunction transformFunction)
+MultiPolygon MultiPolygon::Transform(Geometry<MultiPolygon>::TransformFunction transformFunction) const
 {
     std::vector<Polygon> mappedPolygons;
     for (auto& polygon : _polygons)

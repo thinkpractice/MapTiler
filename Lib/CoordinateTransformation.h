@@ -22,8 +22,12 @@ class CoordinateTransformation
 
         Area MapArea(Area other);
         
-        Polygon MapPolygon(Polygon polygon);
-        MultiPolygon MapMultiPolygon(MultiPolygon multiPolygon);
+        template <class T> T MapGeometry(const Geometry<T>& geometry)
+        {
+            return geometry.Transform([&](const vector<Point> points) -> vector<Point> {
+                    return MapCoordinates(points);
+                    });
+        }
 
     public:
         static Point MapCoordinate(SpatialReference sourceReference, 

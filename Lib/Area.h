@@ -17,6 +17,7 @@ class Area
         operator Polygon() const
         {
             Polygon polygon;
+            polygon.SetSpatialReference(ProjectionReference());
             vector<Point> externalRing =
             {
                 LeftTop(),

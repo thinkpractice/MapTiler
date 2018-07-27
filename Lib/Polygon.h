@@ -12,7 +12,7 @@
 
 using namespace std;
 
-class Polygon : public Geometry
+class Polygon : public Geometry<Polygon>
 {
     public:
         Polygon();
@@ -28,7 +28,7 @@ class Polygon : public Geometry
         Ring GetExternalRing() const;
         vector<Ring> GetInternalRings() const;
 
-        Polygon Transform(Ring::TransformFunction transformFunction);
+        Polygon Transform(Geometry<Polygon>::TransformFunction transformFunction) const;
     private:
         Ring _externalRing;
         vector<Ring> _internalRings;

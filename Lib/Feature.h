@@ -37,7 +37,18 @@ class Feature
         void SetField(string fieldName, string value);
         void SetField(string fieldName, int value);
         void SetField(string fieldName, double value);
-        void SetGeometry(const Geometry& geometry);
+
+        template<class T>
+        void SetGeometry(const Geometry<T> &geometry)
+        {
+            SpatialReference sourceReference = geometry.GetSpatialReference();
+
+            OGRGeomFieldDefn* geometryDefinition = FeatureDefinition()->GetGeomFieldDefn(0);
+            SpatialReference destinationReference(geometryDefinition->GetSpatialRef());
+
+            CoordinateTransformation transformation(sourceReference, destinationReference);
+            _feature->SetGeometryDirectly(transformation.MapGeometry(geometry));
+        }
 
         class FeatureGeometry
         {

@@ -98,10 +98,7 @@ void Feature::SetField(std::string fieldName, double value)
     _feature->SetField(fieldName.c_str(), value);
 }
 
-void Feature::SetGeometry(const Geometry& geometry)
-{
-    _feature->SetGeometry(geometry);
-}
+
 
 Feature::FeatureGeometry::FeatureGeometry()
                             :   FeatureGeometry(nullptr)
@@ -206,11 +203,11 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
     }
     else if (HasPolygon())
     {
-        _polygon = transformation->MapPolygon(_polygon);
+        _polygon = transformation->MapGeometry(_polygon);
     }
     else if (HasMultiPolygon())
     {
-        _multiPolygon = transformation->MapMultiPolygon(_multiPolygon);
+        _multiPolygon = transformation->MapGeometry(_multiPolygon);
     }
 }
 
@@ -333,3 +330,5 @@ Field Feature::GetFieldAtIndex(size_t index) const
         value = _feature->GetFieldAsDouble(index); */
     return Field(fieldDefinition, string(value));
 }
+
+

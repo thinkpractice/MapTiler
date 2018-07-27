@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class MultiPolygon : public Geometry
+class MultiPolygon : public Geometry<MultiPolygon>
 {
     public:
         MultiPolygon();
@@ -17,7 +17,7 @@ class MultiPolygon : public Geometry
         operator OGRGeometry*() const;
         MultiPolygon& operator=(const OGRGeometry* geometry);
 
-        MultiPolygon Transform(Ring::TransformFunction transformFunction);
+        MultiPolygon Transform(Geometry<MultiPolygon>::TransformFunction transformFunction) const;
         void AddPolygon(Polygon polygon);
         vector<Polygon>& Polygons() { return _polygons; };
 
