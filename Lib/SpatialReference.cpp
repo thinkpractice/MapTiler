@@ -27,7 +27,7 @@ bool SpatialReference::IsSame(SpatialReference& reference)
     return _spatialReference.IsSame(&otherReference);
 }
 
-OGRSpatialReference SpatialReference::InnerReference()
+OGRSpatialReference SpatialReference::InnerReference() const
 {
     return _spatialReference;
 }

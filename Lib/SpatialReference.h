@@ -17,7 +17,7 @@ class SpatialReference
         void SetWellKnownGeogCS(const char* geoCs);
         bool IsSame(SpatialReference& reference);
 
-        OGRSpatialReference InnerReference();
+        OGRSpatialReference InnerReference() const;
         string ToWkt() const;
 
     public:
