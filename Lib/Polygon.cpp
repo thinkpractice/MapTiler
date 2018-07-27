@@ -23,9 +23,9 @@ Polygon::operator OGRGeometry *() const
     //Note: needed to work around GDAL memory management here a bit
     //the spatialReference needs to be passed as a pointer but is not copied
     //only the reference count is increased.
-    OGRSpatialReference reference = _spatialReference.InnerReference();
-    //TODO!!! memory leak here!!
-    ogrPolygon->assignSpatialReference( new OGRSpatialReference(reference));
+    OGRSpatialReference* reference = new OGRSpatialReference(_spatialReference.InnerReference());
+    ogrPolygon->assignSpatialReference(reference);
+    reference->Release();
 
     OGRGeometry* externalRing = _externalRing;
     ogrPolygon->addRing((OGRCurve*) externalRing);
