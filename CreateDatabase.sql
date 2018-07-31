@@ -1,4 +1,19 @@
-﻿create table solarpanel_addresses_orig
+﻿create database deepsolaris;
+
+-- Enable PostGIS (includes raster)
+create extension postgis;
+-- Enable Topology
+create extension postgis_topology;
+-- Enable PostGIS Advanced 3D
+-- and other geoprocessing algorithms
+-- sfcgal not available with all distributions
+create extension postgis_sfcgal;
+-- fuzzy matching needed for Tiger
+create extension fuzzystrmatch;
+-- rule based standardizer
+create extension address_standardizer;
+
+create table solarpanel_addresses_orig
 (
   panel_id serial primary key,
   postcode character varying(6),
@@ -6,7 +21,7 @@
   number_add character varying(8),
   building_id character varying(20),
   year_in_use integer,
-  date_in_use date,
+  date_in_use date
 );
 
 create table addresses_bag
@@ -41,9 +56,9 @@ postcode,woonplaats,gemeente,provincie,nummeraanduiding,verblijfsobjectgebruiksd
 oppervlakteverblijfsobject,verblijfsobjectstatus,object_id,object_type,nevenadres,
 pandid,pandstatus,pandbouwjaar,x,y,lon,lat) from '/home/tjadejong/Documents/CBS/BAG/bagadres-full.csv' delimiter ';' csv header;
 
-alter table addresses_bag add column geom geometry(Point, 4326);
+alter table addresses_bag add column location geometry(Point, 4326);
 
-update addresses_bag set geom=st_SetSrid(st_MakePoint(lon, lat), 4326);
+update addresses_bag set location=st_SetSrid(st_MakePoint(lon, lat), 4326);
 
 CREATE INDEX addresses_bag_gix ON addresses_bag USING GIST ( geom );
 
@@ -51,7 +66,7 @@ create table AreaOfInterest
 (
 	area_id serial primary key,
 	description varchar(255),
-	area GEOGRAPHY(POLYGON,4326)
+	area geometry(POLYGON,4326)
 );
 
 CREATE INDEX area_of_interest_gix ON AreaOfInterest USING GIST ( area );
@@ -62,7 +77,7 @@ create table Tiles
 	tile_id serial primary key,
 	uuid varchar(37),
 	area_id int references AreaOfInterest(area_id),
-	area GEOGRAPHY(POLYGON,4326)
+	area geometry(POLYGON,4326)
 );
 
 CREATE INDEX tiles_gix ON Tiles USING GIST ( area );
@@ -87,7 +102,7 @@ create table pv_2017_nl
 	  building_id character varying(20),
 	  year_in_use integer,
 	  date_in_use date,
-	  location GEOGRAPHY(POINT,4326),
+	  location geometry(POINT,4326),
 	  bag_address_id int references addresses_bag (address_id),
 	  solar_panel_id int references solarpanel_addresses_orig(panel_id)
 );
