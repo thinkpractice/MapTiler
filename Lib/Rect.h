@@ -21,6 +21,9 @@ class Rect
         double Height() const;
         void SetHeight(double height);
 
+        int IntegerWidth() const;
+        int IntegerHeight() const;
+
         Point LeftTop() const;
         Point BottomRight() const;
 

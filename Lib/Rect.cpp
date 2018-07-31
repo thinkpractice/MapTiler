@@ -52,6 +52,16 @@ void Rect::SetHeight(double height)
     _height = height;
 }
 
+int Rect::IntegerWidth() const
+{
+    return static_cast<int>(Width());
+}
+
+int Rect::IntegerHeight() const
+{
+    return static_cast<int>(Height());
+}
+
 double Rect::Right() const
 {
     return Left() + Width();

@@ -41,33 +41,32 @@ void TileGpuTransferStep::Run()
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;
+                GLenum colorFormat = ColorFormatForTile(geoTile.tile);
 
                 glBindVertexArray(polygonVao);
 
-				FrameBuffer polygonBuffer;
-				polygonBuffer.Bind();
+                FrameBuffer polygonBuffer(_tileWidth, _tileHeight, colorFormat);
+                polygonBuffer.Bind();
 				polygonBuffer.Clear();
 
 				polygonShaderProgram.Use();
 
-				GLuint polygonTextureId;
-                auto maskTile = DrawPolygons(polygonShaderProgram, geoTile.tile, polygonFeatures, &polygonTextureId);
+                auto maskTile = DrawPolygons(polygonShaderProgram, geoTile.tile, polygonFeatures);
 			
 				//Do onscreen drawing
                 glBindVertexArray(maskingVao);
-                FrameBuffer frameBuffer;
-				frameBuffer.Bind();
+                FrameBuffer frameBuffer(_tileWidth, _tileHeight, colorFormat);
+                frameBuffer.Bind();
                 frameBuffer.Clear();
-				
-				GLuint textureId;
-                TileToTexture(geoTile.tile, &textureId);
+
+                TileToTexture(geoTile.tile);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 /*glClearColor(0,0,0,1);
                 glClear(GL_COLOR_BUFFER_BIT);*/
 				
 				maskingShaderProgram.Use();
-				DrawOnScreen(maskingShaderProgram, textureId, polygonTextureId);
+                DrawOnScreen(maskingShaderProgram, frameBuffer.TextureId(), polygonBuffer.TextureId());
 				
                 auto maskedTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile.tile->BoundingRect(), geoTile.tile->BoundingArea(), 4);
 				// Swap buffers
@@ -76,9 +75,6 @@ void TileGpuTransferStep::Run()
 				//Pass original and created tiles on to next step
                 stepData->AddProcessedTile(tilePair.first + "_mask", maskTile, geoTile.year);
                 stepData->AddProcessedTile(tilePair.first + "_masked", maskedTile, geoTile.year);
-
-				glDeleteTextures(1, &textureId);
-				glDeleteTextures(1, &polygonTextureId);
 
 				glfwPollEvents();
 
@@ -200,14 +196,14 @@ void TileGpuTransferStep::BindMaskingVertices(const ShaderProgram& shaderProgram
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 	
-	GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
 	glEnableVertexAttribArray(posAttrib);
 	
-	GLint texAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "texcoord");
+    GLint texAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "texcoord");
 	glEnableVertexAttribArray(texAttrib);
 	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE,
-						  4*sizeof(float), (void*)(2*sizeof(float)));
+                          4*sizeof(float), reinterpret_cast<void*>(2*sizeof(float)));
 }
 
 void TileGpuTransferStep::DrawOnScreen(const ShaderProgram& shaderProgram, GLuint textureId, GLuint polygonTextureId)
@@ -224,43 +220,20 @@ void TileGpuTransferStep::DrawOnScreen(const ShaderProgram& shaderProgram, GLuin
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glUniform1i(glGetUniformLocation(shaderProgram.ShaderProgramId(), "polygonTex"), 1);
 
-    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
-void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile, GLuint* textureId)
+void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile)
 {
-    glEnable(GL_TEXTURE_2D);
-    //Transfer texture to GPU
-    glGenTextures(1, textureId);
-
-    glBindTexture(GL_TEXTURE_2D, *textureId);
-
-    int textureWidth = geoTile->BoundingRect().Width();
-    int textureHeight = geoTile->BoundingRect().Height();
+    int textureWidth = geoTile->BoundingRect().IntegerWidth();
+    int textureHeight = geoTile->BoundingRect().IntegerHeight();
 
     GLenum colorFormat = ColorFormatForTile(geoTile);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, colorFormat, GL_UNSIGNED_BYTE, geoTile->Data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *textureId, 0);
 }
 
-shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures, GLuint* textureId)
+shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures)
 {
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, textureId);
-    glBindTexture(GL_TEXTURE_2D, *textureId);
-
-    int textureWidth = geoTile->BoundingRect().Width();
-    int textureHeight = geoTile->BoundingRect().Height();
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *textureId, 0);
-
 	Tesselator tesselator;
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
@@ -297,7 +270,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::ReadImage(GLenum mode, Rect boundingRec
 {
    glReadBuffer(mode);
    shared_ptr<GeoTile> readTile = make_shared<GeoTile>(boundingRect, boundingArea, numberOfLayers);
-   glReadPixels(0,0, boundingRect.Width(), boundingRect.Height(), GL_RGBA, GL_UNSIGNED_BYTE, readTile->Data());
+   glReadPixels(0,0, boundingRect.IntegerWidth(), boundingRect.IntegerHeight(), GL_RGBA, GL_UNSIGNED_BYTE, readTile->Data());
    return readTile;
 }
 
@@ -321,7 +294,7 @@ void TileGpuTransferStep::DrawElements(const ShaderProgram& shaderProgram, GLenu
 	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);// GL_STREAM_DRAW);
 
     GLint posAttrib = glGetAttribLocation(shaderProgram.ShaderProgramId(), "position");
-    glVertexAttribPointer(posAttrib, 2, GL_DOUBLE, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 2, GL_DOUBLE, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(posAttrib);
 
     glDrawArrays(mode, 0, elements.size());

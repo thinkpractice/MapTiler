@@ -7,14 +7,27 @@
 class FrameBuffer
 {
 public:
-	FrameBuffer();
+    FrameBuffer(int _width, int _height, GLenum ColorFormat = GL_RGBA);
 	virtual ~FrameBuffer();
 	
-	void Bind();
+    bool StatusOk();
+    GLenum Status();
+
+    void Bind();
 	void Clear();
+
+    GLuint TextureId();
 	
+    int Width() const;
+    int Height() const;
+    GLenum ColorFormat() const;
+
 private:
-	GLuint _frameBufferId;
+    GLuint _frameBufferId;
+    GLuint _textureId;
+    int _width;
+    int _height;
+    GLenum _colorFormat;
 };
 
 #endif
