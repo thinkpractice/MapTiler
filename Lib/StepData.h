@@ -13,6 +13,14 @@ using namespace std;
 
 class StepData
 {
+private:
+    struct TileData
+    {
+        int year;
+        shared_ptr<GeoTile> tile;
+    };
+
+
 public:
 	StepData(const Rect& boundingRect, const Area& boundingArea);
 	virtual ~StepData();
@@ -28,13 +36,13 @@ public:
 	void SetBoundingRect(const Rect& rect);
 	Rect BoundingRect();
 	
-	void AddTile(string tileName, shared_ptr<GeoTile> geoTile);
-	shared_ptr<GeoTile> GetTile(string tileName);
-	map<string, shared_ptr<GeoTile>> Tiles();
+    void AddTile(string tileName, shared_ptr<GeoTile> geoTile, int year);
+    TileData GetTile(string tileName);
+    map<string, TileData> Tiles();
 	
-	void AddProcessedTile(string tileName, shared_ptr<GeoTile> geoTile);
-	shared_ptr<GeoTile> GetProcessedTile(string tileName);
-	map<string, shared_ptr<GeoTile>> ProcessedTiles();
+    void AddProcessedTile(string tileName, shared_ptr<GeoTile> geoTile, int year);
+    TileData GetProcessedTile(string tileName);
+    map<string, TileData> ProcessedTiles();
 	
 
     void AddMetadataFeatures(string metadataName, const vector<Feature>& features);
@@ -52,8 +60,8 @@ private:
     static int numberOfTiles;
     Rect _boundingRect;
 	Area _boundingArea;
-	map<string, shared_ptr<GeoTile>> _tiles;
-	map<string, shared_ptr<GeoTile>> _processedTiles;
+    map<string, TileData> _tiles;
+    map<string, TileData> _processedTiles;
     map<string, vector<Feature>> _metadataFeatures;
 
     int _areaId;

@@ -20,6 +20,8 @@ public:
 
 	GLuint ShaderProgramId() const;
 	
+private:
+    GLuint CreateShaderProgram();
 	
 private:
 	bool _created;

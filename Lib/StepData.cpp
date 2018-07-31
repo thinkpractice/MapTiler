@@ -49,32 +49,32 @@ Rect StepData::BoundingRect()
 	return _boundingRect;
 }
 
-void StepData::AddTile(string tileName, shared_ptr< GeoTile > geoTile)
+void StepData::AddTile(string tileName, shared_ptr< GeoTile > geoTile, int year)
 {
-	_tiles[tileName] = geoTile;
+    _tiles[tileName] = {year, geoTile};
 }
 
-shared_ptr< GeoTile > StepData::GetTile(string tileName)
+StepData::TileData StepData::GetTile(string tileName)
 {
 	return _tiles[tileName];
 }
 
-map< string, shared_ptr< GeoTile > > StepData::Tiles()
+map< string, StepData::TileData > StepData::Tiles()
 {
 	return _tiles;
 }
 
-void StepData::AddProcessedTile(string tileName, shared_ptr< GeoTile > geoTile)
+void StepData::AddProcessedTile(string tileName, shared_ptr< GeoTile > geoTile, int year)
 {
-	_processedTiles[tileName] = geoTile;
+    _processedTiles[tileName] = {year, geoTile};
 }
 
-shared_ptr< GeoTile > StepData::GetProcessedTile(string tileName)
+StepData::TileData StepData::GetProcessedTile(string tileName)
 {
 	return _processedTiles[tileName];
 }
 
-map< string, shared_ptr< GeoTile > > StepData::ProcessedTiles()
+map< string, StepData::TileData > StepData::ProcessedTiles()
 {
 	return _processedTiles;
 }

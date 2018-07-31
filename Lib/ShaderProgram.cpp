@@ -20,7 +20,7 @@ void ShaderProgram::AddShader(const Shader& shader)
 
 void ShaderProgram::Create()
 { 
-	_shaderProgramId = glCreateProgram();
+    _shaderProgramId = CreateShaderProgram();
 	for (auto& shader : _shaders)
 	{
 		shader.Load();
@@ -39,6 +39,15 @@ void ShaderProgram::Use()
 
 GLuint ShaderProgram::ShaderProgramId() const
 {
-	return _shaderProgramId;
+    return _shaderProgramId;
+}
+
+GLuint ShaderProgram::CreateShaderProgram()
+{
+    if (_created)
+        glDeleteProgram(_shaderProgramId);
+    _shaderProgramId = glCreateProgram();
+    _created = true;
+    return _shaderProgramId;
 }
 
