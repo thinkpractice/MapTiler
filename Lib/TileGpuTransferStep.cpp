@@ -234,6 +234,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile)
 
 shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures)
 {
+    cout << "Drawing" << endl;
 	Tesselator tesselator;
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
@@ -252,18 +253,18 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
                     i++;
                 }
                 tesselator.EndContour();
-
-				vector<Point> triangles = tesselator.Points();
-				DrawElements(shaderProgram, GL_TRIANGLES, triangles);
             tesselator.EndPolygon();
         }
+
+        for (auto primitive : tesselator.Primitives())
+        {
+            vector<Point> triangles = primitive.points;
+            DrawElements(shaderProgram, GL_TRIANGLES, triangles);
+        }
+
         numberOfPolygons++;
     }
-    /*if (numberOfPolygons > 0)
-        cout << "number of polygons drawn = " << numberOfPolygons << endl;*/
-
-    auto maskTile = ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
-    return maskTile;
+    return ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
 }
 
 shared_ptr<GeoTile> TileGpuTransferStep::ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers)

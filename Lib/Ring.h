@@ -24,6 +24,7 @@ class Ring : public Geometry<Ring>
         Ring& operator=(OGRGeometry* ring);
         Ring& operator=(OGRLinearRing* ring);
 
+        bool IsClockwise();
         Ring Transform(Geometry<Ring>::TransformFunction transformFunction) const;
         void AddPoint(Point point);
         void SetPoints(vector<Point> points) { _points = points; }
@@ -38,6 +39,7 @@ class Ring : public Geometry<Ring>
 
     private:
         vector<Point> _points;
+        bool _clockwise;
 };
 
 inline std::ostream& operator<<(std::ostream &strm, const Ring &ring)

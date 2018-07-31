@@ -8,7 +8,7 @@ Tesselator::Tesselator()
 	_tesselator = gluNewTess();
 	
 	gluTessProperty(_tesselator, GLU_TESS_BOUNDARY_ONLY, GL_FALSE);
-	gluTessProperty(_tesselator, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+    gluTessProperty(_tesselator, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
 	gluTessCallback(_tesselator, GLU_TESS_BEGIN_DATA, (GLvoid (*)())Tesselator::BeginVA);
 	gluTessCallback(_tesselator, GLU_TESS_END_DATA, (GLvoid (*)())Tesselator::EndVA);
 	gluTessCallback(_tesselator, GLU_TESS_VERTEX_DATA, (GLvoid (*)())Tesselator::VertexVA);

@@ -34,6 +34,7 @@ Ring& Ring::operator=(OGRGeometry* ring)
 
 Ring& Ring::operator=(OGRLinearRing* ring)
 {
+    _clockwise = ring->isClockwise() > 0;
     for (int i = 0; i < ring->getNumPoints(); i++)
     {
         OGRPoint point;
@@ -41,6 +42,11 @@ Ring& Ring::operator=(OGRLinearRing* ring)
         AddPoint(Point(point.getX(), point.getY()));
     }
     return *this;
+}
+
+bool Ring::IsClockwise()
+{
+    return _clockwise;
 }
 
 Ring Ring::Transform(Geometry<Ring>::TransformFunction transformFunction) const
