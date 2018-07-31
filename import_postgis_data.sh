@@ -38,6 +38,6 @@ sudo -u postgres ogr2ogr -f PostgreSQL PG:dbname=deepsolaris -progress -nlt PROM
 
 # Import NRW deepsolaris with SolarPanels
 #ogr2ogr -f PostgreSQL PG:dbname=deepsolaris -progress -nlt PROMOTE_TO_MULTI $datadir/PV_201712_scharf.shp
-
+sudo -u postgres ogr2ogr -f PostgreSQL PG:dbname=deepsolaris -progress -nlt PROMOTE_TO_MULTI "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?request=GetCapabilities"
 # Go back to normal user
 exit
