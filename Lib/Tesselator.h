@@ -30,7 +30,6 @@ public:
 	void AddVertex(const Point& point);
 	
 	vector<Primitive> Primitives();
-	vector<Point> Points();
 	
 private:
 	static void BeginVA(GLenum mode, Tesselator* va);

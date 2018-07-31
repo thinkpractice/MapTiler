@@ -66,11 +66,6 @@ vector< Primitive > Tesselator::Primitives()
 	return _primitives;
 }
 
-vector<Point> Tesselator::Points()
-{
-	return _currentPrimitive.points;
-}
-
 void Tesselator::BeginVA(GLenum mode, Tesselator *tesselator)
 {
 	Primitive primitive;
