@@ -17,14 +17,14 @@ StepFactory::StepFactory()
             "TileProducerStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl(), stepSettings.PersistenceLayerName());
+                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
             }
         },
         {
             "AddMetadataStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex());
+                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex(), stepSettings.PersistenceUrl());
             }
         },
         {

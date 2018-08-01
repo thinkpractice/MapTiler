@@ -7,23 +7,22 @@
 
 #include "CoordinateTransformation.h"
 
-TileProducerStep::TileProducerStep(std::string layerUrl, int layerIndex, const Area &area, int tileWidth, int tileHeight, std::string persistenceUrl, std::string persistenceLayerName)
-                    :	TileProducerStep(Utils::LoadRasterMap(layerUrl, layerIndex), area, tileWidth, tileHeight, persistenceUrl, persistenceLayerName)
+TileProducerStep::TileProducerStep(std::string layerUrl, int layerIndex, const Area &area, int tileWidth, int tileHeight, std::string persistenceUrl)
+                    :	TileProducerStep(Utils::LoadRasterMap(layerUrl, layerIndex), area, tileWidth, tileHeight, persistenceUrl)
 {
 }
 
-TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area, int tileWidth, int tileHeight, std::string persistenceUrl, std::string persistenceLayerName)
-                    :	TileProducerStep(map, map->RectForArea(area), area, tileWidth, tileHeight, persistenceUrl, persistenceLayerName)
+TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area, int tileWidth, int tileHeight, std::string persistenceUrl)
+                    :	TileProducerStep(map, map->RectForArea(area), area, tileWidth, tileHeight, persistenceUrl)
 {
 
 }
 
-TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight, std::string persistenceUrl, std::string persistenceLayerName)
+TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight, std::string persistenceUrl)
                 :   ProcessingStep(Source),
 					_map(map),
                     _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight),
-                    _persistenceUrl(persistenceUrl),
-                    _persistenceLayerName(persistenceLayerName)
+                    _persistenceUrl(persistenceUrl)
 {
 }
 

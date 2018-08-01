@@ -17,11 +17,13 @@ public:
     int SaveAreaOfInterest(const Area& areaOfInterest);
     int SaveTile(int parentAreaId, std::string uuid, const Area& tileArea);
     int SaveTileFile(int tileId, std::string filename, std::string layerName, int year);
+    int SaveBuilding(int tileId, const Feature& buildingFeature);
 
     static shared_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename);
 
 private:
     int SaveFeature(std::string tableName, std::function<void(Feature&)> saveFunction);
+    int SaveFeature(std::string tableName, const Feature& feature);
 
 private:
     std::shared_ptr<VectorFile> _vectorFile;

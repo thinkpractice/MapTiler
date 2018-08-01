@@ -1,10 +1,12 @@
 #include "AddMetadataStep.h"
+#include "DatabaseWrapper.h"
 
-AddMetadataStep::AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex)
+AddMetadataStep::AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex, std::string persistenceUrl)
                     :	ProcessingStep(Processing),
                         _metadataName(metadataName),
                         _vectorFile(vectorFile),
-                        _layerIndex(layerIndex)
+                        _layerIndex(layerIndex),
+                        _persistenceUrl(persistenceUrl)
 {
 }
 
@@ -32,6 +34,7 @@ shared_ptr<Layer> AddMetadataStep::GetLayer()
 void AddMetadataStep::Run()
 {
     auto layer = GetLayer();
+    shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
     while (auto stepData = InQueue()->dequeue())
     {
         layer->SetSpatialFilter(stepData->BoundingArea());
@@ -39,6 +42,7 @@ void AddMetadataStep::Run()
         for (auto it = layer->begin(); it != layer->end(); ++it)
         {
             auto feature = *it;
+            if (databasePersistence) databasePersistence->SaveBuilding(stepData->TileId(), feature);
             metadataFeatures.push_back(feature);
         }
         stepData->AddMetadataFeatures(_metadataName, metadataFeatures);

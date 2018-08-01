@@ -23,7 +23,7 @@ class Feature
 
         OGRFeature* InternalFeature() const;
 
-        long long FeatureId();
+        long long FeatureId() const;
         string Name() const;
         size_t NumberOfFields() const;
 
@@ -31,9 +31,13 @@ class Feature
         Field operator[](size_t index);
         const Field operator[](size_t index) const;
 
+        Field operator[](const char* fieldName);
+        const Field operator[](const char* fieldName) const;
+
         bool operator==(const Feature& other) const;
 
         void SetField(const Field& field);
+        void SetField(string fieldName, const Field& field);
         void SetField(string fieldName, string value);
         void SetField(string fieldName, int value);
         void SetField(string fieldName, double value);
@@ -134,6 +138,7 @@ class Feature
         FeatureGeometry& GetGeometry();
 
     private:
+        Field GetFieldWithName(const char* name) const;
         Field GetFieldAtIndex(size_t index) const;
         OGRFeatureDefn *FeatureDefinition() const;
 

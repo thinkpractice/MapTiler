@@ -41,6 +41,29 @@ int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string 
     });
 }
 
+int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
+{
+    int buildingId = SaveFeature("buildings", [&](Feature feature)
+    {
+        feature.SetField("identifier", feature["identificatie"]);
+        feature.SetField("year_build", feature["bouwjaar"]);
+        feature.SetField("status", feature["status"]);
+        feature.SetField("purpose", feature["gebruiksdoel"]);
+        feature.SetField("area_min", feature["oppervlakte_min"]);
+        feature.SetField("area_max", feature["oppervlakte_max"]);
+        feature.SetField("number_of_residencies", feature["aantal_verblijfsobjecten"]);
+        feature.SetField("update_date", feature["actualiteitsdatum"]);
+        feature.SetGeometry<MultiPolygon>(feature.GetGeometry());
+    });
+
+    SaveFeature("tile_buildings", [&](Feature& feature)
+    {
+        feature.SetField("tile_id", tileId);
+        feature.SetField("building_id", buildingId);
+    });
+    return buildingId;
+}
+
 shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
 {
     if (vectorFilename.empty())
@@ -54,6 +77,12 @@ int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feat
     auto layer = _vectorFile->operator[](tableName.c_str());
     auto feature = layer->NewFeature();
     saveFunction(feature);
+    return SaveFeature(tableName, feature);
+}
+
+int DatabaseWrapper::SaveFeature(std::string tableName, const Feature &feature)
+{
+    auto layer = _vectorFile->operator[](tableName.c_str());
     layer->AddFeature(feature);
     layer->Save();
     return feature.FeatureId();

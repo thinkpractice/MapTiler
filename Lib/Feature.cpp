@@ -30,7 +30,7 @@ OGRFeature *Feature::InternalFeature() const
     return _feature;
 }
 
-long long Feature::FeatureId()
+long long Feature::FeatureId() const
 {
     return _feature->GetFID();
 }
@@ -71,6 +71,16 @@ const Field Feature::operator[](size_t index) const
     return GetFieldAtIndex(index);
 }
 
+Field Feature::operator[](const char *fieldName)
+{
+    return GetFieldWithName(fieldName);
+}
+
+const Field Feature::operator[](const char *fieldName) const
+{
+    return GetFieldWithName(fieldName);
+}
+
 bool Feature::operator==(const Feature& other) const
 {
     if (_feature == nullptr && other._feature == nullptr)
@@ -80,7 +90,12 @@ bool Feature::operator==(const Feature& other) const
 
 void Feature::SetField(const Field &field)
 {
-   SetField(field.Name(), field.Value());
+    SetField(field.Name(), field.Value());
+}
+
+void Feature::SetField(string fieldName, const Field &field)
+{
+    SetField(fieldName, field.Value());
 }
 
 void Feature::SetField(std::string fieldName, string value)
@@ -97,8 +112,6 @@ void Feature::SetField(std::string fieldName, double value)
 {
     _feature->SetField(fieldName.c_str(), value);
 }
-
-
 
 Feature::FeatureGeometry::FeatureGeometry()
                             :   FeatureGeometry(nullptr)
@@ -313,9 +326,10 @@ Feature::FeatureGeometry& Feature::GetGeometry()
     return _featureGeometry;
 }
 
-OGRFeatureDefn* Feature::FeatureDefinition() const
+Field Feature::GetFieldWithName(const char *name) const
 {
-    return _feature->GetDefnRef();
+    size_t index = FeatureDefinition()->GetFieldIndex(name);
+    return GetFieldAtIndex(index);
 }
 
 Field Feature::GetFieldAtIndex(size_t index) const
@@ -331,4 +345,8 @@ Field Feature::GetFieldAtIndex(size_t index) const
     return Field(fieldDefinition, string(value));
 }
 
+OGRFeatureDefn* Feature::FeatureDefinition() const
+{
+    return _feature->GetDefnRef();
+}
 

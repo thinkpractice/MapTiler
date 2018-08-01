@@ -11,7 +11,7 @@ using namespace std;
 class AddMetadataStep : public ProcessingStep
 {
 public:
-    AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex = 0);
+    AddMetadataStep(string metadataName, shared_ptr<VectorFile> vectorFile, int layerIndex = 0, std::string persistenceUrl = "");
     virtual ~AddMetadataStep();
 
     string MetadataName();
@@ -23,6 +23,7 @@ private:
     string _metadataName;
     shared_ptr<VectorFile> _vectorFile;
     int _layerIndex;
+    string _persistenceUrl;
 };
 
 #endif // ADDMETADATASTEP_H

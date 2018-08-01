@@ -125,8 +125,11 @@ create table buildings
 	area_min int,
 	area_max int,
 	number_of_residences int,
-	update_date date		
+	update_date date,		
+	building_polygon geometry(multipolygon, 28992)
 );
+
+CREATE INDEX buildings_gix ON buildings USING GIST ( building_polygon );
 
 create table tile_buildings
 (
