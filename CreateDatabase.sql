@@ -4,10 +4,6 @@
 create extension postgis;
 -- Enable Topology
 create extension postgis_topology;
--- Enable PostGIS Advanced 3D
--- and other geoprocessing algorithms
--- sfcgal not available with all distributions
-create extension postgis_sfcgal;
 -- fuzzy matching needed for Tiger
 create extension fuzzystrmatch;
 -- rule based standardizer
@@ -56,17 +52,20 @@ postcode,woonplaats,gemeente,provincie,nummeraanduiding,verblijfsobjectgebruiksd
 oppervlakteverblijfsobject,verblijfsobjectstatus,object_id,object_type,nevenadres,
 pandid,pandstatus,pandbouwjaar,x,y,lon,lat) from '/home/tjadejong/Documents/CBS/BAG/bagadres-full.csv' delimiter ';' csv header;
 
-alter table addresses_bag add column location geometry(Point, 4326);
+alter table addresses_bag add column location_wgs84 geometry(Point, 4326);
+alter table addresses_bag add column location_rd geometry(Point, 28992);
 
-update addresses_bag set location=st_SetSrid(st_MakePoint(lon, lat), 4326);
+update addresses_bag set location_wgs84 = st_SetSrid(st_MakePoint(lon, lat), 4326);
+update addresses_bag set location_rd = st_SetSrid(st_MakePoint(x, y), 28992);
 
-CREATE INDEX addresses_bag_gix ON addresses_bag USING GIST ( geom );
+CREATE INDEX addresses_bag_gix ON addresses_bag USING GIST ( location_wgs84 );
+CREATE INDEX addresses_bag_gix ON addresses_bag USING GIST ( location_rd );
 
 create table AreaOfInterest
 (
 	area_id serial primary key,
 	description varchar(255),
-	area geometry(POLYGON,4326)
+	area geometry(POLYGON, 28992)	
 );
 
 CREATE INDEX area_of_interest_gix ON AreaOfInterest USING GIST ( area );
@@ -77,20 +76,13 @@ create table Tiles
 	tile_id serial primary key,
 	uuid varchar(37),
 	area_id int references AreaOfInterest(area_id),
-	area geometry(POLYGON,4326)
+	area geometry(POLYGON, 28992)
 );
 
 CREATE INDEX tiles_gix ON Tiles USING GIST ( area );
 
-
-ALTER TABLE IF EXISTS pv_201712_scharf
-RENAME TO pv_2017_de;
-
 ALTER TABLE IF EXISTS solarpanel_addresses
 RENAME TO solarpanel_addresses_orig;
-
-
-CREATE INDEX pv_2017_de_gix ON pv_2017_de USING GIST ( wkb_geometry );
 
 drop table pv_2017_nl;
 create table pv_2017_nl
@@ -102,7 +94,7 @@ create table pv_2017_nl
 	  building_id character varying(20),
 	  year_in_use integer,
 	  date_in_use date,
-	  location geometry(POINT,4326),
+	  location geometry(POINT, 28992),
 	  bag_address_id int references addresses_bag (address_id),
 	  solar_panel_id int references solarpanel_addresses_orig(panel_id)
 );
@@ -110,9 +102,9 @@ create table pv_2017_nl
 CREATE INDEX pv_2017_nl_gix ON pv_2017_nl USING GIST ( location );
 
 insert into pv_2017_nl (postcode, number, number_add, building_id, year_in_use, date_in_use, location, bag_address_id, solar_panel_id)
-select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.geom, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
+select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.location_rd, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
 inner join addresses_bag as ab 
-on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer
+on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer;
 
 create table tile_files
 (
@@ -121,6 +113,26 @@ create table tile_files
 	filename varchar(255),
 	layerName varchar(255),
 	year int
+);
+
+create table buildings
+(
+	building_id serial primary key,
+	identifier varchar(15),
+	year_build int, 
+	status varchar(255),
+	purpose varchar(255),
+	area_min int,
+	area_max int,
+	number_of_residences int,
+	update_date date		
+);
+
+create table tile_buildings
+(
+	tile_id int references tiles(tile_id),
+	building_id int references buildings(building_id),
+	constraint tile_building_pk primary key (tile_id, building_id)
 );
 
 -- number of panels in solarpanel_addresses_orig
