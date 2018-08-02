@@ -41,7 +41,7 @@ std::string Utils::UUID()
 
     char uuid_str[37];
     uuid_unparse_lower(uuidObj, uuid_str);
-    return string(uuid_str);
+    return std::string(uuid_str);
 }
 
 void Utils::TimeIt(std::function<void()> function)
@@ -50,8 +50,8 @@ void Utils::TimeIt(std::function<void()> function)
     function();
     auto end = chrono::system_clock::now();
 
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    std::cout << "Elapsed seconds " << std::elapsed_seconds.count() <<endl;
+    std::chrono::duration<double, std::ratio<1>> elapsed_seconds = end - start;
+    std::cout << "Elapsed seconds " << elapsed_seconds.count() <<endl;
 }
 
 std::string Utils::GetFileExtension(const std::string& fileName)

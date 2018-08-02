@@ -7,7 +7,7 @@
 #include <vector>
 #include "SpatialReference.h"
 
-class Point;
+struct Point;
 
 class BaseGeometry
 {
@@ -15,39 +15,17 @@ class BaseGeometry
         enum Type {PointType, PolygonType, MultiPolygonType, Other};
 
     public:
-        virtual ~BaseGeometry() = default;
+        BaseGeometry();
+        BaseGeometry(const SpatialReference& reference);
+        virtual ~BaseGeometry();
 
-        SpatialReference GetSpatialReference() const
-        {
-        return _spatialReference;
-        }
-
-        void SetSpatialReference(const SpatialReference& spatialReference)
-        {
-        _spatialReference = spatialReference;
-        }
-
-        Type GetType() const
-        {
-        return _type;
-        }
+        SpatialReference GetSpatialReference() const;
+        void SetSpatialReference(const SpatialReference& spatialReference);
+        Type GetType() const;
 
 protected:
-        void SetType(Type type) { _type = type; }
-
-        Type ParseGeometryType(OGRGeometry *geometry)
-        {
-            switch(wkbFlatten(geometry->getGeometryType()))
-            {
-                case wkbPoint:
-                return PointType;
-                case wkbPolygon:
-                return PolygonType;
-                case wkbMultiPolygon:
-                return MultiPolygonType;
-            }
-            return Other;
-        }
+        void SetType(Type type);
+        Type ParseGeometryType(OGRGeometry *geometry);
 
 protected:
     SpatialReference _spatialReference;
@@ -62,11 +40,12 @@ public:
     using TransformFunction = std::function< std::vector<Point>(const std::vector<Point>)>;
 
     Geometry()
+        :	BaseGeometry()
     {
     }
 
     Geometry(const SpatialReference& spatialReference)
-                :	_spatialReference(spatialReference)
+                :	BaseGeometry(spatialReference)
     {
     }
 
