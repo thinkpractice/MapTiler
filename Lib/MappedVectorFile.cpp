@@ -34,9 +34,21 @@ Feature MappedLayer::NextFeature() const
 {
     Feature feature = Layer::NextFeature();
     Feature newFeature = feature;
-    newFeature.GetGeometry().MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform);
+    auto mappedGeometry = MapGeometry(ProjectionTransformation(), _rasterCoordinateTransform, newFeature.GetGeometry());
+    newFeature.SetGeometry(mappedGeometry);
 
     return newFeature;
+}
+
+std::shared_ptr<Geometry> MappedLayer::MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const std::shared_ptr<Geometry> geometry) const
+{
+    return transformation->MapGeometry(geometry);
+}
+
+std::shared_ptr<Geometry> MappedLayer::MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const AffineTransform affineTransform, const std::shared_ptr<Geometry> geometry) const
+{
+    auto mappedGeometry = MapGeometry(transformation, geometry);
+    return affineTransform.ReverseTransform(mappedGeometry);
 }
 
 shared_ptr<CoordinateTransformation> MappedLayer::ProjectionTransformation() const

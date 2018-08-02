@@ -17,18 +17,18 @@ class AffineTransform
         AffineTransform(double* transform);
         virtual ~AffineTransform();
 
-        double Determinant();
-        bool IsDegenerate();
-        AffineTransform Invert();
+        double Determinant() const;
+        bool IsDegenerate() const;
+        AffineTransform Invert() const;
 
         Point Transform(const Point& rasterPoint);
         vector<Point> Transform(vector<Point>& rasterPoints);
         std::shared_ptr<Geometry> Transform(std::shared_ptr<Geometry> geometry);
 
-        Point ReverseTransform(const Point& geoPoint);
+        Point ReverseTransform(const Point& geoPoint) const;
         vector<Point> ReverseTransform(vector<Point>& geoPoints);
 
-        std::shared_ptr<Geometry> ReverseTransform(std::shared_ptr<Geometry> point);
+        std::shared_ptr<Geometry> ReverseTransform(const std::shared_ptr<Geometry> point) const;
 
         void GetTransformMatrix(double* transform) const;
 

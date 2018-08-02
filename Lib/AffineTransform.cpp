@@ -24,17 +24,17 @@ AffineTransform::~AffineTransform()
 {
 }
 
-double AffineTransform::Determinant()
+double AffineTransform::Determinant() const
 {
     return _transform[0] * _transform[4] - _transform[1] * _transform[3];
 }
 
-bool AffineTransform::IsDegenerate()
+bool AffineTransform::IsDegenerate() const
 {
     return Determinant() == 0;
 }
 
-AffineTransform AffineTransform::Invert()
+AffineTransform AffineTransform::Invert() const
 {
     if (IsDegenerate())
     {
@@ -80,7 +80,7 @@ std::shared_ptr<Geometry> AffineTransform::Transform(std::shared_ptr<Geometry> g
              });
 }
 
-Point AffineTransform::ReverseTransform(const Point& geoPoint)
+Point AffineTransform::ReverseTransform(const Point& geoPoint) const
 {
     return Invert() * geoPoint;
 }
@@ -93,7 +93,7 @@ vector<Point> AffineTransform::ReverseTransform(vector<Point>& geoPoints)
     return reverseTransformedPoints;
 }
 
-std::shared_ptr<Geometry> AffineTransform::ReverseTransform(std::shared_ptr<Geometry> geometry)
+std::shared_ptr<Geometry> AffineTransform::ReverseTransform(const std::shared_ptr<Geometry> geometry) const
 {
     return geometry->Transform([&](std::vector<std::tuple<double, double>> points) -> vector<std::tuple<double, double>> {
              vector<std::tuple<double, double>> reverseTransformedPoints;

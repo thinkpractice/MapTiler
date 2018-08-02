@@ -93,8 +93,8 @@ int main(int argc, char** argv)
             cout << field.Name() << "=" << field.Value() << ",";
         }
         
-        cout << "type=" << feature.GetGeometry().Type() << endl;
-        cout << feature.GetGeometry().InnerGeometry() << endl;
+        cout << "type=" << feature.GetGeometry()->GetType() << endl;
+        cout << feature.GetGeometry() << endl;
 
         cout << endl;
     }

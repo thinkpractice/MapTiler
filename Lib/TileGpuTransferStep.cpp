@@ -239,7 +239,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
     {
-        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(feature.GetGeometry().InnerGeometry());
+        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(feature.GetGeometry());
 
         for (auto polygon : *multiPolygon)
         {

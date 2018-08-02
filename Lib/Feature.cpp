@@ -6,7 +6,7 @@ Feature::Feature(OGRFeature* feature)
 {
     if (_feature)
     {
-        _featureGeometry = FeatureGeometry(_feature->GetGeometryRef());
+        _innerGeometry = Geometry::NewGeometry(_feature->GetGeometryRef());
     }
 }
 
@@ -16,7 +16,8 @@ Feature::Feature(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        _featureGeometry = other._featureGeometry;
+        //TODO: copy shared_ptr or clone?
+        _innerGeometry = other._innerGeometry;
     }
 }
 
@@ -56,7 +57,8 @@ Feature& Feature::operator=(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        _featureGeometry = other._featureGeometry;
+        //TODO: copy shared_ptr or clone?
+        _innerGeometry = other._innerGeometry;
     }
     return *this;
 }
@@ -113,94 +115,12 @@ void Feature::SetField(std::string fieldName, double value)
     _feature->SetField(fieldName.c_str(), value);
 }
 
-Feature::FeatureGeometry::FeatureGeometry()
-                            :   FeatureGeometry(nullptr)
-{
-}
-//NO copy constructor here!!!
-Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
-                            :   _geometry(geometry),
-                                _geometryType(Other)
-{
-    if (_geometry)
-        ParseGeometry(geometry);
-}
-
-Feature::FeatureGeometry::~FeatureGeometry()
-{
-}
-
-Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::Type()
-{
-    return _geometryType;
-}
-
-void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
-{
-    _parsedGeometry = true;
-    _geometryType = ParseGeometryType(geometry);
-    if (geometry == nullptr || Type() == GeometryType::Other)
-        return;
-    
-    if (Type() == PointType)
-    {
-        _innerGeometry = make_shared<Point>(geometry);
-    }
-    else if (Type() == PolygonType)
-    {
-        _innerGeometry = make_shared<Polygon>(geometry);
-    }
-    else if (Type() == MultiPolygonType)
-    {
-        _innerGeometry = make_shared<MultiPolygon>(geometry);
-    }
-}
-
-Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::ParseGeometryType(OGRGeometry *geometry)
-{
-    switch(wkbFlatten(geometry->getGeometryType()))
-    {
-        case wkbPoint:
-            return GeometryType::PointType;
-        case wkbPolygon:
-            return GeometryType::PolygonType;
-        case wkbMultiPolygon:
-            return GeometryType::MultiPolygonType;
-    }
-    return GeometryType::Other;
-}
-
-
-bool Feature::FeatureGeometry::HasPoint() const
-{
-    return _innerGeometry->GetType() == Geometry::PointType;
-}
-
-bool Feature::FeatureGeometry::HasPolygon() const
-{
-    return _innerGeometry->GetType() == Geometry::PolygonType;
-}
-
-bool Feature::FeatureGeometry::HasMultiPolygon() const
-{
-    return _innerGeometry->GetType() == Geometry::MultiPolygonType;
-}
-
-std::shared_ptr<Geometry> Feature::FeatureGeometry::InnerGeometry() const
+std::shared_ptr<Geometry> Feature::GetGeometry() const
 {
     return _innerGeometry;
 }
 
-void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation)
-{
-    _innerGeometry = transformation->MapGeometry(_innerGeometry);
-}
 
-void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
-{
-    MapGeometry(transformation);
-    _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
-}
 
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
@@ -282,10 +202,6 @@ Feature::iterator Feature::end() const
     return {this, false};
 }
 
-Feature::FeatureGeometry Feature::GetGeometry() const
-{
-    return _featureGeometry;
-}
 
 Field Feature::GetFieldWithName(const char *name) const
 {

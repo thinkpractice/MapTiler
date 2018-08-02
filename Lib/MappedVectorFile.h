@@ -36,6 +36,8 @@ class MappedLayer : public Layer
     private:
         Feature MapFeature(Feature feature) const;
         std::shared_ptr<CoordinateTransformation> ProjectionTransformation() const;
+        std::shared_ptr<Geometry> MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const std::shared_ptr<Geometry> geometry) const;
+        std::shared_ptr<Geometry> MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const AffineTransform affineTransform, const std::shared_ptr<Geometry> geometry) const;
 
     private:
         std::shared_ptr<CoordinateTransformation> _coordinateTransformation;

@@ -8,6 +8,18 @@
 #include <tuple>
 #include "SpatialReference.h"
 
+class Geometry;
+
+class GeometryFactory
+{
+    public:
+        GeometryFactory();
+        virtual ~GeometryFactory();
+
+        virtual std::shared_ptr<Geometry> Create() = 0;
+        virtual std::shared_ptr<Geometry> Create(OGRGeometry* geometry) = 0;
+};
+
 class Geometry
 {
     public:
@@ -17,7 +29,7 @@ class Geometry
 
     public:
         Geometry(const Type& geometryType);
-        Geometry(const Type&, const SpatialReference& reference);
+        Geometry(const Type& geometryType, const SpatialReference& reference);
         virtual ~Geometry();
 
         virtual operator OGRGeometry*() const = 0;
@@ -26,15 +38,55 @@ class Geometry
         void SetSpatialReference(const SpatialReference& spatialReference);
         Type GetType() const;
 
+        bool IsPoint();
+        bool IsRing();
+        bool IsPolygon();
+        bool IsMultiPolygon();
+        bool IsOther();
+
         virtual shared_ptr<Geometry> Transform(TransformFunction transformFunction) const = 0;
 
-protected:
-        void SetType(Type type);
-        Type ParseGeometryType(OGRGeometry *geometry);
+    public:
+        static Type ParseGeometryType(OGRGeometry *geometry);
 
-protected:
-    SpatialReference _spatialReference;
-    Type _type;
+        static void RegisterFactory(Type type, GeometryFactory* factory)
+        {
+            factories[type] = factory;
+        }
+
+        static std::shared_ptr<Geometry> NewGeometry(Geometry::Type type)
+        {
+            return factories[type]->Create();
+        }
+
+        static std::shared_ptr<Geometry> NewGeometry(OGRGeometry* geometry)
+        {
+            auto type = Geometry::ParseGeometryType(geometry);
+            return NewGeometry(type);
+        }
+
+    protected:
+        void SetType(Type type);
+
+    protected:
+        SpatialReference _spatialReference;
+        Type _type;
+
+    private:
+        static std::map<Type, GeometryFactory*> factories;
+
+};
+
+template <class T>
+class GeometryTemplateFactory : public GeometryFactory
+{
+    public:
+        GeometryTemplateFactory(Geometry::Type type);
+        virtual ~GeometryTemplateFactory();
+
+        virtual std::shared_ptr<Geometry> Create();
+        virtual std::shared_ptr<Geometry> Create(OGRGeometry* geometry);
+
 };
 
 #endif // GEOMETRY_H

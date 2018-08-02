@@ -28,8 +28,8 @@ int main(int argc, char** argv)
             std::cout << field.Name() << "=" << field.Value() << ",";
         }
 
-        std::cout << "type=" << feature.GetGeometry().Type() << std::endl;
-        std::cout << feature.GetGeometry().InnerGeometry() << std::endl;
+        std::cout << "type=" << feature.GetGeometry()->GetType() << std::endl;
+        std::cout << feature.GetGeometry() << std::endl;
     }
 
     Area landgraaf(5.9906272, 50.8702199, 6.094184, 50.9347014);

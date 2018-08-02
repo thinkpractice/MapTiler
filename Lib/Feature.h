@@ -53,38 +53,10 @@ class Feature
             _feature->SetGeometryDirectly(*transformation.MapGeometry(geometry));
         }
 
-        class FeatureGeometry
-        {
-            public:
-                enum GeometryType {PointType, PolygonType, MultiPolygonType, Other};
+        std::shared_ptr<Geometry> GetGeometry() const;
 
-            public:
-                FeatureGeometry();
-                FeatureGeometry(OGRGeometry* geometry);
-                virtual ~FeatureGeometry();
-
-                GeometryType Type();
-
-                bool HasPoint() const;
-                bool HasPolygon() const;
-                bool HasMultiPolygon() const;
-
-                std::shared_ptr<Geometry> InnerGeometry() const;
-
-                void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
-
-                void MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform);
-            private:
-                void ParseGeometry(OGRGeometry* geometry);
-                GeometryType ParseGeometryType(OGRGeometry* geometry);
-
-            private:
-                OGRGeometry* _geometry;
-                std::shared_ptr<Geometry> _innerGeometry;
-
-                GeometryType _geometryType;
-                bool _parsedGeometry;
-        };
+        void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
+        void MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform);
 
         class FieldIterator
         {
@@ -123,7 +95,6 @@ class Feature
         iterator begin() const;
         iterator end() const;
         
-        FeatureGeometry GetGeometry() const;
 
     private:
         Field GetFieldWithName(const char* name) const;
@@ -132,8 +103,7 @@ class Feature
 
     private:
         OGRFeature* _feature;
-        FeatureGeometry _featureGeometry;
-        
+        std::shared_ptr<Geometry> _innerGeometry;
 };
 
 #endif

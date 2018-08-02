@@ -1,13 +1,15 @@
 #include "Geometry.h"
 
+map<Geometry::Type, GeometryFactory*> Geometry::factories;
+
 Geometry::Geometry(const Geometry::Type& type)
                 :	_type(type)
 {
 }
 
-Geometry::Geometry(const Geometry::Type& type, const SpatialReference &reference)
-                :	_type(type),
-                    _spatialReference(reference)
+Geometry::Geometry(const Geometry::Type& geometryType, const SpatialReference &reference)
+                :   _spatialReference(reference),
+                    _type(geometryType)
 {
 }
 
@@ -30,12 +32,37 @@ Geometry::Type Geometry::GetType() const
     return _type;
 }
 
+bool Geometry::IsPoint()
+{
+    return GetType() == PointType;
+}
+
+bool Geometry::IsRing()
+{
+    return GetType() == RingType;
+}
+
+bool Geometry::IsPolygon()
+{
+    return GetType() == PolygonType;
+}
+
+bool Geometry::IsMultiPolygon()
+{
+    return GetType() == MultiPolygonType;
+}
+
+bool Geometry::IsOther()
+{
+    return GetType() == Other;
+}
+
 void Geometry::SetType(Geometry::Type type)
 {
     _type = type;
 }
 
-Geometry::Type ParseGeometryType(OGRGeometry *geometry)
+Geometry::Type Geometry::ParseGeometryType(OGRGeometry *geometry)
 {
     switch(wkbFlatten(geometry->getGeometryType()))
     {
@@ -49,4 +76,35 @@ Geometry::Type ParseGeometryType(OGRGeometry *geometry)
             break;
     }
     return Geometry::Type::Other;
+}
+
+GeometryFactory::GeometryFactory()
+{
+}
+
+GeometryFactory::~GeometryFactory()
+{
+}
+
+template<class T>
+GeometryTemplateFactory<T>::GeometryTemplateFactory(Geometry::Type type)
+{
+    Geometry::RegisterFactory(type, this);
+}
+
+template<class T>
+GeometryTemplateFactory<T>::~GeometryTemplateFactory()
+{
+}
+
+template<class T>
+std::shared_ptr<Geometry> GeometryTemplateFactory<T>::Create()
+{
+    return new T();
+}
+
+template<class T>
+std::shared_ptr<Geometry> GeometryTemplateFactory<T>::Create(OGRGeometry *geometry)
+{
+    return new T(geometry);
 }
