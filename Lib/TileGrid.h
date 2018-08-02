@@ -36,7 +36,7 @@ class TileGrid
                 TileGridIterator(const TileGrid* owner, bool start);
                 virtual ~TileGridIterator();
 
-                reference operator*() { return _currentRect; };
+                reference operator*() { return _currentRect; }
 
                 TileGridIterator<T>& operator++();
                 TileGridIterator<T> operator++(int);

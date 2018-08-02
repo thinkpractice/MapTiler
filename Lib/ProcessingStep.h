@@ -24,8 +24,8 @@ class ProcessingStep
         virtual void Run() = 0;
        
         void InitQueues(shared_ptr<QueueType> inQueue, shared_ptr<QueueType> outQueue);
-        shared_ptr<QueueType> InQueue() { return _inQueue; };
-        shared_ptr<QueueType> OutQueue() { return _outQueue; };
+        shared_ptr<QueueType> InQueue() { return _inQueue; }
+        shared_ptr<QueueType> OutQueue() { return _outQueue; }
 
         void DoneProcessing();
 

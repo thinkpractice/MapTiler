@@ -14,12 +14,12 @@ StepData::~StepData()
 {
 }
 
-string StepData::UniqueId()
+std::string StepData::UniqueId()
 {
 	return _uniqueId;
 }
 
-void StepData::SetUniqueId(string uniqueId)
+void StepData::SetUniqueId(std::string uniqueId)
 {
 	_uniqueId = uniqueId;
 }
@@ -49,42 +49,42 @@ Rect StepData::BoundingRect()
 	return _boundingRect;
 }
 
-void StepData::AddTile(string tileName, shared_ptr< GeoTile > geoTile, int year)
+void StepData::AddTile(std::string tileName, std::shared_ptr< GeoTile > geoTile, int year)
 {
     _tiles[tileName] = {year, geoTile};
 }
 
-StepData::TileData StepData::GetTile(string tileName)
+StepData::TileData StepData::GetTile(std::string tileName)
 {
 	return _tiles[tileName];
 }
 
-map< string, StepData::TileData > StepData::Tiles()
+std::map< std::string, StepData::TileData > StepData::Tiles()
 {
 	return _tiles;
 }
 
-void StepData::AddProcessedTile(string tileName, shared_ptr< GeoTile > geoTile, int year)
+void StepData::AddProcessedTile(std::string tileName, std::shared_ptr< GeoTile > geoTile, int year)
 {
     _processedTiles[tileName] = {year, geoTile};
 }
 
-StepData::TileData StepData::GetProcessedTile(string tileName)
+StepData::TileData StepData::GetProcessedTile(std::string tileName)
 {
 	return _processedTiles[tileName];
 }
 
-map< string, StepData::TileData > StepData::ProcessedTiles()
+std::map< std::string, StepData::TileData > StepData::ProcessedTiles()
 {
 	return _processedTiles;
 }
 
-void StepData::AddMetadataFeatures(string metadataName, const vector<Feature> &features)
+void StepData::AddMetadataFeatures(std::string metadataName, const std::vector<Feature> &features)
 {
     _metadataFeatures[metadataName] = features;
 }
 
-map<string, vector<Feature>> StepData::MetadataFeatures()
+std::map<std::string, std::vector<Feature>> StepData::MetadataFeatures()
 {
     return _metadataFeatures;
 }
@@ -109,7 +109,7 @@ void StepData::SetTileId(int tileId)
     _tileId = tileId;
 }
 
-vector<Feature> StepData::GetMetadataFeatures(string metadataName)
+std::vector<Feature> StepData::GetMetadataFeatures(std::string metadataName)
 {
     return _metadataFeatures[metadataName];
 }

@@ -9,7 +9,7 @@
 #include "SpatialReference.h"
 #include "Point.h"
 #include "Layer.h"
-#include "gdal_priv.h"
+#include <gdal/gdal_priv.h>
 
 class GDALMap : public GeoMap
 {

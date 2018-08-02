@@ -6,8 +6,7 @@
 #include "GLWindow.h"
 #include "ShaderProgram.h"
 #include <vector>
-
-using namespace std;
+#include <memory>
 
 class TileGpuTransferStep : public ProcessingStep
 {
@@ -20,17 +19,17 @@ public:
 private:
     ShaderProgram SetupPolygonShaders(GLuint* vao);
     ShaderProgram SetupMaskingShaders(GLuint* vao);
-    void TileToTexture(shared_ptr<GeoTile> geoTile);
+    void TileToTexture(std::shared_ptr<GeoTile> geoTile);
     void DrawOnScreen(const ShaderProgram& shaderProgram, GLuint textureId, GLuint polygonTextureId);
-    shared_ptr<GeoTile> DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures);
-    shared_ptr<GeoTile> ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers);
+    std::shared_ptr<GeoTile> DrawPolygons(const ShaderProgram& shaderProgram, std::shared_ptr<GeoTile> geoTile, const std::vector<Feature> polygonFeatures);
+    std::shared_ptr<GeoTile> ReadImage(GLenum mode, Rect boundingRect, Area boundingArea, int numberOfLayers);
 	void BindMaskingVertices(const ShaderProgram& shaderProgram, GLuint* vbo, GLuint* ebo);
 	
-    void DrawElements(const ShaderProgram& shaderProgram, GLenum mode, vector<Point>& elements);
+    void DrawElements(const ShaderProgram& shaderProgram, GLenum mode, std::vector<Point>& elements);
    
-	Point MapGeoTileCoordinateToGL(shared_ptr<GeoTile> geoTile, const Point& point);
+    Point MapGeoTileCoordinateToGL(std::shared_ptr<GeoTile> geoTile, const Point& point);
 
-    GLenum ColorFormatForTile(shared_ptr<GeoTile> geoTile);
+    GLenum ColorFormatForTile(std::shared_ptr<GeoTile> geoTile);
 
 private:
     int _tileWidth;

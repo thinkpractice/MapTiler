@@ -5,33 +5,32 @@
 #include <memory>
 #include <functional>
 #include <iostream>
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include "Point.h"
 #include "Geometry.h"
 #include "Ring.h"
 
-using namespace std;
 
 class Polygon : public Geometry<Polygon>
 {
     public:
         Polygon();
-        Polygon(Ring externalRing, vector<Ring> internalRings);
+        Polygon(Ring externalRing, std::vector<Ring> internalRings);
         virtual ~Polygon();
 
         operator OGRGeometry*() const;
         Polygon& operator=(const OGRGeometry* geometry);
 
         Ring& ExternalRing();
-        vector<Ring>& InternalRings();
+        std::vector<Ring>& InternalRings();
 
         Ring GetExternalRing() const;
-        vector<Ring> GetInternalRings() const;
+        std::vector<Ring> GetInternalRings() const;
 
         Polygon Transform(Geometry<Polygon>::TransformFunction transformFunction) const;
     private:
         Ring _externalRing;
-        vector<Ring> _internalRings;
+        std::vector<Ring> _internalRings;
 };
 
 

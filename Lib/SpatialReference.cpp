@@ -1,5 +1,5 @@
 #include "SpatialReference.h"
-#include <cpl_conv.h>
+#include <gdal/cpl_conv.h>
 
 SpatialReference::SpatialReference()
 {
@@ -32,12 +32,12 @@ OGRSpatialReference SpatialReference::InnerReference() const
     return _spatialReference;
 }
 
-string SpatialReference::ToWkt() const
+std::string SpatialReference::ToWkt() const
 {
     char *wktString = nullptr;
 
     _spatialReference.exportToWkt(&wktString);
-    string wkt(wktString);
+    std::string wkt(wktString);
 
     CPLFree(wktString);
 

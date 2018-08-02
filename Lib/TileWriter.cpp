@@ -4,7 +4,15 @@
 #include "AffineTransform.h"
 #include "CoordinateTransformation.h"
 #include <png.h>
-#include <cpl_string.h>
+#include <gdal/cpl_string.h>
+
+GeoTileWriter::GeoTileWriter()
+{
+}
+
+GeoTileWriter::~GeoTileWriter()
+{
+}
 
 TileWriter::TileWriter(shared_ptr<GeoTileWriter> writer)
                 :   _writer(writer)
@@ -18,6 +26,10 @@ void TileWriter::Save(shared_ptr<GeoTile> tile, string filename)
 
 PngWriter::PngWriter()
             :   GeoTileWriter()
+{
+}
+
+PngWriter::~PngWriter()
 {
 }
 
@@ -171,7 +183,7 @@ shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
     optionList.AddString("COMPRESS=DEFLATE");
 
     Rect boundingRect = tile->BoundingRect();
-    GDALDataset *dataset = driver->Create(filename.c_str(), boundingRect.Width(), boundingRect.Height(), tile->NumberOfLayers(), GDT_Byte, optionList.List());
+    GDALDataset *dataset = driver->Create(filename.c_str(), boundingRect.IntegerWidth(), boundingRect.IntegerHeight(), tile->NumberOfLayers(), GDT_Byte, optionList.List());
 
     return make_shared<GDALMap>(filename, dataset);
 }

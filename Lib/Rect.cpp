@@ -1,8 +1,6 @@
 #include "Rect.h"
 #include <cmath>
 
-using namespace std;
-
 Rect::Rect()
         :   Rect(0.0,0.0,0.0,0.0)
 {
@@ -16,8 +14,8 @@ Rect::Rect(double x, double y, double width, double height)
 Rect::Rect(Point leftTop, Point bottomRight)
         : Rect( leftTop.X,
                 leftTop.Y,
-                abs(bottomRight.X - leftTop.X),
-                abs(bottomRight.Y - leftTop.Y)
+                std::abs(bottomRight.X - leftTop.X),
+                std::abs(bottomRight.Y - leftTop.Y)
               )
 {
 }

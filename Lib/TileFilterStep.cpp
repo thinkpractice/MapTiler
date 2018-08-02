@@ -15,7 +15,6 @@ void TileFilterStep::Run()
 {
 	while (auto stepData = InQueue()->dequeue())
 	{
-		Rect boundingRect = stepData->BoundingRect();
 		vector<Feature> features = stepData->GetMetadataFeatures("polygons");
 		if (features.size() > 0)
 		{

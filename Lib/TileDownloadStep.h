@@ -4,21 +4,20 @@
 #include "ProcessingStep.h"
 #include "GeoMap.h"
 #include <string>
-
-using namespace std;
+#include <memory>
 
 class TileDownloadStep : public ProcessingStep
 {
 public:
-    TileDownloadStep(string layerName, string layerUrl, int layerIndex, int year);
-    TileDownloadStep(string tileName, shared_ptr<GeoMap> map, int year);
+    TileDownloadStep(std::string layerName, std::string layerUrl, int layerIndex, int year);
+    TileDownloadStep(std::string tileName, std::shared_ptr<GeoMap> map, int year);
 	virtual ~TileDownloadStep();
 	
 	virtual void Run();
 
 public:
-	string _tileName;
-	shared_ptr<GeoMap> _map;
+    std::string _tileName;
+    std::shared_ptr<GeoMap> _map;
     int _year;
 };
 

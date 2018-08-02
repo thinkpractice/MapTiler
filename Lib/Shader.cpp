@@ -1,8 +1,6 @@
 #include "Shader.h"
 #include <iostream>
 
-using namespace std;
-
 Shader::Shader(GLenum shaderType, const char* shaderSource)
 			:	_loaded(false),
 				_shaderType(shaderType),
@@ -32,8 +30,8 @@ void Shader::Load()
 	if (status != GL_TRUE)
 	{
 		char buffer[512];
-		glGetShaderInfoLog(_shaderId, 512, NULL, buffer);
-		cout << "shader error: " << buffer << endl;
+        glGetShaderInfoLog(_shaderId, 512, nullptr, buffer);
+        std::cout << "shader error: " << buffer << std::endl;
 		return;
 	}
 	_loaded = true;

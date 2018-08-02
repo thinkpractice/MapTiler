@@ -8,8 +8,6 @@
 #include "SafeQueue.h"
 #include "GeoTile.h"
 
-using namespace std;
-
 class ProcessingPipeline
 {
 public:
@@ -17,12 +15,12 @@ public:
     virtual ~ProcessingPipeline();
 
     void StartProcessing();
-    void AddProcessingStep(shared_ptr<ProcessingStep> step);
+    void AddProcessingStep(std::shared_ptr<ProcessingStep> step);
 
 private:
-		vector< shared_ptr<ProcessingStep::QueueType> > _queues;
-        vector< shared_ptr<ProcessingStep> > _processingSteps;
-        vector<thread> _threads;
+    std::vector< std::shared_ptr<ProcessingStep::QueueType> > _queues;
+    std::vector< std::shared_ptr<ProcessingStep> > _processingSteps;
+    std::vector< std::thread > _threads;
 };
 
 #endif /* PROCESSINGPIPELINE_H */

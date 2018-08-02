@@ -7,12 +7,12 @@
 
 std::vector<std::string> Utils::SplitKeyValuePair(const char* keyValueString)
 {
-    vector <string> matchResults;
+    std::vector <std::string> matchResults;
 
-    regex re(R"((\w+)=(.+))");
-    cmatch matches;
+    std::regex re(R"((\w+)=(.+))");
+    std::cmatch matches;
 
-    if (regex_match(keyValueString, matches, re))
+    if (std::regex_match(keyValueString, matches, re))
     {
         for (const auto& matchResult : matches)
         {
@@ -25,9 +25,9 @@ std::vector<std::string> Utils::SplitKeyValuePair(const char* keyValueString)
 
 std::string Utils::GetKeyType(std::string key)
 {
-    regex re(R"((\w+_\d+_)(\w+))");
-    smatch matches;
-    if (regex_match(key, matches, re))
+    std::regex re(R"((\w+_\d+_)(\w+))");
+    std::smatch matches;
+    if (std::regex_match(key, matches, re))
     {
         return matches[2];
     }
@@ -50,8 +50,8 @@ void Utils::TimeIt(std::function<void()> function)
     function();
     auto end = chrono::system_clock::now();
 
-    chrono::duration<double> elapsed_seconds = end-start;
-    cout << "Elapsed seconds " << elapsed_seconds.count() <<endl;
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    std::cout << "Elapsed seconds " << std::elapsed_seconds.count() <<endl;
 }
 
 std::string Utils::GetFileExtension(const std::string& fileName)
@@ -66,13 +66,13 @@ std::shared_ptr<GeoMap> Utils::LoadRasterMap(std::string layerUrl, int layerInde
     GeoMapProvider mapProvider(layerUrl);
     if (mapProvider.Maps().size() == 0)
     {
-        cerr << "No maps at url/in file" << endl;
+        std::cerr << "No maps at url/in file" << std::endl;
         return nullptr;
     }
 
     if (mapProvider.Maps().size() >= 1)
     {
-        cout << "Multiple Maps found at url, continuing with map at layerIndex: " << layerIndex << endl;
+        std::cout << "Multiple Maps found at url, continuing with map at layerIndex: " << layerIndex << std::endl;
     }
     return mapProvider.Maps()[layerIndex];
 }

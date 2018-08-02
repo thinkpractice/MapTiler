@@ -1,7 +1,7 @@
 #include "GeoMapProvider.h"
 #include "Utils.h"
 #include "GDALMap.h"
-#include "gdal_priv.h"
+#include <gdal/gdal_priv.h>
 #include <iostream>
 
 #define kNameFieldKey "NAME"

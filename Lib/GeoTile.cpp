@@ -17,9 +17,9 @@ GeoTile::~GeoTile()
     delete[] _data;
 }
 
-int GeoTile::NumberOfBytes()
+size_t GeoTile::NumberOfBytes()
 {
-    return int(_rect.Width()) * int(_rect.Height()) * _numberOfLayers;
+    return static_cast<size_t>(_rect.IntegerWidth() * _rect.IntegerHeight() * _numberOfLayers);
 }
 
 int GeoTile::NumberOfLayers()
@@ -45,7 +45,7 @@ unsigned char* GeoTile::Data()
 void GeoTile::SetRasterData(unsigned char** rasterData)
 {
     unsigned char* data = Data();
-    for (int arrayIndex = 0, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
+    for (size_t arrayIndex = 0, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
     {
         for (int layerIndex = 0; layerIndex < NumberOfLayers(); layerIndex++)
         {

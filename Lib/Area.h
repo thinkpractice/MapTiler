@@ -28,7 +28,7 @@ class Area
             };
             polygon.ExternalRing() = externalRing;
             return polygon;
-        };
+        }
 
         SpatialReference ProjectionReference() const;
         void SetProjectionReference(const SpatialReference& projectionReference);

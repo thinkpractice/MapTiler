@@ -5,8 +5,6 @@
 #include <iostream>
 #include <memory>
 
-#include "CoordinateTransformation.h"
-
 TileProducerStep::TileProducerStep(std::string layerUrl, int layerIndex, const Area &area, int tileWidth, int tileHeight, std::string persistenceUrl)
                     :	TileProducerStep(Utils::LoadRasterMap(layerUrl, layerIndex), area, tileWidth, tileHeight, persistenceUrl)
 {
@@ -20,8 +18,8 @@ TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area
 
 TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight, std::string persistenceUrl)
                 :   ProcessingStep(Source),
-					_map(map),
                     _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight),
+                    _map(map),
                     _persistenceUrl(persistenceUrl)
 {
 }
@@ -32,12 +30,10 @@ TileProducerStep::~TileProducerStep()
 
 void TileProducerStep::Run()
 {
-    int numberOfTilesDownloaded = 0;
     cout << "Map dimensions = (" << _map->WidthInPixels() << "," << _map->HeightInPixels() << ")" << endl;
     cout << "TileGrid dimensions=(" << _tileGrid.WidthInTiles() << "," << _tileGrid.HeightInTiles() << ")" << endl;
     cout << "Pixel dimensions" << _tileGrid.PixelDimensions().Left() << "," << _tileGrid.PixelDimensions().Top() << "," << _tileGrid.PixelDimensions().Width() << "," << _tileGrid.PixelDimensions().Height() << endl;
     cout << "Tile Dimensions=(" << _tileGrid.TileWidth() << "," << _tileGrid.TileHeight() << ")" << endl;
-
 
     shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
     int areaId = databasePersistence ? databasePersistence->SaveAreaOfInterest(_tileGrid.GridArea()) : 0;

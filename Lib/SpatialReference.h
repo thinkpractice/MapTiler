@@ -2,7 +2,7 @@
 #define SPATIAL_REFERENCE_H
 
 #include <string>
-#include <ogr_spatialref.h>
+#include <gdal/ogr_spatialref.h>
 #include "Point.h"
 
 using namespace std;

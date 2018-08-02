@@ -2,17 +2,21 @@
 #define MAPPEDVECTORFILE_H
 
 #include <string>
-#include "VectorFile.h"
+#include <memory>
+#include "Layer.h"
+#include "Feature.h"
 #include "AffineTransform.h"
 #include "CoordinateTransformation.h"
+#include "VectorFile.h"
+#include "SpatialReference.h"
 
 class MappedVectorFile : public VectorFile
 {
 public:
-    MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode = ReadOnly);
+    MappedVectorFile(std::string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode = ReadOnly);
     virtual ~MappedVectorFile();
 
-    virtual shared_ptr<Layer> LayerFor(OGRLayer* layer);
+    virtual std::shared_ptr<Layer> LayerFor(OGRLayer* layer);
 
 private:
     SpatialReference _destinationReference;
@@ -31,10 +35,10 @@ class MappedLayer : public Layer
 
     private:
         Feature MapFeature(Feature feature) const;
-        shared_ptr<CoordinateTransformation> ProjectionTransformation() const;
+        std::shared_ptr<CoordinateTransformation> ProjectionTransformation() const;
 
     private:
-        shared_ptr<CoordinateTransformation> _coordinateTransformation;
+        std::shared_ptr<CoordinateTransformation> _coordinateTransformation;
         SpatialReference _destinationReference;
         AffineTransform _rasterCoordinateTransform;
 };

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <memory>
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include "SpatialReference.h"
 #include "Feature.h"
 #include "Area.h"

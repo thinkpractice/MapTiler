@@ -7,12 +7,10 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-using namespace std;
-
 struct Primitive
 {
 	GLenum mode;
-	vector<Point> points;
+    std::vector<Point> points;
 };
 
 class Tesselator
@@ -29,7 +27,7 @@ public:
 	
 	void AddVertex(const Point& point);
 	
-	vector<Primitive> Primitives();
+    std::vector<Primitive> Primitives();
 	
 private:
 	static void BeginVA(GLenum mode, Tesselator* va);
@@ -47,7 +45,7 @@ private:
 	BufferFactory _bufferFactory;
 	
 	Primitive _currentPrimitive;
-	vector<Primitive> _primitives;
+    std::vector<Primitive> _primitives;
 };
 
 #endif

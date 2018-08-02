@@ -8,8 +8,7 @@
 #include <memory>
 #include <map>
 #include <string>
-
-using namespace std;
+#include <vector>
 
 class StepData
 {
@@ -17,16 +16,15 @@ private:
     struct TileData
     {
         int year;
-        shared_ptr<GeoTile> tile;
+        std::shared_ptr<GeoTile> tile;
     };
-
 
 public:
 	StepData(const Rect& boundingRect, const Area& boundingArea);
 	virtual ~StepData();
 	
-	string UniqueId();
-	void SetUniqueId(string uniqueId);
+    std::string UniqueId();
+    void SetUniqueId(std::string uniqueId);
 	
 	static int NumberOfTiles();
 	static void SetNumberOfTiles(int numberOfTiles);
@@ -36,18 +34,18 @@ public:
 	void SetBoundingRect(const Rect& rect);
 	Rect BoundingRect();
 	
-    void AddTile(string tileName, shared_ptr<GeoTile> geoTile, int year);
-    TileData GetTile(string tileName);
-    map<string, TileData> Tiles();
+    void AddTile(std::string tileName, std::shared_ptr<GeoTile> geoTile, int year);
+    TileData GetTile(std::string tileName);
+    std::map<std::string, TileData> Tiles();
 	
-    void AddProcessedTile(string tileName, shared_ptr<GeoTile> geoTile, int year);
-    TileData GetProcessedTile(string tileName);
-    map<string, TileData> ProcessedTiles();
+    void AddProcessedTile(std::string tileName, std::shared_ptr<GeoTile> geoTile, int year);
+    TileData GetProcessedTile(std::string tileName);
+    std::map<std::string, TileData> ProcessedTiles();
 	
 
-    void AddMetadataFeatures(string metadataName, const vector<Feature>& features);
-    vector<Feature> GetMetadataFeatures(string metadataName);
-    map<string, vector<Feature>> MetadataFeatures();
+    void AddMetadataFeatures(std::string metadataName, const std::vector<Feature>& features);
+    std::vector<Feature> GetMetadataFeatures(std::string metadataName);
+    std::map<std::string, std::vector<Feature>> MetadataFeatures();
 
     int AreaId() const;
     void SetAreaId(int AreaId);
@@ -56,13 +54,13 @@ public:
     void SetTileId(int TileId);
 
 private:
-    string _uniqueId;
+    std::string _uniqueId;
     static int numberOfTiles;
     Rect _boundingRect;
 	Area _boundingArea;
-    map<string, TileData> _tiles;
-    map<string, TileData> _processedTiles;
-    map<string, vector<Feature>> _metadataFeatures;
+    std::map<std::string, TileData> _tiles;
+    std::map<std::string, TileData> _processedTiles;
+    std::map<std::string, std::vector<Feature>> _metadataFeatures;
 
     int _areaId;
     int _tileId;

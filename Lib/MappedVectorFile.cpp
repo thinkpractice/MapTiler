@@ -1,8 +1,6 @@
 #include "MappedVectorFile.h"
 #include <iostream>
 
-using namespace std;
-
 MappedVectorFile::MappedVectorFile(string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode)
                     :   VectorFile(filename, mode),
                         _destinationReference(destinationReference),
@@ -16,7 +14,7 @@ MappedVectorFile::~MappedVectorFile()
 
 shared_ptr<Layer> MappedVectorFile::LayerFor(OGRLayer* layer)
 {
-    return make_shared<MappedLayer>(layer, _destinationReference, _rasterCoordinateTransform);
+    return std::make_shared<MappedLayer>(layer, _destinationReference, _rasterCoordinateTransform);
 }
 
 MappedLayer::MappedLayer(OGRLayer* layer, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform)

@@ -4,17 +4,18 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <gdal/cpl_string.h>
 #include "GeoTile.h"
 #include "GDALMap.h"
 #include "SpatialReference.h"
-#include "cpl_string.h"
 
 using namespace std;
 
 class GeoTileWriter
 {
 public:
-    GeoTileWriter() {};
+    GeoTileWriter();
+    virtual ~GeoTileWriter();
     virtual bool HandlesFile(string filename) = 0;
     virtual void Save(shared_ptr<GeoTile> tile, string filename) = 0;
 };
@@ -33,6 +34,7 @@ class PngWriter : public GeoTileWriter
 {
 public:
     PngWriter();
+    virtual ~PngWriter();
 
     bool HandlesFile(string filename);
     void Save(shared_ptr<GeoTile> tile, string filename);

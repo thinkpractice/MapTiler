@@ -4,9 +4,9 @@
 #include <vector>
 #include <functional>
 #include <initializer_list>
+#include <gdal/ogrsf_frmts.h>
 #include "Point.h"
 #include "Geometry.h"
-#include "ogrsf_frmts.h"
 
 class Ring : public Geometry<Ring>
 {

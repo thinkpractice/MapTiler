@@ -41,12 +41,12 @@ int TileGrid::NumberOfTiles() const
 
 int TileGrid::WidthInTiles() const
 {
-    return (int)ceil(_pixelDimensions.Width() / (1.0 * TileWidth()));
+    return static_cast<int>(ceil(_pixelDimensions.Width() / (1.0 * TileWidth())));
 }
 
 int TileGrid::HeightInTiles() const
 {
-    return (int)ceil(_pixelDimensions.Height() / (1.0 * TileHeight()));
+    return static_cast<int>(ceil(_pixelDimensions.Height() / (1.0 * TileHeight())));
 }
 
 Rect TileGrid::operator()(int row, int column) const
@@ -54,7 +54,7 @@ Rect TileGrid::operator()(int row, int column) const
     //TODO: exception if row or column are out of bounds
     if (row > HeightInTiles() || column > WidthInTiles())
     {
-        cout << "row or column index out of bounds" << endl;
+        std::cout << "row or column index out of bounds" << std::endl;
     }
     double startX = PixelDimensions().Left() + (column * TileWidth());
     double startY = PixelDimensions().Top() + (row * TileHeight());

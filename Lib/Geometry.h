@@ -1,7 +1,7 @@
 ﻿#ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include <memory>
 #include <functional>
 #include <vector>

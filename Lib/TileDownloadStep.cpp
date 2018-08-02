@@ -5,13 +5,13 @@
 #include <chrono>
 #include <thread>
 
-TileDownloadStep::TileDownloadStep(string layerName, string layerUrl, int layerIndex, int year)
+TileDownloadStep::TileDownloadStep(std::string layerName, std::string layerUrl, int layerIndex, int year)
                     :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex), year)
 {
 }
 
 //TODO remove later
-TileDownloadStep::TileDownloadStep(string tileName, shared_ptr<GeoMap> map, int year)
+TileDownloadStep::TileDownloadStep(std::string tileName, std::shared_ptr<GeoMap> map, int year)
                     :	ProcessingStep(Source),
 						_tileName(tileName),
                         _map(map),
@@ -30,14 +30,14 @@ void TileDownloadStep::Run()
 	{
 		try
 		{
-			auto tile = shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
+            auto tile = std::shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
             stepData->AddTile(_tileName, tile, _year);
 
 			OutQueue()->enqueue(stepData);
 			numberOfTilesDownloaded++;
 			
 			if (numberOfTilesDownloaded % 100 == 0)
-				cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(StepData::NumberOfTiles()) << endl;
+                cout << "Downloaded " << to_string(numberOfTilesDownloaded) << " out of " << to_string(StepData::NumberOfTiles()) << endl;
 			
 			if (numberOfTilesDownloaded > 0 && numberOfTilesDownloaded % 100 == 0)
 			{

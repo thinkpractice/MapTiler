@@ -10,7 +10,7 @@ class GeoTile
         GeoTile(const Rect& rectangle, const Area& area, int numberOfLayers);
         virtual ~GeoTile();
 
-        int NumberOfBytes();
+        size_t NumberOfBytes();
         int NumberOfLayers();
         Rect BoundingRect();
         Area BoundingArea();

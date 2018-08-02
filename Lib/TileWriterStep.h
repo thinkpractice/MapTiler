@@ -16,8 +16,8 @@ class TileWriterStep : public ProcessingStep
         void SaveTile(std::shared_ptr<GeoTile> tile, string tileFilename);
 
     private:
-        string _tileDirectory;
-        string _persistenceUrl;
+        std::string _tileDirectory;
+        std::string _persistenceUrl;
         int _numberOfTilesWritten;
 };
 

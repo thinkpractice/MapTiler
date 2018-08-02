@@ -7,7 +7,7 @@
 #include "Area.h"
 #include "SpatialReference.h"
 #include <vector>
-#include <ogr_spatialref.h>
+#include <gdal/ogr_spatialref.h>
 
 using namespace std;
 

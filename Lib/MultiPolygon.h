@@ -1,7 +1,7 @@
 #ifndef MULTI_POLYGON_H
 #define MULTI_POLYGON_H 
 
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include "Polygon.h"
 #include <vector>
 
@@ -19,7 +19,7 @@ class MultiPolygon : public Geometry<MultiPolygon>
 
         MultiPolygon Transform(Geometry<MultiPolygon>::TransformFunction transformFunction) const;
         void AddPolygon(Polygon polygon);
-        vector<Polygon>& Polygons() { return _polygons; };
+        vector<Polygon>& Polygons() { return _polygons; }
 
         using iterator = vector<Polygon>::iterator;
         using const_iterator = vector<Polygon>::const_iterator;

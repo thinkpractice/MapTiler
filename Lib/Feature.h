@@ -1,7 +1,7 @@
 #ifndef FEATURE_H
 #define FEATURE_H
 
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include <string>
 #include <iterator>
 #include <memory>
