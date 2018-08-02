@@ -69,7 +69,7 @@ class Feature
                 bool HasPolygon() const;
                 bool HasMultiPolygon() const;
 
-                std::shared_ptr<Geometry> InnerGeometry();
+                std::shared_ptr<Geometry> InnerGeometry() const;
 
                 void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
 
@@ -123,7 +123,7 @@ class Feature
         iterator begin() const;
         iterator end() const;
         
-        FeatureGeometry& GetGeometry();
+        FeatureGeometry GetGeometry() const;
 
     private:
         Field GetFieldWithName(const char* name) const;

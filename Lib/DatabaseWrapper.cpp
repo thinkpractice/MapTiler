@@ -45,15 +45,15 @@ int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
 {
     int buildingId = SaveFeature("buildings", [&](Feature feature)
     {
-        feature.SetField("identifier", feature["identificatie"]);
-        feature.SetField("year_build", feature["bouwjaar"]);
-        feature.SetField("status", feature["status"]);
-        feature.SetField("purpose", feature["gebruiksdoel"]);
-        feature.SetField("area_min", feature["oppervlakte_min"]);
-        feature.SetField("area_max", feature["oppervlakte_max"]);
-        feature.SetField("number_of_residencies", feature["aantal_verblijfsobjecten"]);
-        feature.SetField("update_date", feature["actualiteitsdatum"]);
-        feature.SetGeometry(feature.GetGeometry().InnerGeometry());
+        feature.SetField("identifier", buildingFeature["identificatie"]);
+        feature.SetField("year_build", buildingFeature["bouwjaar"]);
+        feature.SetField("status", buildingFeature["status"]);
+        feature.SetField("purpose", buildingFeature["gebruiksdoel"]);
+        feature.SetField("area_min", buildingFeature["oppervlakte_min"]);
+        feature.SetField("area_max", buildingFeature["oppervlakte_max"]);
+        feature.SetField("number_of_residencies", buildingFeature["aantal_verblijfsobjecten"]);
+        feature.SetField("update_date", buildingFeature["actualiteitsdatum"]);
+        //feature.SetGeometry(buildingFeature.GetGeometry().InnerGeometry());
     });
 
     SaveFeature("tile_buildings", [&](Feature& feature)

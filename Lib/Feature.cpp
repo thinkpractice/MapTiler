@@ -117,7 +117,7 @@ Feature::FeatureGeometry::FeatureGeometry()
                             :   FeatureGeometry(nullptr)
 {
 }
-
+//NO copy constructor here!!!
 Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
                             :   _geometry(geometry),
                                 _geometryType(Other)
@@ -186,7 +186,7 @@ bool Feature::FeatureGeometry::HasMultiPolygon() const
     return _innerGeometry->GetType() == Geometry::MultiPolygonType;
 }
 
-std::shared_ptr<Geometry> Feature::FeatureGeometry::InnerGeometry()
+std::shared_ptr<Geometry> Feature::FeatureGeometry::InnerGeometry() const
 {
     return _innerGeometry;
 }
@@ -199,18 +199,7 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
 void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
 {
     MapGeometry(transformation);
-    if (HasPoint())
-    {
-        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
-    }
-    else if (HasPolygon())
-    {
-        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
-    }
-    else if (HasMultiPolygon())
-    {
-        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
-    }
+    _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
 }
 
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
@@ -293,14 +282,14 @@ Feature::iterator Feature::end() const
     return {this, false};
 }
 
-Feature::FeatureGeometry& Feature::GetGeometry()
+Feature::FeatureGeometry Feature::GetGeometry() const
 {
     return _featureGeometry;
 }
 
 Field Feature::GetFieldWithName(const char *name) const
 {
-    size_t index = FeatureDefinition()->GetFieldIndex(name);
+    int index = FeatureDefinition()->GetFieldIndex(name);
     return GetFieldAtIndex(index);
 }
 
