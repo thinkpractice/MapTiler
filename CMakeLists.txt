@@ -4,14 +4,14 @@ project(MapTiler)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_PREFIX_PATH $ENV{HOME}/Qt/5.10.1/gcc_64)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_AUTOMOC ON)
 
-message(STATUS ${CMAKE_PREFIX_PATH})
-
+find_package(GDAL 2.2.3 REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets Location REQUIRED)
 
-include_directories(/usr/include/gdal ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location_INCLUDE_DIRS})
+include_directories(${GDAL_INCLUDE_DIR} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location_INCLUDE_DIRS})
 
 add_subdirectory(Lib)
 
