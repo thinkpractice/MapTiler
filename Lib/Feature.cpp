@@ -85,7 +85,7 @@ bool Feature::operator==(const Feature& other) const
 {
     if (_feature == nullptr && other._feature == nullptr)
         return true;
-    _feature == other._feature;
+    return _feature == other._feature;
 }
 
 void Feature::SetField(const Field &field)
@@ -120,10 +120,7 @@ Feature::FeatureGeometry::FeatureGeometry()
 
 Feature::FeatureGeometry::FeatureGeometry(OGRGeometry* geometry)
                             :   _geometry(geometry),
-                                _geometryType(Other),
-                                _hasPoint(false),
-                                _hasPolygon(false),
-                                _hasMultiPolygon(false)
+                                _geometryType(Other)
 {
     if (_geometry)
         ParseGeometry(geometry);
@@ -147,19 +144,15 @@ void Feature::FeatureGeometry::ParseGeometry(OGRGeometry *geometry)
     
     if (Type() == PointType)
     {
-        OGRPoint *poPoint = (OGRPoint*)geometry;
-        _point = Point(poPoint->getX(), poPoint->getY());
-        _hasPoint = true;
+        _innerGeometry = make_shared<Point>(geometry);
     }
     else if (Type() == PolygonType)
     {
-        _polygon = geometry;
-        _hasPolygon = true;
+        _innerGeometry = make_shared<Polygon>(geometry);
     }
     else if (Type() == MultiPolygonType)
     {
-        _multiPolygon = geometry;
-        _hasMultiPolygon = true;
+        _innerGeometry = make_shared<MultiPolygon>(geometry);
     }
 }
 
@@ -180,48 +173,27 @@ Feature::FeatureGeometry::GeometryType Feature::FeatureGeometry::ParseGeometryTy
 
 bool Feature::FeatureGeometry::HasPoint() const
 {
-    return _hasPoint;
-}
-
-Point Feature::FeatureGeometry::GetPoint() const
-{
-    return _point;
+    return _innerGeometry->GetType() == Geometry::PointType;
 }
 
 bool Feature::FeatureGeometry::HasPolygon() const
 {
-    return _hasPolygon;
-}
-
-Polygon Feature::FeatureGeometry::GetPolygon() const
-{
-    return _polygon;
+    return _innerGeometry->GetType() == Geometry::PolygonType;
 }
 
 bool Feature::FeatureGeometry::HasMultiPolygon() const
 {
-    return _hasMultiPolygon;
+    return _innerGeometry->GetType() == Geometry::MultiPolygonType;
 }
 
-MultiPolygon Feature::FeatureGeometry::GetMultiPolygon() const
+std::shared_ptr<Geometry> Feature::FeatureGeometry::InnerGeometry()
 {
-    return _multiPolygon;
+    return _innerGeometry;
 }
 
 void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation)
 {
-    if (HasPoint())
-    {
-        _point = transformation->MapCoordinate(_point);
-    }
-    else if (HasPolygon())
-    {
-        _polygon = transformation->MapGeometry(_polygon);
-    }
-    else if (HasMultiPolygon())
-    {
-        _multiPolygon = transformation->MapGeometry(_multiPolygon);
-    }
+    _innerGeometry = transformation->MapGeometry(_innerGeometry);
 }
 
 void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform)
@@ -229,22 +201,22 @@ void Feature::FeatureGeometry::MapGeometry(shared_ptr<CoordinateTransformation> 
     MapGeometry(transformation);
     if (HasPoint())
     {
-        _point = affineTransform.ReverseTransform(_point);
+        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
     }
     else if (HasPolygon())
     {
-        _polygon = affineTransform.ReverseTransform(_polygon);
+        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
     }
     else if (HasMultiPolygon())
     {
-        _multiPolygon = affineTransform.ReverseTransform(_multiPolygon);
+        _innerGeometry = affineTransform.ReverseTransform(_innerGeometry);
     }
 }
 
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
-                                _currentField(nullptr, ""),
-                                _currentIndex(-1)
+                                _currentIndex(-1),
+                                _currentField(nullptr, "")
 {
     if (start)
     {
@@ -255,8 +227,8 @@ Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
 
 Feature::FieldIterator::FieldIterator(const FieldIterator& iterator)
                             :   _owner(iterator._owner),
-                                _currentField(iterator._currentField),
-                                _currentIndex(iterator._currentIndex)
+                                _currentIndex(iterator._currentIndex),
+                                _currentField(iterator._currentField)
 {
 }
 

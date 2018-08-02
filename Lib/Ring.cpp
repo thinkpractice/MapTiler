@@ -1,18 +1,27 @@
 #include "Ring.h"
 
 Ring::Ring()
+        :	Geometry(Geometry::RingType)
 {
 }
 
 Ring::Ring(vector<Point> points)
-                :   _points(points)
+        :	Geometry(Geometry::RingType),
+            _points(points)
 {
 }
 
 Ring::Ring(std::initializer_list<Point> list)
-                :	_points(list)
+        :	Geometry(Geometry::RingType),
+            _points(list)
 {
 
+}
+Ring::Ring(std::vector<std::tuple<double, double>> list)
+        :	Geometry(Geometry::RingType)
+{
+    for (auto p : list)
+        _points.push_back(p);
 }
 
 Ring::~Ring()
@@ -29,10 +38,10 @@ Ring::operator OGRGeometry *() const
 
 Ring& Ring::operator=(OGRGeometry* ring)
 {
-    return operator=((OGRLinearRing*) ring);
+    return operator=(dynamic_cast<const OGRLinearRing*>(ring));
 }
 
-Ring& Ring::operator=(OGRLinearRing* ring)
+Ring& Ring::operator=(const OGRLinearRing* ring)
 {
     _clockwise = ring->isClockwise() > 0;
     for (int i = 0; i < ring->getNumPoints(); i++)
@@ -49,10 +58,13 @@ bool Ring::IsClockwise()
     return _clockwise;
 }
 
-Ring Ring::Transform(Geometry<Ring>::TransformFunction transformFunction) const
+shared_ptr<Geometry> Ring::Transform(Geometry::TransformFunction transformFunction) const
 {
-    vector<Point> mappedPoints = transformFunction(_points);
-    return Ring(mappedPoints);
+    vector<std::tuple<double, double>> originalPoints;
+    for (auto p : _points)
+        originalPoints.push_back(p);
+    vector<std::tuple<double, double>> mappedPoints = transformFunction(originalPoints);
+    return make_shared<Ring>(mappedPoints);
 }
 
 void Ring::AddPoint(const Point point)

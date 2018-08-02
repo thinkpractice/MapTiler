@@ -42,16 +42,15 @@ class Feature
         void SetField(string fieldName, int value);
         void SetField(string fieldName, double value);
 
-        template<class T>
-        void SetGeometry(const Geometry<T> &geometry)
+        void SetGeometry(const shared_ptr<Geometry> geometry)
         {
-            SpatialReference sourceReference = geometry.GetSpatialReference();
+            SpatialReference sourceReference = geometry->GetSpatialReference();
 
             OGRGeomFieldDefn* geometryDefinition = FeatureDefinition()->GetGeomFieldDefn(0);
             SpatialReference destinationReference(geometryDefinition->GetSpatialRef());
 
             CoordinateTransformation transformation(sourceReference, destinationReference);
-            _feature->SetGeometryDirectly(transformation.MapGeometry(geometry));
+            _feature->SetGeometryDirectly(*transformation.MapGeometry(geometry));
         }
 
         class FeatureGeometry
@@ -67,35 +66,24 @@ class Feature
                 GeometryType Type();
 
                 bool HasPoint() const;
-                Point GetPoint() const;
-
                 bool HasPolygon() const;
-                Polygon GetPolygon() const;
-
                 bool HasMultiPolygon() const;
-                MultiPolygon GetMultiPolygon() const;
+
+                std::shared_ptr<Geometry> InnerGeometry();
 
                 void MapGeometry(shared_ptr<CoordinateTransformation> transformation);
 
                 void MapGeometry(shared_ptr<CoordinateTransformation> transformation, AffineTransform affineTransform);
             private:
                 void ParseGeometry(OGRGeometry* geometry);
-                Polygon ParsePolygon(OGRPolygon* polygon);
                 GeometryType ParseGeometryType(OGRGeometry* geometry);
 
             private:
                 OGRGeometry* _geometry;
+                std::shared_ptr<Geometry> _innerGeometry;
 
                 GeometryType _geometryType;
                 bool _parsedGeometry;
-                bool _hasPoint;
-                Point _point;
-
-                Polygon _polygon;
-                bool _hasPolygon;
-
-                MultiPolygon _multiPolygon;
-                bool _hasMultiPolygon;
         };
 
         class FieldIterator
@@ -126,7 +114,7 @@ class Feature
 
             private:
                 const Feature* _owner;
-                size_t _currentIndex;
+                int _currentIndex;
                 Field _currentField;
         };
 

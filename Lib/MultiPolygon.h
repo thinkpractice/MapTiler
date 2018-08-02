@@ -7,17 +7,18 @@
 
 using namespace std;
 
-class MultiPolygon : public Geometry<MultiPolygon>
+class MultiPolygon : public Geometry
 {
     public:
         MultiPolygon();
+        MultiPolygon(const OGRGeometry* ogrGeometry);
         MultiPolygon(vector<Polygon> polygons);
         virtual ~MultiPolygon();
 
         operator OGRGeometry*() const;
         MultiPolygon& operator=(const OGRGeometry* geometry);
 
-        MultiPolygon Transform(Geometry<MultiPolygon>::TransformFunction transformFunction) const;
+        shared_ptr<Geometry> Transform(Geometry::TransformFunction transformFunction) const;
         void AddPolygon(Polygon polygon);
         vector<Polygon>& Polygons() { return _polygons; }
 
@@ -30,6 +31,9 @@ class MultiPolygon : public Geometry<MultiPolygon>
         const_iterator end() const { return _polygons.end(); }
         const_iterator cbegin() const { return _polygons.cbegin(); }
         const_iterator cend() const { return _polygons.cend(); }
+
+    private:
+        void ParseGeometry(const OGRGeometry* geometry);
 
     private:
         vector <Polygon> _polygons;

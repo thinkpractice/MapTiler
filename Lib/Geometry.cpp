@@ -1,50 +1,52 @@
 #include "Geometry.h"
 
-BaseGeometry::BaseGeometry()
+Geometry::Geometry(const Geometry::Type& type)
+                :	_type(type)
 {
 }
 
-BaseGeometry::BaseGeometry(const SpatialReference &reference)
-                :	_spatialReference(reference)
+Geometry::Geometry(const Geometry::Type& type, const SpatialReference &reference)
+                :	_type(type),
+                    _spatialReference(reference)
 {
 }
 
-BaseGeometry::~BaseGeometry()
+Geometry::~Geometry()
 {
 }
 
-SpatialReference BaseGeometry::GetSpatialReference() const
+SpatialReference Geometry::GetSpatialReference() const
 {
     return _spatialReference;
 }
 
-void BaseGeometry::SetSpatialReference(const SpatialReference& spatialReference)
+void Geometry::SetSpatialReference(const SpatialReference& spatialReference)
 {
     _spatialReference = spatialReference;
 }
 
-BaseGeometry::Type BaseGeometry::GetType() const
+Geometry::Type Geometry::GetType() const
 {
     return _type;
 }
 
-void BaseGeometry::SetType(BaseGeometry::Type type)
+void Geometry::SetType(Geometry::Type type)
 {
     _type = type;
 }
 
-BaseGeometry::Type ParseGeometryType(OGRGeometry *geometry)
+Geometry::Type ParseGeometryType(OGRGeometry *geometry)
 {
     switch(wkbFlatten(geometry->getGeometryType()))
     {
         case wkbPoint:
-            return BaseGeometry::Type::PointType;
+            return Geometry::Type::PointType;
         case wkbPolygon:
-            return BaseGeometry::Type::PolygonType;
+            return Geometry::Type::PolygonType;
         case wkbMultiPolygon:
-            return BaseGeometry::Type::MultiPolygonType;
+            return Geometry::Type::MultiPolygonType;
         default:
             break;
     }
-    return BaseGeometry::Type::Other;
+    return Geometry::Type::Other;
 }

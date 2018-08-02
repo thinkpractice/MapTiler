@@ -49,6 +49,30 @@ vector<Point> CoordinateTransformation::MapCoordinates(vector<Point> sourceCoord
     return destinationCoordinates;
 }
 
+std::vector<std::tuple<double, double> > CoordinateTransformation::MapCoordinates(std::vector<std::tuple<double, double> > sourceCoordinates)
+{
+    if (_sourceReference.IsSame(_destinationReference))
+        return sourceCoordinates;
+
+    double xCoordinates[sourceCoordinates.size()];
+    double yCoordinates[sourceCoordinates.size()];
+    for (size_t i = 0; i < sourceCoordinates.size(); i++)
+    {
+        Point p = sourceCoordinates[i];
+        xCoordinates[i] = p.X;
+        yCoordinates[i] = p.Y;
+    }
+
+    Transformation()->Transform(sourceCoordinates.size(), xCoordinates, yCoordinates);
+
+    vector<std::tuple<double, double>> destinationCoordinates;
+    for (size_t i = 0; i < sourceCoordinates.size(); i++)
+    {
+        destinationCoordinates.push_back(Point(xCoordinates[i], yCoordinates[i]));
+    }
+    return destinationCoordinates;
+}
+
 Area CoordinateTransformation::MapArea(Area other)
 {
     Point convertedLeftTop = MapCoordinate(other.LeftTop());

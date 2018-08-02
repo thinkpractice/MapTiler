@@ -2,31 +2,34 @@
 #define POINT_H
 
 #include <iostream>
+#include <gdal/ogrsf_frmts.h>
+#include <tuple>
+#include "Geometry.h"
 
-struct Point
+struct Point : public Geometry
 {
     double X;
     double Y;
 	double Z;
 	double data[3];
 	
-    Point()
-        : Point(0.0, 0.0, 0.0)
-    {
-    }
+    Point();
+    Point(OGRGeometry* geometry);
+    Point(const std::tuple<double, double>& pointData);
+    Point (double x, double y, double z = 0.0);
 
-    Point (double x, double y, double z = 0.0)
-        : X(x), Y(y), Z(z)
-    {
-    }
-    
-    double* Data()
-	{
-		data[0] = X;
-		data[1] = Y;
-		data[2] = Z;
-		return data;
-	}
+    double* Data();
+
+    virtual operator OGRGeometry*() const;
+    Point& operator=(const OGRGeometry* geometry);
+
+    virtual operator std::tuple<double, double>() const;
+    Point& operator=(const std::tuple<double, double> pointData);
+
+    virtual shared_ptr<Geometry> Transform(Geometry::TransformFunction transformFunction) const;
+
+private:
+    void ParseGeometry(const OGRGeometry* geometry);
 };
 
 inline std::ostream& operator<<(std::ostream &strm, const Point &p) 

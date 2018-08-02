@@ -14,10 +14,10 @@ class Area
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight, string description);
         Area(double minX, double minY, double maxX, double maxY, string wellKnownGeogCS = "EPSG:4326", string description="");
 
-        operator Polygon() const
+        operator shared_ptr<Geometry>() const
         {
-            Polygon polygon;
-            polygon.SetSpatialReference(ProjectionReference());
+            auto polygon = make_shared<Polygon>();
+            polygon->SetSpatialReference(ProjectionReference());
             vector<Point> externalRing =
             {
                 LeftTop(),
@@ -26,7 +26,7 @@ class Area
                 Point(LeftTop().X, BottomRight().Y),
                 LeftTop()
             };
-            polygon.ExternalRing() = externalRing;
+            polygon->ExternalRing() = externalRing;
             return polygon;
         }
 

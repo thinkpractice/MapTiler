@@ -1,4 +1,4 @@
-#include "ogrsf_frmts.h"
+#include <gdal/ogrsf_frmts.h>
 #include <iostream>
 #include "Lib/VectorFile.h"
 #include "Lib/MappedVectorFile.h"
@@ -29,24 +29,13 @@ int main(int argc, char** argv)
         }
 
         std::cout << "type=" << feature.GetGeometry().Type() << std::endl;
-        if (feature.GetGeometry().HasPoint())
-        {
-            std::cout << feature.GetGeometry().GetPoint() << std::endl;
-        }
-        else if (feature.GetGeometry().HasPolygon())
-        {
-            std::cout << feature.GetGeometry().GetPolygon() << std::endl;
-        }
-        else if (feature.GetGeometry().HasMultiPolygon())
-        {
-            std::cout << feature.GetGeometry().GetMultiPolygon() << std::endl;
-        }
+        std::cout << feature.GetGeometry().InnerGeometry() << std::endl;
     }
 
     Area landgraaf(5.9906272, 50.8702199, 6.094184, 50.9347014);
     auto feature = layer->NewFeature();
     feature.SetField("description", "Landgraaf");
-    feature.SetGeometry<Polygon>(landgraaf);
+    feature.SetGeometry(landgraaf);
     layer->AddFeature(feature);
     layer->Save();
 

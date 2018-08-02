@@ -8,7 +8,7 @@
 #include "Point.h"
 #include "Geometry.h"
 
-class Ring : public Geometry<Ring>
+class Ring : public Geometry
 {
     public:
 
@@ -18,14 +18,15 @@ class Ring : public Geometry<Ring>
         Ring();
         Ring(vector<Point> points);
         Ring(std::initializer_list<Point> list);
+        Ring(std::vector<std::tuple<double, double>> list);
         virtual ~Ring();
 
         operator OGRGeometry*() const;
         Ring& operator=(OGRGeometry* ring);
-        Ring& operator=(OGRLinearRing* ring);
+        Ring& operator=(const OGRLinearRing* ring);
 
         bool IsClockwise();
-        Ring Transform(Geometry<Ring>::TransformFunction transformFunction) const;
+        shared_ptr<Geometry> Transform(Geometry::TransformFunction transformFunction) const;
         void AddPoint(Point point);
         void SetPoints(vector<Point> points) { _points = points; }
         vector<Point>& Points() { return _points; }

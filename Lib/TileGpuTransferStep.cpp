@@ -239,9 +239,9 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
     {
-        auto multiPolygon = feature.GetGeometry().GetMultiPolygon();
+        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(feature.GetGeometry().InnerGeometry());
 
-        for (auto polygon : multiPolygon)
+        for (auto polygon : *multiPolygon)
         {
             tesselator.BeginPolygon(polygon.ExternalRing().Points().size());
                 tesselator.BeginContour();

@@ -11,11 +11,12 @@
 #include "Ring.h"
 
 
-class Polygon : public Geometry<Polygon>
+class Polygon : public Geometry
 {
     public:
         Polygon();
         Polygon(Ring externalRing, std::vector<Ring> internalRings);
+        Polygon(const OGRGeometry* geometry);
         virtual ~Polygon();
 
         operator OGRGeometry*() const;
@@ -27,7 +28,11 @@ class Polygon : public Geometry<Polygon>
         Ring GetExternalRing() const;
         std::vector<Ring> GetInternalRings() const;
 
-        Polygon Transform(Geometry<Polygon>::TransformFunction transformFunction) const;
+        shared_ptr<Geometry> Transform(Geometry::TransformFunction transformFunction) const;
+
+    private:
+        void ParseGeometry(const OGRGeometry* geometry);
+
     private:
         Ring _externalRing;
         std::vector<Ring> _internalRings;

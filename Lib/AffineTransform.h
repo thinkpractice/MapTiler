@@ -21,16 +21,14 @@ class AffineTransform
         bool IsDegenerate();
         AffineTransform Invert();
 
-
         Point Transform(const Point& rasterPoint);
         vector<Point> Transform(vector<Point>& rasterPoints);
-        Polygon Transform(Polygon& polygon);
-        MultiPolygon Transform(MultiPolygon& multiPolygon);
+        std::shared_ptr<Geometry> Transform(std::shared_ptr<Geometry> geometry);
 
         Point ReverseTransform(const Point& geoPoint);
         vector<Point> ReverseTransform(vector<Point>& geoPoints);
-        Polygon ReverseTransform(Polygon& polygon);
-        MultiPolygon ReverseTransform(MultiPolygon& multiPolygon);
+
+        std::shared_ptr<Geometry> ReverseTransform(std::shared_ptr<Geometry> point);
 
         void GetTransformMatrix(double* transform) const;
 

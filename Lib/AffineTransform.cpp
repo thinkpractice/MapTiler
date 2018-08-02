@@ -69,17 +69,14 @@ vector<Point> AffineTransform::Transform(vector<Point>& ring)
     return transformedPoints;
 }
 
-Polygon AffineTransform::Transform(Polygon& polygon)
-{
-    return polygon.Transform([&](vector<Point> points) -> vector<Point>{
-                return Transform(points);
-             });
-}
+std::shared_ptr<Geometry> AffineTransform::Transform(std::shared_ptr<Geometry> geometry)
 
-MultiPolygon AffineTransform::Transform(MultiPolygon& multiPolygon)
 {
-    return multiPolygon.Transform([&](vector<Point> points) -> vector<Point>{
-                return Transform(points);
+    return geometry->Transform([&](vector<std::tuple<double, double>> points) -> vector<std::tuple<double, double>> {
+                std::vector<std::tuple<double, double>> transformedPoints;
+                for (auto& point : points)
+                   transformedPoints.push_back(Transform(point));
+                return transformedPoints;
              });
 }
 
@@ -96,17 +93,13 @@ vector<Point> AffineTransform::ReverseTransform(vector<Point>& geoPoints)
     return reverseTransformedPoints;
 }
 
-Polygon AffineTransform::ReverseTransform(Polygon& polygon)
+std::shared_ptr<Geometry> AffineTransform::ReverseTransform(std::shared_ptr<Geometry> geometry)
 {
-    return polygon.Transform([&](vector<Point> points) -> vector<Point> {
-             return ReverseTransform(points);
-    });
-}
-
-MultiPolygon AffineTransform::ReverseTransform(MultiPolygon& multiPolygon)
-{
-    return multiPolygon.Transform([&](vector<Point> points) -> vector<Point> {
-             return ReverseTransform(points);
+    return geometry->Transform([&](std::vector<std::tuple<double, double>> points) -> vector<std::tuple<double, double>> {
+             vector<std::tuple<double, double>> reverseTransformedPoints;
+             for (auto& point : points)
+                reverseTransformedPoints.push_back(ReverseTransform(point));
+             return reverseTransformedPoints;
     });
 }
 

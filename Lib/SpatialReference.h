@@ -3,7 +3,6 @@
 
 #include <string>
 #include <gdal/ogr_spatialref.h>
-#include "Point.h"
 
 using namespace std;
 

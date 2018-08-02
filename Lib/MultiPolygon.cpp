@@ -1,12 +1,19 @@
 #include "MultiPolygon.h"
 
 MultiPolygon::MultiPolygon()
+                :	Geometry(Geometry::MultiPolygonType)
 {
 }
 
+MultiPolygon::MultiPolygon(const OGRGeometry *geometry)
+                :	Geometry(Geometry::MultiPolygonType)
+{
+    ParseGeometry(geometry);
+}
 
 MultiPolygon::MultiPolygon(std::vector<Polygon> polygons)
-                :   _polygons(polygons)
+                :	Geometry(Geometry::MultiPolygonType),
+                   _polygons(polygons)
 {
 }
 
@@ -28,13 +35,7 @@ MultiPolygon::operator OGRGeometry *() const
 
 MultiPolygon& MultiPolygon::operator=(const OGRGeometry *geometry)
 {
-    OGRMultiPolygon* multiPolygon = (OGRMultiPolygon*)geometry;
-    for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
-    {
-        Polygon polygon;
-        polygon = multiPolygon->getGeometryRef(i);
-        AddPolygon(polygon);
-    }
+    ParseGeometry(geometry);
     return *this;
 }
 
@@ -43,12 +44,24 @@ void MultiPolygon::AddPolygon(Polygon polygon)
     _polygons.push_back(polygon);
 }
 
-MultiPolygon MultiPolygon::Transform(Geometry<MultiPolygon>::TransformFunction transformFunction) const
+shared_ptr<Geometry> MultiPolygon::Transform(Geometry::TransformFunction transformFunction) const
 {
     std::vector<Polygon> mappedPolygons;
     for (auto& polygon : _polygons)
     {
-        mappedPolygons.push_back(polygon.Transform(transformFunction));
+        shared_ptr<Polygon> mappedPolygon = dynamic_pointer_cast<Polygon>(polygon.Transform(transformFunction));
+        mappedPolygons.push_back(*mappedPolygon);
     }
-    return MultiPolygon(mappedPolygons);
+    return make_shared<MultiPolygon>(mappedPolygons);
+}
+
+void MultiPolygon::ParseGeometry(const OGRGeometry* geometry)
+{
+    const OGRMultiPolygon* multiPolygon = dynamic_cast<const OGRMultiPolygon*>(geometry);
+    for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
+    {
+        Polygon polygon;
+        polygon = multiPolygon->getGeometryRef(i);
+        AddPolygon(polygon);
+    }
 }

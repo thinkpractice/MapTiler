@@ -5,23 +5,28 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <tuple>
 #include "SpatialReference.h"
 
-struct Point;
-
-class BaseGeometry
+class Geometry
 {
     public:
-        enum Type {PointType, PolygonType, MultiPolygonType, Other};
+        enum Type {PointType, RingType, PolygonType, MultiPolygonType, Other};
+
+        using TransformFunction = std::function< std::vector<std::tuple<double, double> >(const std::vector<std::tuple<double, double>>)>;
 
     public:
-        BaseGeometry();
-        BaseGeometry(const SpatialReference& reference);
-        virtual ~BaseGeometry();
+        Geometry(const Type& geometryType);
+        Geometry(const Type&, const SpatialReference& reference);
+        virtual ~Geometry();
+
+        virtual operator OGRGeometry*() const = 0;
 
         SpatialReference GetSpatialReference() const;
         void SetSpatialReference(const SpatialReference& spatialReference);
         Type GetType() const;
+
+        virtual shared_ptr<Geometry> Transform(TransformFunction transformFunction) const = 0;
 
 protected:
         void SetType(Type type);
@@ -30,32 +35,6 @@ protected:
 protected:
     SpatialReference _spatialReference;
     Type _type;
-};
-
-template <class T>
-class Geometry : public BaseGeometry
-{
-public:
-
-    using TransformFunction = std::function< std::vector<Point>(const std::vector<Point>)>;
-
-    Geometry()
-        :	BaseGeometry()
-    {
-    }
-
-    Geometry(const SpatialReference& spatialReference)
-                :	BaseGeometry(spatialReference)
-    {
-    }
-
-    virtual ~Geometry()
-    {
-    }
-
-    virtual operator OGRGeometry*() const = 0;
-    virtual T Transform(Geometry<T>::TransformFunction transformFunction) const = 0;
-
 };
 
 #endif // GEOMETRY_H

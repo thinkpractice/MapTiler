@@ -9,7 +9,6 @@
 #include <vector>
 #include <gdal/ogr_spatialref.h>
 
-using namespace std;
 
 class CoordinateTransformation
 {
@@ -18,13 +17,15 @@ class CoordinateTransformation
         virtual ~CoordinateTransformation();
 
         Point MapCoordinate(Point sourceCoordinate);
-        vector<Point> MapCoordinates(vector<Point> sourceCoordinates);
+        std::vector<Point> MapCoordinates(vector<Point> sourceCoordinates);
+        std::vector<std::tuple<double, double>> MapCoordinates(std::vector<std::tuple<double, double>> sourceCoordinates);
+
 
         Area MapArea(Area other);
         
-        template <class T> T MapGeometry(const Geometry<T>& geometry)
+        std::shared_ptr<Geometry> MapGeometry(const std::shared_ptr<Geometry> geometry)
         {
-            return geometry.Transform([&](const vector<Point> points) -> vector<Point> {
+            return geometry->Transform([&](const std::vector<std::tuple<double, double>> points) -> std::vector<std::tuple<double, double>> {
                     return MapCoordinates(points);
                     });
         }
@@ -33,8 +34,8 @@ class CoordinateTransformation
         static Point MapCoordinate(SpatialReference sourceReference, 
                 SpatialReference targetReference,
                 Point sourceCoordinate);
-        static vector<Point> MapCoordinates(SpatialReference sourceReference, SpatialReference targetReference, vector<Point> sourceCoordinates);
-        static Area MapArea(Area other, string epsgCode);
+        static std::vector<Point> MapCoordinates(SpatialReference sourceReference, SpatialReference targetReference, std::vector<Point> sourceCoordinates);
+        static Area MapArea(Area other, std::string epsgCode);
         static Area MapArea(Area other, SpatialReference destinationReference);
 
     private:

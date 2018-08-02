@@ -94,18 +94,7 @@ int main(int argc, char** argv)
         }
         
         cout << "type=" << feature.GetGeometry().Type() << endl;
-        if (feature.GetGeometry().HasPoint())
-        {
-            cout << feature.GetGeometry().GetPoint() << endl;
-        }
-        else if (feature.GetGeometry().HasPolygon())
-        {
-            cout << feature.GetGeometry().GetPolygon() << endl;
-        }
-        else if (feature.GetGeometry().HasMultiPolygon())
-        {
-            cout << feature.GetGeometry().GetMultiPolygon() << endl;
-        }
+        cout << feature.GetGeometry().InnerGeometry() << endl;
 
         cout << endl;
     }

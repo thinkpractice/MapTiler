@@ -4,13 +4,21 @@
 using namespace std;
 
 Polygon::Polygon()
+            :	Geometry(Geometry::PolygonType)
 {
 }
 
 Polygon::Polygon(Ring externalRing, vector<Ring> internalRings)
-            :   _externalRing(externalRing),
+            :	Geometry(Geometry::PolygonType),
+                _externalRing(externalRing),
                 _internalRings(internalRings)
 {
+}
+
+Polygon::Polygon(const OGRGeometry *geometry)
+            :	Polygon()
+{
+    ParseGeometry(geometry);
 }
 
 Polygon::~Polygon()
@@ -28,13 +36,13 @@ Polygon::operator OGRGeometry *() const
     reference->Release();
 
     OGRGeometry* externalRing = _externalRing;
-    ogrPolygon->addRing((OGRCurve*) externalRing);
+    ogrPolygon->addRing(dynamic_cast<OGRCurve*>(externalRing));
     delete externalRing;
 
     for (auto& ring : _internalRings)
     {
         OGRGeometry* internalRing = ring;
-        ogrPolygon->addRing((OGRCurve*) internalRing);
+        ogrPolygon->addRing(dynamic_cast<OGRCurve*>(internalRing));
         delete internalRing;
     }
     return ogrPolygon;
@@ -42,15 +50,7 @@ Polygon::operator OGRGeometry *() const
 
 Polygon& Polygon::operator=(const OGRGeometry *geometry)
 {
-    OGRPolygon* ogrPolygon = (OGRPolygon*)geometry;
-    _externalRing = ogrPolygon->getExteriorRing();
-
-    for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
-    {
-        Ring newInternalRing;
-        newInternalRing = ogrPolygon->getInteriorRing(i);
-        _internalRings.push_back(newInternalRing);
-    }
+    ParseGeometry(geometry);
     return *this;
 }
 
@@ -74,14 +74,28 @@ vector<Ring> Polygon::GetInternalRings() const
     return _internalRings;
 }
 
-Polygon Polygon::Transform(Geometry<Polygon>::TransformFunction transformFunction) const
+shared_ptr<Geometry> Polygon::Transform(Geometry::TransformFunction transformFunction) const
 {
-    Ring mappedExternalRing = GetExternalRing().Transform(transformFunction);
+    shared_ptr<Ring> mappedExternalRing = dynamic_pointer_cast<Ring>(GetExternalRing().Transform(transformFunction));
     
     vector<Ring> mappedInternalRings;
     for (auto internalRing : GetInternalRings())
     {
-        mappedInternalRings.push_back(internalRing.Transform(transformFunction));
+        shared_ptr<Ring> mappedInternalRing = dynamic_pointer_cast<Ring>(internalRing.Transform(transformFunction));
+        mappedInternalRings.push_back(*mappedInternalRing);
     }
-    return Polygon(mappedExternalRing, mappedInternalRings);
+    return make_shared<Polygon>(*mappedExternalRing, mappedInternalRings);
+}
+
+void Polygon::ParseGeometry(const OGRGeometry* geometry)
+{
+    const OGRPolygon* ogrPolygon = dynamic_cast<const OGRPolygon*>(geometry);
+    _externalRing = ogrPolygon->getExteriorRing();
+
+    for (int i = 0; i < ogrPolygon->getNumInteriorRings(); i++)
+    {
+        Ring newInternalRing;
+        newInternalRing = ogrPolygon->getInteriorRing(i);
+        _internalRings.push_back(newInternalRing);
+    }
 }

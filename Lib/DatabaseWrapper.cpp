@@ -16,7 +16,7 @@ int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
     return SaveFeature("areaofinterest", [&](Feature& feature)
     {
         feature.SetField("description", areaOfInterest.Description());
-        feature.SetGeometry<Polygon>(areaOfInterest);
+        feature.SetGeometry(areaOfInterest);
     });
 }
 
@@ -26,7 +26,7 @@ int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &ti
     {
         feature.SetField("area_id", parentAreaId);
         feature.SetField("uuid", uuid);
-        feature.SetGeometry<Polygon>(tileArea);
+        feature.SetGeometry(tileArea);
     });
 }
 
@@ -53,7 +53,7 @@ int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
         feature.SetField("area_max", feature["oppervlakte_max"]);
         feature.SetField("number_of_residencies", feature["aantal_verblijfsobjecten"]);
         feature.SetField("update_date", feature["actualiteitsdatum"]);
-        feature.SetGeometry<MultiPolygon>(feature.GetGeometry());
+        feature.SetGeometry(feature.GetGeometry().InnerGeometry());
     });
 
     SaveFeature("tile_buildings", [&](Feature& feature)
