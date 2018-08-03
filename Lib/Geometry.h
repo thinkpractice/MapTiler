@@ -49,14 +49,19 @@ class Geometry
     public:
         static Type ParseGeometryType(OGRGeometry *geometry);
 
+        static std::map<Type, GeometryFactory*> GetFactoryRegistry()
+        {
+            return factories;
+        }
+
         static void RegisterFactory(Type type, GeometryFactory* factory)
         {
-            factories[type] = factory;
+            GetFactoryRegistry()[type] = factory;
         }
 
         static std::shared_ptr<Geometry> NewGeometry(Geometry::Type type)
         {
-            return factories[type]->Create();
+            return GetFactoryRegistry()[type]->Create();
         }
 
         static std::shared_ptr<Geometry> NewGeometry(OGRGeometry* geometry)
