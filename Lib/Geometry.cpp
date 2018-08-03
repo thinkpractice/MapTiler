@@ -85,26 +85,3 @@ GeometryFactory::GeometryFactory()
 GeometryFactory::~GeometryFactory()
 {
 }
-
-template<class T>
-GeometryTemplateFactory<T>::GeometryTemplateFactory(Geometry::Type type)
-{
-    Geometry::RegisterFactory(type, this);
-}
-
-template<class T>
-GeometryTemplateFactory<T>::~GeometryTemplateFactory()
-{
-}
-
-template<class T>
-std::shared_ptr<Geometry> GeometryTemplateFactory<T>::Create()
-{
-    return new T();
-}
-
-template<class T>
-std::shared_ptr<Geometry> GeometryTemplateFactory<T>::Create(OGRGeometry *geometry)
-{
-    return new T(geometry);
-}

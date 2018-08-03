@@ -81,11 +81,24 @@ template <class T>
 class GeometryTemplateFactory : public GeometryFactory
 {
     public:
-        GeometryTemplateFactory(Geometry::Type type);
-        virtual ~GeometryTemplateFactory();
+        GeometryTemplateFactory(Geometry::Type type)
+        {
+            Geometry::RegisterFactory(type, this);
+        }
 
-        virtual std::shared_ptr<Geometry> Create();
-        virtual std::shared_ptr<Geometry> Create(OGRGeometry* geometry);
+        virtual ~GeometryTemplateFactory()
+        {
+        }
+
+        virtual std::shared_ptr<Geometry> Create()
+        {
+            return make_shared<T>();
+        }
+
+        virtual std::shared_ptr<Geometry> Create(OGRGeometry* geometry)
+        {
+            return make_shared<T>(geometry);
+        }
 
 };
 

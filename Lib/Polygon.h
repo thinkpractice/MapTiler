@@ -38,7 +38,7 @@ class Polygon : public Geometry
         std::vector<Ring> _internalRings;
 };
 
-
+static GeometryTemplateFactory<Polygon> global_PolygonFactory(Geometry::PolygonType);
 
 inline std::ostream& operator<<(std::ostream &strm, const Polygon& polygon)
 {

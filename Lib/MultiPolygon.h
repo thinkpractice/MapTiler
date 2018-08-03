@@ -39,6 +39,8 @@ class MultiPolygon : public Geometry
         vector <Polygon> _polygons;
 };
 
+static GeometryTemplateFactory<MultiPolygon> global_MultiPolygonFactory(Geometry::MultiPolygonType);
+
 inline std::ostream& operator<<(std::ostream &strm, const MultiPolygon& multiPolygon)
 {
     strm << "MultiPolygon" << endl;

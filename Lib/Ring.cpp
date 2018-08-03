@@ -24,6 +24,12 @@ Ring::Ring(std::vector<std::tuple<double, double>> list)
         _points.push_back(p);
 }
 
+Ring::Ring(OGRGeometry *ring)
+        :	Geometry (Geometry::RingType)
+{
+    ParseGeometry(dynamic_cast<OGRLinearRing*>(ring));
+}
+
 Ring::~Ring()
 {
 }
@@ -41,7 +47,7 @@ Ring& Ring::operator=(OGRGeometry* ring)
     return operator=(dynamic_cast<const OGRLinearRing*>(ring));
 }
 
-Ring& Ring::operator=(const OGRLinearRing* ring)
+void Ring::ParseGeometry(const OGRLinearRing* ring)
 {
     _clockwise = ring->isClockwise() > 0;
     for (int i = 0; i < ring->getNumPoints(); i++)
@@ -50,6 +56,11 @@ Ring& Ring::operator=(const OGRLinearRing* ring)
         ring->getPoint(i, &point);
         AddPoint(Point(point.getX(), point.getY()));
     }
+}
+
+Ring& Ring::operator=(const OGRLinearRing* ring)
+{
+    ParseGeometry(ring);
     return *this;
 }
 

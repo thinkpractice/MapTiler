@@ -19,6 +19,7 @@ class Ring : public Geometry
         Ring(vector<Point> points);
         Ring(std::initializer_list<Point> list);
         Ring(std::vector<std::tuple<double, double>> list);
+        Ring(OGRGeometry* ring);
         virtual ~Ring();
 
         operator OGRGeometry*() const;
@@ -39,9 +40,14 @@ class Ring : public Geometry
         const_iterator cend() const { return _points.cend(); }
 
     private:
+        void ParseGeometry(const OGRLinearRing* ring);
+
+    private:
         vector<Point> _points;
         bool _clockwise;
 };
+
+static GeometryTemplateFactory<Ring> global_RingFactory(Geometry::RingType);
 
 inline std::ostream& operator<<(std::ostream &strm, const Ring &ring)
 {
