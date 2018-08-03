@@ -6,7 +6,8 @@ Feature::Feature(OGRFeature* feature)
 {
     if (_feature)
     {
-        _innerGeometry = Geometry::NewGeometry(_feature->GetGeometryRef());
+        OGRGeometry* geometry = _feature->GetGeometryRef();
+        _innerGeometry = Geometry::NewGeometry(geometry);
     }
 }
 
@@ -16,7 +17,6 @@ Feature::Feature(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        //TODO: copy shared_ptr or clone?
         _innerGeometry = other._innerGeometry;
     }
 }
@@ -41,7 +41,7 @@ string Feature::Name() const
     return string(FeatureDefinition()->GetName());
 }
 
-size_t Feature::NumberOfFields() const
+int Feature::NumberOfFields() const
 {
     return FeatureDefinition()->GetFieldCount();
 }
@@ -57,7 +57,6 @@ Feature& Feature::operator=(const Feature& other)
     if (other._feature)
     {
         _feature = other._feature->Clone();
-        //TODO: copy shared_ptr or clone?
         _innerGeometry = other._innerGeometry;
     }
     return *this;
@@ -65,12 +64,12 @@ Feature& Feature::operator=(const Feature& other)
 
 Field Feature::operator[](size_t index)
 {
-    return GetFieldAtIndex(index);
+    return GetFieldAtIndex(static_cast<int>(index));
 }
 
 const Field Feature::operator[](size_t index) const
 {
-    return GetFieldAtIndex(index);
+    return GetFieldAtIndex(static_cast<int>(index));
 }
 
 Field Feature::operator[](const char *fieldName)
@@ -119,8 +118,6 @@ std::shared_ptr<Geometry> Feature::GetGeometry() const
 {
     return _innerGeometry;
 }
-
-
 
 Feature::FieldIterator::FieldIterator(const Feature* owner, bool start)
                             :   _owner(owner),
@@ -188,7 +185,7 @@ void Feature::FieldIterator::NextField()
         _currentIndex = -1;
         return;
     }
-    _currentField = (*_owner)[_currentIndex];
+    _currentField = (*_owner)[static_cast<size_t>(_currentIndex)];
     _currentIndex++;
 }
 
@@ -209,7 +206,7 @@ Field Feature::GetFieldWithName(const char *name) const
     return GetFieldAtIndex(index);
 }
 
-Field Feature::GetFieldAtIndex(size_t index) const
+Field Feature::GetFieldAtIndex(int index) const
 {
     OGRFieldDefn* fieldDefinition = FeatureDefinition()->GetFieldDefn(index);
     auto value = _feature->GetFieldAsString(index);

@@ -102,7 +102,7 @@ create table pv_2017_nl
 CREATE INDEX pv_2017_nl_gix ON pv_2017_nl USING GIST ( location );
 
 insert into pv_2017_nl (postcode, number, number_add, building_id, year_in_use, date_in_use, location, bag_address_id, solar_panel_id)
-select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.location_rd, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
+select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.location, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
 inner join addresses_bag as ab 
 on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer;
 

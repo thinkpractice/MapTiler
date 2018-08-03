@@ -31,7 +31,7 @@ class MappedLayer : public Layer
         virtual ~MappedLayer();
 
     protected:
-        virtual Feature NextFeature() const;
+        virtual std::shared_ptr<Feature> NextFeature() const;
 
     private:
         Feature MapFeature(Feature feature) const;

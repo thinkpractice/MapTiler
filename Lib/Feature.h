@@ -25,7 +25,7 @@ class Feature
 
         long long FeatureId() const;
         string Name() const;
-        size_t NumberOfFields() const;
+        int NumberOfFields() const;
 
         Feature& operator=(const Feature& feature);
         Field operator[](size_t index);
@@ -44,6 +44,8 @@ class Feature
 
         void SetGeometry(const shared_ptr<Geometry> geometry)
         {
+            _innerGeometry = geometry;
+
             SpatialReference sourceReference = geometry->GetSpatialReference();
 
             OGRGeomFieldDefn* geometryDefinition = FeatureDefinition()->GetGeomFieldDefn(0);
@@ -98,7 +100,7 @@ class Feature
 
     private:
         Field GetFieldWithName(const char* name) const;
-        Field GetFieldAtIndex(size_t index) const;
+        Field GetFieldAtIndex(int index) const;
         OGRFeatureDefn *FeatureDefinition() const;
 
     private:

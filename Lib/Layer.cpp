@@ -61,10 +61,12 @@ void Layer::ResetReading() const
     _layer->ResetReading();
 }
 
-Feature Layer::NextFeature() const
+std::shared_ptr<Feature> Layer::NextFeature() const
 {
     OGRFeature* feature = _layer->GetNextFeature();
-    return Feature(feature);
+    if (!feature)
+        return nullptr;
+    return make_shared<Feature>(feature);
 }
 
 Layer::iterator Layer::begin() const
@@ -84,18 +86,21 @@ OGRFeatureDefn* Layer::FeatureDefinition()
 
 Layer::FeatureIterator::FeatureIterator(const Layer* layer, bool start)
                     :   _layer(layer),
-                        _currentFeature(nullptr)
+                        _currentFeature(nullptr),
+                        _lastFeature(true)
 {
     if (start)
     {
         _layer->ResetReading();
+        _lastFeature = false;
         NextFeature();
     }
 }
 
 Layer::FeatureIterator::FeatureIterator(const FeatureIterator& iterator)
                     :   _layer(iterator._layer),
-                        _currentFeature(iterator._currentFeature)
+                        _currentFeature(iterator._currentFeature),
+                        _lastFeature(iterator._lastFeature)
 {
 }
 
@@ -106,6 +111,8 @@ Layer::FeatureIterator::~FeatureIterator()
 Layer::FeatureIterator& Layer::FeatureIterator::operator=(const FeatureIterator& iterator)
 {
     _layer = iterator._layer;
+    _currentFeature = iterator._currentFeature;
+    _lastFeature = iterator._lastFeature;
     return *this;
 }
 
@@ -129,7 +136,7 @@ Layer::FeatureIterator Layer::FeatureIterator::operator++(int)
 
 bool Layer::FeatureIterator::operator==(const FeatureIterator& rhs)
 {
-    return _currentFeature == rhs._currentFeature;
+    return !_lastFeature && (_currentFeature == rhs._currentFeature);
 }
 
 bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
@@ -139,5 +146,11 @@ bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
 
 void Layer::FeatureIterator::NextFeature()
 {
-    _currentFeature = _layer->NextFeature();
+    auto nextFeature = _layer->NextFeature();
+    if (!nextFeature)
+    {
+        _lastFeature = true;
+        return;
+    }
+    _currentFeature = *nextFeature;
 }

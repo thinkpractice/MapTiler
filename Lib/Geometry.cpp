@@ -1,7 +1,5 @@
 #include "Geometry.h"
 
-map<Geometry::Type, GeometryFactory*> Geometry::factories;
-
 Geometry::Geometry(const Geometry::Type& type)
                 :	_type(type)
 {

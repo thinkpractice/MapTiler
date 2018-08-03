@@ -60,6 +60,7 @@ class Layer
             private:
                 const Layer* _layer;
                 Feature _currentFeature;
+                bool _lastFeature;
         };
 
         using iterator = FeatureIterator;
@@ -71,7 +72,7 @@ class Layer
         OGRFeatureDefn* FeatureDefinition();
 
         void ResetReading() const;
-        virtual Feature NextFeature() const;
+        virtual std::shared_ptr<Feature> NextFeature() const;
 
     private:
         OGRLayer* _layer;

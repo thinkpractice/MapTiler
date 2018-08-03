@@ -49,8 +49,9 @@ class Geometry
     public:
         static Type ParseGeometryType(OGRGeometry *geometry);
 
-        static std::map<Type, GeometryFactory*> GetFactoryRegistry()
+        static std::map<Type, GeometryFactory*>& GetFactoryRegistry()
         {
+            static std::map<Type, GeometryFactory*> factories;
             return factories;
         }
 
@@ -66,6 +67,9 @@ class Geometry
 
         static std::shared_ptr<Geometry> NewGeometry(OGRGeometry* geometry)
         {
+            if (!geometry)
+                return nullptr;
+
             auto type = Geometry::ParseGeometryType(geometry);
             return NewGeometry(type);
         }
@@ -76,9 +80,6 @@ class Geometry
     protected:
         SpatialReference _spatialReference;
         Type _type;
-
-    private:
-        static std::map<Type, GeometryFactory*> factories;
 
 };
 
