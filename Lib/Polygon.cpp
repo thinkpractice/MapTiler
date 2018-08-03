@@ -89,6 +89,7 @@ shared_ptr<Geometry> Polygon::Transform(Geometry::TransformFunction transformFun
 
 void Polygon::ParseGeometry(const OGRGeometry* geometry)
 {
+    Geometry::ParseGeometry(geometry);
     const OGRPolygon* ogrPolygon = dynamic_cast<const OGRPolygon*>(geometry);
     _externalRing = ogrPolygon->getExteriorRing();
 

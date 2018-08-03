@@ -57,6 +57,7 @@ shared_ptr<Geometry> MultiPolygon::Transform(Geometry::TransformFunction transfo
 
 void MultiPolygon::ParseGeometry(const OGRGeometry* geometry)
 {
+    Geometry::ParseGeometry(geometry);
     const OGRMultiPolygon* multiPolygon = dynamic_cast<const OGRMultiPolygon*>(geometry);
     for (int i = 0; i < multiPolygon->getNumGeometries(); i++)
     {

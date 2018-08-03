@@ -96,7 +96,6 @@ class Feature
 
         iterator begin() const;
         iterator end() const;
-        
 
     private:
         Field GetFieldWithName(const char* name) const;

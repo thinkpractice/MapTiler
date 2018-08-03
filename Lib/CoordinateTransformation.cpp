@@ -15,7 +15,6 @@ CoordinateTransformation::~CoordinateTransformation()
 
 Point CoordinateTransformation::MapCoordinate(Point sourceCoordinate)
 {
-
     if (_sourceReference.IsSame(_destinationReference))
         return sourceCoordinate;
 
@@ -23,7 +22,9 @@ Point CoordinateTransformation::MapCoordinate(Point sourceCoordinate)
     double y = sourceCoordinate.Y;
     Transformation()->Transform(1, &x, &y);
 
-    return Point(x, y);
+    Point point(x, y);
+    point.SetSpatialReference(_destinationReference);
+    return point;
 }
 
 vector<Point> CoordinateTransformation::MapCoordinates(vector<Point> sourceCoordinates)

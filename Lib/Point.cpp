@@ -64,6 +64,7 @@ shared_ptr<Geometry> Point::Transform(Geometry::TransformFunction transformFunct
 
 void Point::ParseGeometry(const OGRGeometry *geometry)
 {
+    Geometry::ParseGeometry(geometry);
     const OGRPoint* point = dynamic_cast<const OGRPoint*>(geometry);
     X = point->getX();
     Y = point->getY();

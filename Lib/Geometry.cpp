@@ -60,6 +60,13 @@ void Geometry::SetType(Geometry::Type type)
     _type = type;
 }
 
+void Geometry::ParseGeometry(const OGRGeometry *geometry)
+{
+    OGRSpatialReference* ogrReference = geometry->getSpatialReference();
+    SpatialReference reference(ogrReference);
+    SetSpatialReference(reference);
+}
+
 Geometry::Type Geometry::ParseGeometryType(OGRGeometry *geometry)
 {
     switch(wkbFlatten(geometry->getGeometryType()))

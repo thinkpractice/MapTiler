@@ -76,6 +76,7 @@ class Geometry
 
     protected:
         void SetType(Type type);
+        void ParseGeometry(const OGRGeometry* geometry);
 
     protected:
         SpatialReference _spatialReference;

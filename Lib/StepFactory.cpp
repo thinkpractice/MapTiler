@@ -45,7 +45,7 @@ StepFactory::StepFactory()
             "TileGpuTransferStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileGpuTransferStep>(stepSettings.TileWidth(), stepSettings.TileHeight());
+                return std::make_shared<TileGpuTransferStep>(GetAffineTransform(settings), stepSettings.TileWidth(), stepSettings.TileHeight());
             }
         },
         {
@@ -85,8 +85,14 @@ std::shared_ptr<ProcessingStep> StepFactory::StepFor(const Settings& settings, c
     return nullptr;
 }
 
+AffineTransform StepFactory::GetAffineTransform(const Settings& settings)
+{
+    auto mainRasterMap = Utils::LoadRasterMap(settings.MainRasterUrl(), settings.MainRasterLayerIndex());
+    return mainRasterMap->MapTransform();
+}
+
 std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const Settings& settings, const StepSettings& stepSettings)
 {
     auto mainRasterMap = Utils::LoadRasterMap(settings.MainRasterUrl(), settings.MainRasterLayerIndex());
-    return std::make_shared<MappedVectorFile>(stepSettings.LayerUrl(), mainRasterMap->ProjectionReference(), mainRasterMap->MapTransform());
+    return std::make_shared<MappedVectorFile>(stepSettings.LayerUrl(), mainRasterMap->ProjectionReference());
 }

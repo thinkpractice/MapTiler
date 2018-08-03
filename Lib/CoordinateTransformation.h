@@ -25,9 +25,11 @@ class CoordinateTransformation
         
         std::shared_ptr<Geometry> MapGeometry(const std::shared_ptr<Geometry> geometry)
         {
-            return geometry->Transform([&](const std::vector<std::tuple<double, double>> points) -> std::vector<std::tuple<double, double>> {
+            auto mappedGeometry = geometry->Transform([&](const std::vector<std::tuple<double, double>> points) -> std::vector<std::tuple<double, double>> {
                     return MapCoordinates(points);
                     });
+            mappedGeometry->SetSpatialReference(_destinationReference);
+            return mappedGeometry;
         }
 
     public:

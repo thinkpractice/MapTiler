@@ -9,6 +9,7 @@
 #include "GeoMap.h"
 #include "VectorFile.h"
 #include "Settings.h"
+#include "AffineTransform.h"
 
 class StepFactory
 {
@@ -47,6 +48,7 @@ private:
     };
 
 private:
+    AffineTransform GetAffineTransform(const Settings& settings);
     std::shared_ptr<VectorFile> LoadVectorFile(const Settings& settings, const StepSettings& stepSettings);
 
 private:

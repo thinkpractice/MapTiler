@@ -13,21 +13,19 @@
 class MappedVectorFile : public VectorFile
 {
 public:
-    MappedVectorFile(std::string filename, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform, VectorFile::OpenMode mode = ReadOnly);
+    MappedVectorFile(std::string filename, SpatialReference destinationReference, VectorFile::OpenMode mode = ReadOnly);
     virtual ~MappedVectorFile();
 
     virtual std::shared_ptr<Layer> LayerFor(OGRLayer* layer);
 
 private:
     SpatialReference _destinationReference;
-    AffineTransform _rasterCoordinateTransform;
-
 };
 
 class MappedLayer : public Layer
 {
     public:
-        MappedLayer(OGRLayer* layer, SpatialReference destinationReference, AffineTransform rasterCoordinateTransform);
+        MappedLayer(OGRLayer* layer, SpatialReference destinationReference);
         virtual ~MappedLayer();
 
     protected:
@@ -37,12 +35,10 @@ class MappedLayer : public Layer
         Feature MapFeature(Feature feature) const;
         std::shared_ptr<CoordinateTransformation> ProjectionTransformation() const;
         std::shared_ptr<Geometry> MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const std::shared_ptr<Geometry> geometry) const;
-        std::shared_ptr<Geometry> MapGeometry(const shared_ptr<CoordinateTransformation> transformation, const AffineTransform affineTransform, const std::shared_ptr<Geometry> geometry) const;
 
     private:
         std::shared_ptr<CoordinateTransformation> _coordinateTransformation;
         SpatialReference _destinationReference;
-        AffineTransform _rasterCoordinateTransform;
 };
 
 #endif /* MAPPEDVECTORFILE_H */

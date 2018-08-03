@@ -49,6 +49,7 @@ Ring& Ring::operator=(OGRGeometry* ring)
 
 void Ring::ParseGeometry(const OGRLinearRing* ring)
 {
+    Geometry::ParseGeometry(ring);
     _clockwise = ring->isClockwise() > 0;
     for (int i = 0; i < ring->getNumPoints(); i++)
     {

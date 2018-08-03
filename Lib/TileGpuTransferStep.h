@@ -5,13 +5,14 @@
 #include "VectorFile.h"
 #include "GLWindow.h"
 #include "ShaderProgram.h"
+#include "AffineTransform.h"
 #include <vector>
 #include <memory>
 
 class TileGpuTransferStep : public ProcessingStep
 {
 public:
-    TileGpuTransferStep(int tileWidth, int tileHeight);
+    TileGpuTransferStep(const AffineTransform& affineTransform, int tileWidth, int tileHeight);
     virtual ~TileGpuTransferStep();
 
     void Run();
@@ -34,6 +35,7 @@ private:
 private:
     int _tileWidth;
     int _tileHeight;
+    AffineTransform _affineTransform;
 };
 
 #endif /* TILEGPUTRANSFERSTEP_H */

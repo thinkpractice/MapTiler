@@ -6,10 +6,11 @@
 
 using namespace std;
 
-TileGpuTransferStep::TileGpuTransferStep(int tileWidth, int tileHeight)
+TileGpuTransferStep::TileGpuTransferStep(const AffineTransform& affineTransform, int tileWidth, int tileHeight)
                         :   ProcessingStep(Processing),
                             _tileWidth(tileWidth),
-                            _tileHeight(tileHeight)
+                            _tileHeight(tileHeight),
+                            _affineTransform(affineTransform)
 {
 }
 
@@ -239,8 +240,8 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
     {
-        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(feature.GetGeometry());
-
+        auto mappedGeometry = _affineTransform.ReverseTransform(feature.GetGeometry());
+        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(mappedGeometry);
         for (auto polygon : *multiPolygon)
         {
             tesselator.BeginPolygon(polygon.ExternalRing().Points().size());
