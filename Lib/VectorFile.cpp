@@ -3,8 +3,8 @@
 
 VectorFile::VectorFile(string filename, OpenMode mode)
                 :   _filename(filename),
-                    _mode(mode),
-                    _dataset(nullptr)
+                    _dataset(nullptr),
+                    _mode(mode)
 {
 }
 
