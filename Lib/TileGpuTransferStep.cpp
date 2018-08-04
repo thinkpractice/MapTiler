@@ -264,7 +264,7 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
     {
         auto geometry = feature.GetGeometry();
 
-        if (!geometry->IsPolygon() || !geometry->IsMultiPolygon())
+        if (!geometry->IsPolygon() && !geometry->IsMultiPolygon())
             continue;
 
         auto mappedGeometry = _affineTransform.ReverseTransform(geometry);

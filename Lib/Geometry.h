@@ -71,12 +71,14 @@ class Geometry
                 return nullptr;
 
             auto type = Geometry::ParseGeometryType(geometry);
-            return NewGeometry(type);
+            auto newGeometry = NewGeometry(type);
+            newGeometry->ParseGeometry(geometry);
+            return newGeometry;
         }
 
     protected:
-        void SetType(Type type);
-        void ParseGeometry(const OGRGeometry* geometry);
+        virtual void SetType(Type type);
+        virtual void ParseGeometry(const OGRGeometry* geometry);
 
     protected:
         SpatialReference _spatialReference;
