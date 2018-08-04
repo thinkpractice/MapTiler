@@ -136,12 +136,12 @@ Layer::FeatureIterator Layer::FeatureIterator::operator++(int)
 
 bool Layer::FeatureIterator::operator==(const FeatureIterator& rhs)
 {
-    return !_lastFeature && (_currentFeature == rhs._currentFeature);
+    return (_currentFeature == rhs._currentFeature);
 }
 
 bool Layer::FeatureIterator::operator!=(const FeatureIterator& rhs)
 {
-    return !(*this == rhs);
+    return !_lastFeature;
 }
 
 void Layer::FeatureIterator::NextFeature()

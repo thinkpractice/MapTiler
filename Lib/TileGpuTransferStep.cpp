@@ -1,7 +1,6 @@
 #include "TileGpuTransferStep.h"
 #include "GeoTile.h"
 #include "FrameBuffer.h"
-#include "Tesselator.h"
 #include <iostream>
 
 using namespace std;
@@ -233,37 +232,58 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, colorFormat, GL_UNSIGNED_BYTE, geoTile->Data());
 }
 
+void TileGpuTransferStep::DrawPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, Polygon& polygon)
+{
+    tesselator.BeginPolygon(polygon.ExternalRing().Points().size());
+        tesselator.BeginContour();
+        int i = 0;
+        for (auto point : polygon.ExternalRing())
+        {
+            Point glPoint = MapGeoTileCoordinateToGL(geoTile, point);
+            tesselator.AddVertex(glPoint);
+            i++;
+        }
+        tesselator.EndContour();
+    tesselator.EndPolygon();
+}
+
+void TileGpuTransferStep::DrawMultiPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, std::shared_ptr<Geometry> geometry)
+{
+    auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(geometry);
+    for (auto polygon : *multiPolygon)
+    {
+        DrawPolygon(tesselator, geoTile, polygon);
+    }
+}
+
 shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shaderProgram, shared_ptr<GeoTile> geoTile, const vector<Feature> polygonFeatures)
 {
-    cout << "Drawing" << endl;
 	Tesselator tesselator;
 	int numberOfPolygons = 0;
     for (auto feature : polygonFeatures)
     {
-        auto mappedGeometry = _affineTransform.ReverseTransform(feature.GetGeometry());
-        auto multiPolygon = dynamic_pointer_cast<MultiPolygon>(mappedGeometry);
-        for (auto polygon : *multiPolygon)
-        {
-            tesselator.BeginPolygon(polygon.ExternalRing().Points().size());
-                tesselator.BeginContour();
-                int i = 0;
-                for (auto point : polygon.ExternalRing())
-                {
-                    Point glPoint = MapGeoTileCoordinateToGL(geoTile, point);
-                    tesselator.AddVertex(glPoint);
-                    i++;
-                }
-                tesselator.EndContour();
-            tesselator.EndPolygon();
-        }
+        auto geometry = feature.GetGeometry();
 
-        for (auto primitive : tesselator.Primitives())
-        {
-            vector<Point> triangles = primitive.points;
-            DrawElements(shaderProgram, GL_TRIANGLES, triangles);
-        }
+        if (!geometry->IsPolygon() || !geometry->IsMultiPolygon())
+            continue;
 
+        auto mappedGeometry = _affineTransform.ReverseTransform(geometry);
+        if (geometry->IsPolygon())
+        {
+            auto polygon = dynamic_pointer_cast<Polygon>(geometry);
+            DrawPolygon(tesselator, geoTile, *polygon);
+        }
+        else if (geometry->IsMultiPolygon())
+        {
+            DrawMultiPolygon(tesselator, geoTile, mappedGeometry);
+        }
         numberOfPolygons++;
+    }
+
+    for (auto primitive : tesselator.Primitives())
+    {
+        vector<Point> triangles = primitive.points;
+        DrawElements(shaderProgram, GL_TRIANGLES, triangles);
     }
     return ReadImage(GL_COLOR_ATTACHMENT0, geoTile->BoundingRect(), geoTile->BoundingArea(), 4);
 }

@@ -42,7 +42,7 @@ void AddMetadataStep::Run()
         for (auto it = layer->begin(); it != layer->end(); ++it)
         {
             auto feature = *it;
-            if (databasePersistence) databasePersistence->SaveBuilding(stepData->TileId(), feature);
+            //if (databasePersistence) databasePersistence->SaveBuilding(stepData->TileId(), feature);
             metadataFeatures.push_back(feature);
         }
         stepData->AddMetadataFeatures(_metadataName, metadataFeatures);
