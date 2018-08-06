@@ -51,7 +51,7 @@ int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
         feature.SetField("purpose", buildingFeature["gebruiksdoel"]);
         feature.SetField("area_min", buildingFeature["oppervlakte_min"]);
         feature.SetField("area_max", buildingFeature["oppervlakte_max"]);
-        feature.SetField("number_of_residencies", buildingFeature["aantal_verblijfsobjecten"]);
+        feature.SetField("number_of_residences", buildingFeature["aantal_verblijfsobjecten"]);
         feature.SetField("update_date", buildingFeature["actualiteitsdatum"]);
         feature.SetGeometry(buildingFeature.GetGeometry());
     });
