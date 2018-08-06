@@ -25,27 +25,28 @@
         {
             "name" : "Step 1: Produces Tiles for Map",
             "type" : "TileProducerStep",
-            "persistence_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'"
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         },
         {
             "name" : "Step 2a: Add BAG House Polygons",
             "type" : "AddMetadataStep",
             "layer_name" : "polygons",
             "layer_url" : "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs",
-            "layer_index" : 1
+            "layer_index" : 1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         },
         {
             "name" : "Step 2b: Add BAG House Addresses",
             "type" : "AddMetadataStep",
             "layer_name" : "addresses_bag",
-            "layer_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
             "layer_index" : -1
         },
         {
             "name" : "Step 2c: Add Solar Panel Addresses",
             "type" : "AddMetadataStep",
             "layer_name" : "pv_2017_nl",
-            "layer_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
             "layer_index" : -1
         },
         {
@@ -82,8 +83,8 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "/home/tjadejong/Documents/CBS/ZonnePanelen/Heerlen/",
-            "persistence_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'"
+            "output_directory" : "/media/tim/Data/Work/CBS/Heerlen/",
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }
     ]
 }
