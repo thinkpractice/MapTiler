@@ -21,6 +21,7 @@ void DownloadTilesForArea(const Settings& settings)
         processingPipeline->StartProcessing();
     });
     cout << "Finished" << endl;
+    QCoreApplication::exit(0);
 }
 
 int main(int argc, char** argv)
@@ -60,7 +61,6 @@ int main(int argc, char** argv)
                     settings.SetChosenArea(chosenArea);
                     cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << endl;
                     DownloadTilesForArea(settings);
-					QCoreApplication::exit(0);
                 }
             });
 

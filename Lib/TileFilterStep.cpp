@@ -25,4 +25,5 @@ void TileFilterStep::Run()
 			StepData::SetNumberOfTiles(StepData::NumberOfTiles() - 1);
 		}
 	}
+    DoneProcessing();
 }

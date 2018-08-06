@@ -41,6 +41,7 @@ void TileWriterStep::Run()
          if (_numberOfTilesWritten % 100 == 0)
              std::cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << std::endl;
 	 }
+     DoneProcessing();
 }
 
 void TileWriterStep::SaveTile(std::shared_ptr<GeoTile> tile, std::string tileFilename)
