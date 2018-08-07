@@ -106,6 +106,12 @@ select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.ye
 inner join addresses_bag as ab 
 on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer;
 
+create table tile_pv
+(
+	tile_id int references tiles(tile_id),
+	pv_id int references pv_2017_nl(pv_id)
+);
+
 create table tile_files
 (
 	file_id serial primary key,
