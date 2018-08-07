@@ -41,27 +41,18 @@ long long DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::s
     });
 }
 
-long long DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
+long long DatabaseWrapper::SaveMetadata(std::string layerName, int tileId, const Feature &buildingFeature)
 {
-    long long buildingId = SaveFeature("buildings", [&](Feature feature)
-    {
-        feature.SetField("identifier", buildingFeature["identificatie"]);
-        feature.SetField("year_build", buildingFeature["bouwjaar"]);
-        feature.SetField("status", buildingFeature["status"]);
-        feature.SetField("purpose", buildingFeature["gebruiksdoel"]);
-        feature.SetField("area_min", buildingFeature["oppervlakte_min"]);
-        feature.SetField("area_max", buildingFeature["oppervlakte_max"]);
-        feature.SetField("number_of_residences", buildingFeature["aantal_verblijfsobjecten"]);
-        feature.SetField("update_date", buildingFeature["actualiteitsdatum"]);
-        feature.SetGeometry(buildingFeature.GetGeometry());
-    });
+    if (layerName.empty())
+        return -1;
 
-    SaveFeature("tile_buildings", [&](Feature& feature)
+    long long metadataRelationId = SaveFeature(layerName, [&](Feature& feature)
     {
         feature.SetField("tile_id", tileId);
-        feature.SetField("building_id", buildingId);
+        //TODO: see if we can retrieve name of the metadata_id foreign key from the relationship table.
+        feature.SetField("metadata_id", buildingFeature.FeatureId());
     });
-    return buildingId;
+    return metadataRelationId;
 }
 
 shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)

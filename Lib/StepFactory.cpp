@@ -24,7 +24,7 @@ StepFactory::StepFactory()
             "AddMetadataStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex(), stepSettings.PersistenceUrl());
+                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex(), stepSettings.PersistenceUrl(), stepSettings.PersistenceLayerName());
             }
         },
         {
