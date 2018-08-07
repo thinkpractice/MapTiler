@@ -114,6 +114,11 @@ void Feature::SetField(std::string fieldName, double value)
     _feature->SetField(fieldName.c_str(), value);
 }
 
+void Feature::SetField(std::string fieldName, long long value)
+{
+    _feature->SetField(fieldName.c_str(), value);
+}
+
 std::shared_ptr<Geometry> Feature::GetGeometry() const
 {
     return _innerGeometry;

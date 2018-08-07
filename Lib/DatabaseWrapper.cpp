@@ -11,7 +11,7 @@ DatabaseWrapper::~DatabaseWrapper()
 {
 }
 
-int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
+long long DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
 {
     return SaveFeature("areaofinterest", [&](Feature& feature)
     {
@@ -20,7 +20,7 @@ int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
     });
 }
 
-int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
+long long DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
 {
     return SaveFeature("tiles", [&](Feature& feature)
     {
@@ -30,7 +30,7 @@ int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &ti
     });
 }
 
-int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
+long long DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
 {
     return SaveFeature("tile_files", [&](Feature& feature)
     {
@@ -41,9 +41,9 @@ int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string 
     });
 }
 
-int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
+long long DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
 {
-    int buildingId = SaveFeature("buildings", [&](Feature feature)
+    long long buildingId = SaveFeature("buildings", [&](Feature feature)
     {
         feature.SetField("identifier", buildingFeature["identificatie"]);
         feature.SetField("year_build", buildingFeature["bouwjaar"]);
@@ -72,7 +72,7 @@ shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vect
     return make_shared<DatabaseWrapper>(vectorFile);
 }
 
-int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)
+long long DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)
 {
     auto layer = _vectorFile->operator[](tableName.c_str());
     auto feature = layer->NewFeature();
@@ -80,7 +80,7 @@ int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feat
     return SaveFeature(tableName, feature);
 }
 
-int DatabaseWrapper::SaveFeature(std::string tableName, const Feature &feature)
+long long DatabaseWrapper::SaveFeature(std::string tableName, const Feature &feature)
 {
     auto layer = _vectorFile->operator[](tableName.c_str());
     layer->AddFeature(feature);

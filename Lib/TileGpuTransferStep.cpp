@@ -270,12 +270,16 @@ shared_ptr<GeoTile> TileGpuTransferStep::DrawPolygons(const ShaderProgram& shade
         auto mappedGeometry = _affineTransform.ReverseTransform(geometry);
         if (geometry->IsPolygon())
         {
-            auto polygon = dynamic_pointer_cast<Polygon>(geometry);
+            auto polygon = dynamic_pointer_cast<Polygon>(mappedGeometry);
             DrawPolygon(tesselator, geoTile, *polygon);
         }
         else if (geometry->IsMultiPolygon())
         {
             DrawMultiPolygon(tesselator, geoTile, mappedGeometry);
+        }
+        else
+        {
+            std::cerr << "MapTiler doesn't support drawing geometry of this type" << endl;
         }
         numberOfPolygons++;
     }
