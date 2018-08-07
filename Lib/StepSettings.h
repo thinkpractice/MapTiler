@@ -27,8 +27,14 @@ public:
     std::string MaskingLayerName() const;
     void SetMaskingLayerName(const std::string &maskingLayerName);
 
-    std::string FileType() const;
-    void SetFileType(const std::string &fileType);
+    std::string DriverName() const;
+    void SetDriverName(const std::string &driverName);
+
+    std::string EpsgFormat() const;
+    void SetEpsgFormat(const std::string &epsgFormat);
+
+    std::string FileExtension() const;
+    void SetFileExtension(const std::string &fileExtension);
 
     std::string OutputDirectory() const;
     void SetOutputDirectory(const std::string &outputDirectory);
@@ -60,7 +66,9 @@ private:
     int _layerIndex;
 
     std::string _maskingLayerName;
-    std::string _fileType;
+    std::string _driverName;
+    std::string _epsgFormat;
+    std::string _fileExtension;
     std::string _outputDirectory;
 
     std::string _persistenceUrl;

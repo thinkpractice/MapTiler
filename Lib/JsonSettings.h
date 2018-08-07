@@ -70,7 +70,9 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetLayerUrl(j.value("layer_url", ""));
     stepSettings.SetLayerIndex(j.value("layer_index", 0));
     stepSettings.SetMaskingLayerName(j.value("masking_layer_name", ""));
-    stepSettings.SetFileType(j.value("file_type", "GTiff"));
+    stepSettings.SetDriverName(j.value("driver_name", "GTiff"));
+    stepSettings.SetEpsgFormat(j.value("epsg_format", "EPSG:4326"));
+    stepSettings.SetFileExtension(j.value("file_extension", "tiff"));
     stepSettings.SetOutputDirectory(j.value("output_directory", ""));
     stepSettings.SetTileWidth(j.value("tile_width", StepSettings::TileWidthNotSet));
     stepSettings.SetTileHeight(j.value("tile_height", StepSettings::TileHeightNotSet));

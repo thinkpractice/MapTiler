@@ -71,14 +71,35 @@ void StepSettings::SetMaskingLayerName(const std::string &maskingLayerName)
     _maskingLayerName = maskingLayerName;
 }
 
-std::string StepSettings::FileType() const
+std::string StepSettings::DriverName() const
 {
-    return _fileType;
+    return _driverName;
 }
 
-void StepSettings::SetFileType(const std::string &fileType)
+void StepSettings::SetDriverName(const std::string &driverName)
 {
-    _fileType = fileType;
+    _driverName = driverName;
+}
+
+
+std::string StepSettings::EpsgFormat() const
+{
+    return _epsgFormat;
+}
+
+void StepSettings::SetEpsgFormat(const std::string &epsgFormat)
+{
+    _epsgFormat = epsgFormat;
+}
+
+std::string StepSettings::FileExtension() const
+{
+    return _fileExtension;
+}
+
+void StepSettings::SetFileExtension(const std::string &fileExtension)
+{
+    _fileExtension = fileExtension;
 }
 
 std::string StepSettings::OutputDirectory() const

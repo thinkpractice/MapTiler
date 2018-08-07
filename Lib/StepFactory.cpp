@@ -52,7 +52,7 @@ StepFactory::StepFactory()
             "TileWriterStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileWriterStep>(stepSettings.OutputDirectory(), stepSettings.PersistenceUrl());
+                return std::make_shared<TileWriterStep>(stepSettings.OutputDirectory(), stepSettings.PersistenceUrl(), stepSettings.DriverName(), stepSettings.EpsgFormat(), stepSettings.FileExtension());
             }
         }
     };
