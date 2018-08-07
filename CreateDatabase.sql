@@ -70,7 +70,6 @@ create table AreaOfInterest
 
 CREATE INDEX area_of_interest_gix ON AreaOfInterest USING GIST ( area );
 
-drop table Tiles cascade;
 create table Tiles
 (
 	tile_id serial primary key,
@@ -81,10 +80,6 @@ create table Tiles
 
 CREATE INDEX tiles_gix ON Tiles USING GIST ( area );
 
-ALTER TABLE IF EXISTS solarpanel_addresses
-RENAME TO solarpanel_addresses_orig;
-
-drop table pv_2017_nl;
 create table pv_2017_nl
 (
 	  pv_id serial primary key,
@@ -105,6 +100,13 @@ insert into pv_2017_nl (postcode, number, number_add, building_id, year_in_use, 
 select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.location, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
 inner join addresses_bag as ab 
 on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer;
+
+create table tile_pv
+(
+	tile_id int references tiles(tile_id),
+	metadata_id int references pv_2017_nl(pv_id),
+	constraint tile_pv_pk primary key (tile_id, metadata_id)
+);
 
 create table tile_files
 (
@@ -134,37 +136,13 @@ CREATE INDEX buildings_gix ON buildings USING GIST ( building_polygon );
 create table tile_buildings
 (
 	tile_id int references tiles(tile_id),
-	building_id int references buildings(building_id),
-	constraint tile_building_pk primary key (tile_id, building_id)
+	metadata_id int references buildings(building_id),
+	constraint tile_building_pk primary key (tile_id, metadata_id)
 );
 
--- number of panels in solarpanel_addresses_orig
-select count(*) from solarpanel_addresses_orig
-select count(*) from pv_2017_nl
-
--- multiple addresses per building
-select count(*) from addresses_bag
-group by object_id
-order by count(object_id) desc
-
--- some of the addresses have a different housenumber/postcode than the object id returned from the bag?
-select count(*) from solarpanel_addresses_orig as sao
-inner join addresses_bag as ab 
-on sao.building_id = ab.object_id
-where sao.building_id not in
-select * from solarpanel_addresses_orig as sao
-inner join addresses_bag as ab 
-on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer
-
-
-select count(building_id) from solarpanel_addresses_orig as sao
-inner join addresses_bag as ab 
-on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer
-
-select * from address_bag as ab
-inner join cbs_provincies_2012 as cp
-on ST_Intersects(cp.wkb_geometry, ab.geom)
-where cp.objectid = 1 and cp.provincien = 'Limburg';
-
-insert into areaofinterest(description, area)
-values ('Heerlen', ST_GeomFromText('POLYGON((50.8184032 5.9163049, 50.9342223 5.9163049, 50.9342223 6.0263794, 50.8184032 6.0263794, 50.8184032 5.9163049))', 4326));
+create table tile_addresses
+(
+	tile_id int references tiles(tile_id),
+	metadata_id int references addresses_bag(address_id),
+	constraint tile_addresses_pk primary key (tile_id, metadata_id)
+);

@@ -11,7 +11,7 @@ DatabaseWrapper::~DatabaseWrapper()
 {
 }
 
-int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
+long long DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
 {
     return SaveFeature("areaofinterest", [&](Feature& feature)
     {
@@ -20,7 +20,7 @@ int DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
     });
 }
 
-int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
+long long DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
 {
     return SaveFeature("tiles", [&](Feature& feature)
     {
@@ -30,7 +30,7 @@ int DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &ti
     });
 }
 
-int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
+long long DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
 {
     return SaveFeature("tile_files", [&](Feature& feature)
     {
@@ -41,27 +41,18 @@ int DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string 
     });
 }
 
-int DatabaseWrapper::SaveBuilding(int tileId, const Feature &buildingFeature)
+long long DatabaseWrapper::SaveMetadata(std::string layerName, int tileId, const Feature &buildingFeature)
 {
-    int buildingId = SaveFeature("buildings", [&](Feature feature)
-    {
-        feature.SetField("identifier", buildingFeature["identificatie"]);
-        feature.SetField("year_build", buildingFeature["bouwjaar"]);
-        feature.SetField("status", buildingFeature["status"]);
-        feature.SetField("purpose", buildingFeature["gebruiksdoel"]);
-        feature.SetField("area_min", buildingFeature["oppervlakte_min"]);
-        feature.SetField("area_max", buildingFeature["oppervlakte_max"]);
-        feature.SetField("number_of_residences", buildingFeature["aantal_verblijfsobjecten"]);
-        feature.SetField("update_date", buildingFeature["actualiteitsdatum"]);
-        feature.SetGeometry(buildingFeature.GetGeometry());
-    });
+    if (layerName.empty())
+        return -1;
 
-    SaveFeature("tile_buildings", [&](Feature& feature)
+    long long metadataRelationId = SaveFeature(layerName, [&](Feature& feature)
     {
         feature.SetField("tile_id", tileId);
-        feature.SetField("building_id", buildingId);
+        //TODO: see if we can retrieve name of the metadata_id foreign key from the relationship table.
+        feature.SetField("metadata_id", buildingFeature.FeatureId());
     });
-    return buildingId;
+    return metadataRelationId;
 }
 
 shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
@@ -72,7 +63,7 @@ shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vect
     return make_shared<DatabaseWrapper>(vectorFile);
 }
 
-int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)
+long long DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)
 {
     auto layer = _vectorFile->operator[](tableName.c_str());
     auto feature = layer->NewFeature();
@@ -80,7 +71,7 @@ int DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feat
     return SaveFeature(tableName, feature);
 }
 
-int DatabaseWrapper::SaveFeature(std::string tableName, const Feature &feature)
+long long DatabaseWrapper::SaveFeature(std::string tableName, const Feature &feature)
 {
     auto layer = _vectorFile->operator[](tableName.c_str());
     layer->AddFeature(feature);

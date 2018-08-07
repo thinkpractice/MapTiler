@@ -48,7 +48,9 @@ Feature Layer::NewFeature()
 
 void Layer::AddFeature(const Feature &feature)
 {
-    _layer->CreateFeature(feature.InternalFeature());
+    auto error = _layer->CreateFeature(feature.InternalFeature());
+    if (error != OGRERR_NONE)
+        std::cerr << "Error adding feature: " << error << std::endl;
 }
 
 void Layer::Save()

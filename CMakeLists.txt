@@ -15,7 +15,7 @@ include_directories(${GDAL_INCLUDE_DIR} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location
 
 add_subdirectory(Lib)
 
-add_executable(MapTiler MapViewer.cpp)
+add_executable(MapTiler MapTiler.cpp)
 target_link_libraries(MapTiler Lib Qt5::Core)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)

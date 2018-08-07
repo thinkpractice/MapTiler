@@ -4,10 +4,13 @@
 #include "Utils.h"
 #include <iostream>
 
-TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl)
+TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, std::string epsgFormat, std::string fileExtension)
                     :   ProcessingStep(Sink),
                         _tileDirectory(tileDirectory),
                         _persistenceUrl(persistenceUrl),
+                        _driverName(driverName),
+                        _epsgFormat(epsgFormat),
+                        _fileExtension(fileExtension),
                         _numberOfTilesWritten(0)
 {
 }
@@ -24,7 +27,7 @@ void TileWriterStep::Run()
          std::string tileFilename = _tileDirectory + stepData->UniqueId();
 		 for (auto geoTile : stepData->Tiles())
 		 {
-             std::string filename = tileFilename + "_" + geoTile.first + ".tiff";
+             std::string filename = tileFilename + "_" + geoTile.first;
              SaveTile(geoTile.second.tile, filename);
              if (databasePersistence)
                  databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
@@ -32,7 +35,7 @@ void TileWriterStep::Run()
 		 
 		 for (auto geoTile : stepData->ProcessedTiles())
 		 {
-             std::string filename = tileFilename + "_" + geoTile.first + ".tiff";
+             std::string filename = tileFilename + "_" + geoTile.first;
              SaveTile(geoTile.second.tile, filename);
              if (databasePersistence)
                  databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
@@ -46,6 +49,21 @@ void TileWriterStep::Run()
 
 void TileWriterStep::SaveTile(std::shared_ptr<GeoTile> tile, std::string tileFilename)
 {
-    TileWriter tileWriter(make_shared<GdalWriter>());
-    tileWriter.Save(tile, tileFilename);
+        TileWriter tileWriter(make_shared<GdalWriter>(EpsgFormat(), DriverName(), FileExtension()));
+        tileWriter.Save(tile, tileFilename + "." + tileWriter.FileExtension());
+}
+
+std::string TileWriterStep::DriverName() const
+{
+    return _driverName;
+}
+
+std::string TileWriterStep::EpsgFormat() const
+{
+    return _epsgFormat;
+}
+
+std::string TileWriterStep::FileExtension() const
+{
+    return _fileExtension;
 }

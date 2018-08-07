@@ -41,6 +41,7 @@ class Feature
         void SetField(string fieldName, string value);
         void SetField(string fieldName, int value);
         void SetField(string fieldName, double value);
+        void SetField(string fieldName, long long value);
 
         void SetGeometry(const shared_ptr<Geometry> geometry)
         {
