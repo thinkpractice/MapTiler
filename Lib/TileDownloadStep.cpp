@@ -33,7 +33,7 @@ void TileDownloadStep::Run()
             auto tile = std::shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
             stepData->AddTile(_tileName, tile, _year);
 
-			OutQueue()->enqueue(stepData);
+            OutQueue()->enqueue(std::move(stepData));
 			numberOfTilesDownloaded++;
 			
 			if (numberOfTilesDownloaded % 100 == 0)

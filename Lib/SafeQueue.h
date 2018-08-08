@@ -31,7 +31,7 @@ class SafeQueue
         void enqueue(T t)
         {
             std::lock_guard<std::mutex> lock(_mutex);
-            _queue.push(t);
+            _queue.push(std::move(t));
             _condition.notify_one();
         }
 
@@ -45,7 +45,7 @@ class SafeQueue
                 // release lock as long as the wait and reaquire it afterwards.
                 _condition.wait(lock);
             }
-            T val = _queue.front();
+            T val = std::move(_queue.front());
             _queue.pop();
             return val;
         }

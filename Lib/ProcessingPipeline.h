@@ -15,11 +15,11 @@ public:
     virtual ~ProcessingPipeline();
 
     void StartProcessing();
-    void AddProcessingStep(std::shared_ptr<ProcessingStep> step);
+    void AddProcessingStep(std::unique_ptr<ProcessingStep> step);
 
 private:
     std::vector< std::shared_ptr<ProcessingStep::QueueType> > _queues;
-    std::vector< std::shared_ptr<ProcessingStep> > _processingSteps;
+    std::vector< std::unique_ptr<ProcessingStep> > _processingSteps;
     std::vector< std::thread > _threads;
 };
 

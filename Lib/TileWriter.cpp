@@ -14,8 +14,8 @@ GeoTileWriter::~GeoTileWriter()
 {
 }
 
-TileWriter::TileWriter(shared_ptr<GeoTileWriter> writer)
-                :   _writer(writer)
+TileWriter::TileWriter(std::unique_ptr<GeoTileWriter> writer)
+                :   _writer(std::move(writer))
 {
 }
 
@@ -35,7 +35,8 @@ GdalWriter::GdalWriter(std::string epsgFormat, std::string driverName, std::stri
 }
 
 GdalWriter::GdalWriter(const SpatialReference& targetProjection, std::string driverName, std::string fileExtension)
-                :   _targetProjection(targetProjection),
+                :   _driver(nullptr),
+                    _targetProjection(targetProjection),
                     _driverName(driverName),
                     _fileExtension(fileExtension)
 {
@@ -84,7 +85,7 @@ shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
     }
 
     CPLStringList optionList;
-    optionList.AddString("COMPRESS=DEFLATE");
+    optionList.AddString("COMPRESS=JPEG");
 
     Rect boundingRect = tile->BoundingRect();
     GDALDataset *dataset = driver->Create(filename.c_str(), boundingRect.IntegerWidth(), boundingRect.IntegerHeight(), tile->NumberOfLayers(), GDT_Byte, optionList.List());
@@ -94,7 +95,9 @@ shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
 
 GDALDriver* GdalWriter::DriverFor(string fileFormat)
 {
-    return GetGDALDriverManager()->GetDriverByName(fileFormat.c_str());
+    if (!_driver)
+        _driver = GetGDALDriverManager()->GetDriverByName(fileFormat.c_str());
+    return _driver;
 }
 
 bool GdalWriter::SupportsCreate(GDALDriver* driver)

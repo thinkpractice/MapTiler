@@ -17,42 +17,42 @@ StepFactory::StepFactory()
             "TileProducerStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
+                return std::make_unique<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
             }
         },
         {
             "AddMetadataStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex(), stepSettings.PersistenceUrl(), stepSettings.PersistenceLayerName());
+                return std::make_unique<AddMetadataStep>(stepSettings.LayerName(), LoadVectorFile(settings, stepSettings), stepSettings.LayerIndex(), stepSettings.PersistenceUrl(), stepSettings.PersistenceLayerName());
             }
         },
         {
             "TileFilterStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileFilterStep>(stepSettings.LayerName());
+                return std::make_unique<TileFilterStep>(stepSettings.LayerName());
             }
         },
         {
             "TileDownloadStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex(), stepSettings.MapYear());
+                return std::make_unique<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex(), stepSettings.MapYear());
             }
         },
         {
             "TileGpuTransferStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileGpuTransferStep>(GetAffineTransform(settings), stepSettings.MaskingLayerName(), stepSettings.TileWidth(), stepSettings.TileHeight());
+                return std::make_unique<TileGpuTransferStep>(GetAffineTransform(settings), stepSettings.MaskingLayerName(), stepSettings.TileWidth(), stepSettings.TileHeight());
             }
         },
         {
             "TileWriterStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileWriterStep>(stepSettings.OutputDirectory(), stepSettings.PersistenceUrl(), stepSettings.DriverName(), stepSettings.EpsgFormat(), stepSettings.FileExtension());
+                return std::make_unique<TileWriterStep>(stepSettings.OutputDirectory(), stepSettings.PersistenceUrl(), stepSettings.DriverName(), stepSettings.EpsgFormat(), stepSettings.FileExtension());
             }
         }
     };
@@ -62,20 +62,20 @@ StepFactory::~StepFactory()
 {
 }
 
-std::shared_ptr<ProcessingPipeline> StepFactory::PipelineFor(const Settings &settings)
+std::unique_ptr<ProcessingPipeline> StepFactory::PipelineFor(const Settings &settings)
 {
-    auto pipeline = make_shared<ProcessingPipeline>();
+    auto pipeline = make_unique<ProcessingPipeline>();
     for (auto& stepSettings : settings.StepSettingsCollection())
     {
         auto processingStep = StepFor(settings, stepSettings);
         if (!processingStep)
             continue;
-        pipeline->AddProcessingStep(processingStep);
+        pipeline->AddProcessingStep(std::move(processingStep));
     }
     return pipeline;
 }
 
-std::shared_ptr<ProcessingStep> StepFactory::StepFor(const Settings& settings, const StepSettings &stepSettings)
+std::unique_ptr<ProcessingStep> StepFactory::StepFor(const Settings& settings, const StepSettings &stepSettings)
 {
     for (auto& step : _steps)
     {
@@ -91,8 +91,8 @@ AffineTransform StepFactory::GetAffineTransform(const Settings& settings)
     return mainRasterMap->MapTransform();
 }
 
-std::shared_ptr<VectorFile> StepFactory::LoadVectorFile(const Settings& settings, const StepSettings& stepSettings)
+std::unique_ptr<VectorFile> StepFactory::LoadVectorFile(const Settings& settings, const StepSettings& stepSettings)
 {
     auto mainRasterMap = Utils::LoadRasterMap(settings.MainRasterUrl(), settings.MainRasterLayerIndex());
-    return std::make_shared<MappedVectorFile>(stepSettings.LayerUrl(), mainRasterMap->ProjectionReference());
+    return std::make_unique<MappedVectorFile>(stepSettings.LayerUrl(), mainRasterMap->ProjectionReference());
 }

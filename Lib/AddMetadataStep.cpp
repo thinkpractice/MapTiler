@@ -47,7 +47,7 @@ void AddMetadataStep::Run()
             metadataFeatures.push_back(feature);
         }
         stepData->AddMetadataFeatures(_metadataName, metadataFeatures);
-        OutQueue()->enqueue(stepData);
+        OutQueue()->enqueue(std::move(stepData));
     }
     DoneProcessing();
 }

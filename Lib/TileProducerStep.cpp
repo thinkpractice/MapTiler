@@ -32,7 +32,7 @@ void TileProducerStep::CreateTile(std::shared_ptr<DatabaseWrapper> databasePersi
     try
     {
         Area area = _map->AreaForRect(tileRect);
-        auto stepData = make_shared<StepData>(tileRect, area);
+        auto stepData = make_unique<StepData>(tileRect, area);
         stepData->SetAreaId(areaId);
 
         long long tileId = databasePersistence ? databasePersistence->SaveTile(areaId, stepData->UniqueId(), area) : 0;
@@ -40,7 +40,7 @@ void TileProducerStep::CreateTile(std::shared_ptr<DatabaseWrapper> databasePersi
 
         StepData::SetNumberOfTiles(_tileGrid.NumberOfTiles());
 
-        OutQueue()->enqueue(stepData);
+        OutQueue()->enqueue(std::move(stepData));
     }
     catch (...)
     {

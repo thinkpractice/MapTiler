@@ -82,7 +82,7 @@ void TileGpuTransferStep::Run()
 				/*if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS || glfwWindowShouldClose(window) != 0)
 					break;*/
 			}
-			OutQueue()->enqueue(stepData);
+            OutQueue()->enqueue(std::move(stepData));
         }
 
         glDeleteBuffers(1, &ebo);

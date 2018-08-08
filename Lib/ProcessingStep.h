@@ -13,7 +13,7 @@ class ProcessingStep
     public:
         enum ProcessingType { Source, Processing, Sink };
 
-        using StepDataType = shared_ptr<StepData>;
+        using StepDataType = unique_ptr<StepData>;
         using QueueType = SafeQueue<StepDataType>;
 
     public:

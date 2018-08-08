@@ -19,7 +19,7 @@ void TileFilterStep::Run()
         vector<Feature> features = stepData->GetMetadataFeatures(_layerName);
 		if (features.size() > 0)
 		{
-			OutQueue()->enqueue(stepData);
+            OutQueue()->enqueue(std::move(stepData));
 		}
 		else
 		{

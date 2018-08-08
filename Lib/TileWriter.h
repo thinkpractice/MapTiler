@@ -26,13 +26,13 @@ public:
 class TileWriter
 {
     public:
-        TileWriter(shared_ptr<GeoTileWriter> writer);
+        TileWriter(std::unique_ptr<GeoTileWriter> writer);
         void Save(shared_ptr<GeoTile> tile, string filename);
 
         std::string FileExtension() const;
 
     private:
-        shared_ptr<GeoTileWriter> _writer;
+        std::unique_ptr<GeoTileWriter> _writer;
 };
 
 class GdalWriter : public GeoTileWriter
@@ -53,6 +53,7 @@ private:
     bool SupportsCreate(GDALDriver* driver);
 
 private:
+    GDALDriver* _driver;
     SpatialReference _targetProjection;
     std::string _driverName;
     std::string _fileExtension;

@@ -1,6 +1,6 @@
 #include "TileWriterStep.h"
-#include "TileWriter.h"
 #include "Utils.h"
+#include <algorithm>
 #include <iostream>
 
 TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, std::string epsgFormat, std::string fileExtension)
@@ -10,6 +10,7 @@ TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenc
                         _driverName(driverName),
                         _epsgFormat(epsgFormat),
                         _fileExtension(fileExtension),
+                        _tileWriter(make_unique<GdalWriter>(EpsgFormat(), DriverName(), FileExtension())),
                         _numberOfTilesWritten(0)
 {
 }
@@ -18,13 +19,13 @@ TileWriterStep::~TileWriterStep()
 {
 }
 
-void TileWriterStep::WriteTile(std::shared_ptr<DatabaseWrapper> databasePersistence, std::shared_ptr<StepData> stepData, std::pair<std::string, StepData::TileData> geoTile)
+void TileWriterStep::WriteTile(std::shared_ptr<DatabaseWrapper> databasePersistence, std::string uniqueId, long long tileId, std::string layerName, int year, std::shared_ptr<GeoTile> geoTile)
 {
-    std::string tileFilename = _tileDirectory + stepData->UniqueId();
-    std::string filename = tileFilename + "_" + geoTile.first;
-    SaveTile(geoTile.second.tile, filename);
+    std::string tileFilename = _tileDirectory + uniqueId;
+    std::string filename = tileFilename + "_" + layerName;
+    SaveTile(geoTile, filename);
     if (databasePersistence)
-        databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
+        databasePersistence->SaveTileFile(tileId, filename, layerName, year);
 }
 
 void TileWriterStep::Run()
@@ -32,14 +33,14 @@ void TileWriterStep::Run()
      std::shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
      while (auto stepData = InQueue()->dequeue())
 	 {
-		 for (auto geoTile : stepData->Tiles())
+         for (auto geoTile : stepData->Tiles())
 		 {
-             WriteTile(databasePersistence, stepData, geoTile);
-		 }
+             WriteTile(databasePersistence, stepData->UniqueId(), stepData->TileId(), geoTile.first, geoTile.second.year, geoTile.second.tile);
+         }
 		 
 		 for (auto geoTile : stepData->ProcessedTiles())
 		 {
-             WriteTile(databasePersistence, stepData, geoTile);
+              WriteTile(databasePersistence, stepData->UniqueId(), stepData->TileId(), geoTile.first, geoTile.second.year, geoTile.second.tile);
          }
          _numberOfTilesWritten++;
          if (_numberOfTilesWritten % 100 == 0)
@@ -50,8 +51,7 @@ void TileWriterStep::Run()
 
 void TileWriterStep::SaveTile(std::shared_ptr<GeoTile> tile, std::string tileFilename)
 {
-        TileWriter tileWriter(make_shared<GdalWriter>(EpsgFormat(), DriverName(), FileExtension()));
-        tileWriter.Save(tile, tileFilename + "." + tileWriter.FileExtension());
+    _tileWriter.Save(tile, tileFilename + "." + _tileWriter.FileExtension());
 }
 
 std::string TileWriterStep::DriverName() const
