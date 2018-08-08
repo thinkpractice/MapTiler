@@ -12,7 +12,7 @@
 
 class StepData
 {
-private:
+public:
     struct TileData
     {
         int year;

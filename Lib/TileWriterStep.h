@@ -5,6 +5,7 @@
 #include <memory>
 #include "ProcessingStep.h"
 #include "GeoTile.h"
+#include "DatabaseWrapper.h"
 
 class TileWriterStep : public ProcessingStep
 {
@@ -18,6 +19,9 @@ class TileWriterStep : public ProcessingStep
         std::string DriverName() const;
         std::string EpsgFormat() const;
         std::string FileExtension() const;
+
+private:
+        void WriteTile(std::shared_ptr<DatabaseWrapper> databasePersistence, std::shared_ptr<StepData> stepData, std::pair<std::string, StepData::TileData> geoTile);
 
 private:
         std::string _tileDirectory;

@@ -1,6 +1,5 @@
 #include "TileWriterStep.h"
 #include "TileWriter.h"
-#include "DatabaseWrapper.h"
 #include "Utils.h"
 #include <iostream>
 
@@ -19,27 +18,29 @@ TileWriterStep::~TileWriterStep()
 {
 }
 
+void TileWriterStep::WriteTile(std::shared_ptr<DatabaseWrapper> databasePersistence, std::shared_ptr<StepData> stepData, std::pair<std::string, StepData::TileData> geoTile)
+{
+    std::string tileFilename = _tileDirectory + stepData->UniqueId();
+    std::string filename = tileFilename + "_" + geoTile.first;
+    SaveTile(geoTile.second.tile, filename);
+    if (databasePersistence)
+        databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
+}
+
 void TileWriterStep::Run()
 {
      std::shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
      while (auto stepData = InQueue()->dequeue())
 	 {
-         std::string tileFilename = _tileDirectory + stepData->UniqueId();
 		 for (auto geoTile : stepData->Tiles())
 		 {
-             std::string filename = tileFilename + "_" + geoTile.first;
-             SaveTile(geoTile.second.tile, filename);
-             if (databasePersistence)
-                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
+             WriteTile(databasePersistence, stepData, geoTile);
 		 }
 		 
 		 for (auto geoTile : stepData->ProcessedTiles())
 		 {
-             std::string filename = tileFilename + "_" + geoTile.first;
-             SaveTile(geoTile.second.tile, filename);
-             if (databasePersistence)
-                 databasePersistence->SaveTileFile(stepData->TileId(), filename, geoTile.first, geoTile.second.year);
-		 }
+             WriteTile(databasePersistence, stepData, geoTile);
+         }
          _numberOfTilesWritten++;
          if (_numberOfTilesWritten % 100 == 0)
              std::cout << "Number of tiles written: " << to_string(_numberOfTilesWritten) << std::endl;
