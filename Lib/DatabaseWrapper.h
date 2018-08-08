@@ -15,9 +15,9 @@ public:
     virtual ~DatabaseWrapper();
 
     long long SaveAreaOfInterest(const Area& areaOfInterest);
-    long long SaveTile(int parentAreaId, std::string uuid, const Area& tileArea);
-    long long SaveTileFile(int tileId, std::string filename, std::string layerName, int year);
-    long long SaveMetadata(std::string layerName, int tileId, const Feature& buildingFeature);
+    long long SaveTile(long long parentAreaId, std::string uuid, const Area& tileArea);
+    long long SaveTileFile(long long tileId, std::string filename, std::string layerName, int year);
+    long long SaveMetadata(std::string layerName, long long tileId, const Feature& buildingFeature);
 
     static shared_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename);
 

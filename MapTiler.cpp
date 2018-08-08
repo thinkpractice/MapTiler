@@ -10,8 +10,6 @@
 #include "Lib/StepFactory.h"
 #include "Lib/CommandLineParser.h"
 
-using namespace std;
-
 void DownloadTilesForArea(const Settings& settings)
 {
     Utils::TimeIt([&]
@@ -20,7 +18,7 @@ void DownloadTilesForArea(const Settings& settings)
         auto processingPipeline = stepFactory.PipelineFor(settings);
         processingPipeline->StartProcessing();
     });
-    cout << "Finished" << endl;
+    std::cout << "Finished" << std::endl;
     QCoreApplication::exit(0);
 }
 
@@ -28,7 +26,7 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName("MapTiler");
-    QCoreApplication::setApplicationVersion("0.1");
+    QCoreApplication::setApplicationVersion("0.2");
 
     CommandLineParser parser;
     switch (parser.Parse())
@@ -43,13 +41,13 @@ int main(int argc, char** argv)
 
     Settings settings = parser.GetSettings();
 	
-    cout << "Target directory: " << settings.OutputDirectory() << endl;
-    cout << "Address: " << settings.Address() << endl;
-    cout << "Tile width: " << settings.TileWidth() << endl;
-    cout << "Tile height: " << settings.TileHeight() << endl;
+    std::cout << "Target directory: " << settings.OutputDirectory() << std::endl;
+    std::cout << "Address: " << settings.Address() << std::endl;
+    std::cout << "Tile width: " << settings.TileWidth() << std::endl;
+    std::cout << "Tile height: " << settings.TileHeight() << std::endl;
 
     AreaLookup areaLookup;
-    areaLookup.AddListener([&](vector<Area> areas){
+    areaLookup.AddListener([&](std::vector<Area> areas){
 
                 if (areas.size() > 0)
                 {
@@ -59,7 +57,7 @@ int main(int argc, char** argv)
                             chosenArea = areas[settings.AddressOption()];
                     }
                     settings.SetChosenArea(chosenArea);
-                    cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << endl;
+                    std::cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << std::endl;
                     DownloadTilesForArea(settings);
                 }
             });

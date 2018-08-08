@@ -108,7 +108,7 @@ Lib/VectorFile.cpp
 Lib/VectorFile.h
 Lib/moc_AreaLookup.cpp
 MapTiler_automoc.cpp
-MapViewer.cpp
+MapTiler.cpp
 MapViewer_automoc.cpp
 QtApp/main.cpp
 QtApp/mainwindow.cpp

@@ -47,11 +47,11 @@ public:
     std::vector<Feature> GetMetadataFeatures(std::string metadataName);
     std::map<std::string, std::vector<Feature>> MetadataFeatures();
 
-    int AreaId() const;
-    void SetAreaId(int AreaId);
+    long long AreaId() const;
+    void SetAreaId(long long AreaId);
 
-    int TileId() const;
-    void SetTileId(int TileId);
+    long long TileId() const;
+    void SetTileId(long long TileId);
 
 private:
     std::string _uniqueId;
@@ -62,8 +62,8 @@ private:
     std::map<std::string, TileData> _processedTiles;
     std::map<std::string, std::vector<Feature>> _metadataFeatures;
 
-    int _areaId;
-    int _tileId;
+    long long _areaId;
+    long long _tileId;
 };
 
 #endif

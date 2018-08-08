@@ -89,22 +89,22 @@ std::map<std::string, std::vector<Feature>> StepData::MetadataFeatures()
     return _metadataFeatures;
 }
 
-int StepData::AreaId() const
+long long StepData::AreaId() const
 {
     return _areaId;
 }
 
-void StepData::SetAreaId(int areaId)
+void StepData::SetAreaId(long long areaId)
 {
     _areaId = areaId;
 }
 
-int StepData::TileId() const
+long long StepData::TileId() const
 {
     return _tileId;
 }
 
-void StepData::SetTileId(int tileId)
+void StepData::SetTileId(long long tileId)
 {
     _tileId = tileId;
 }

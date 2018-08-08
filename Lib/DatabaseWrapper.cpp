@@ -20,7 +20,7 @@ long long DatabaseWrapper::SaveAreaOfInterest(const Area &areaOfInterest)
     });
 }
 
-long long DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Area &tileArea)
+long long DatabaseWrapper::SaveTile(long long parentAreaId, std::string uuid, const Area &tileArea)
 {
     return SaveFeature("tiles", [&](Feature& feature)
     {
@@ -30,7 +30,7 @@ long long DatabaseWrapper::SaveTile(int parentAreaId, std::string uuid, const Ar
     });
 }
 
-long long DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::string layerName, int year)
+long long DatabaseWrapper::SaveTileFile(long long tileId, std::string filename, std::string layerName, int year)
 {
     return SaveFeature("tile_files", [&](Feature& feature)
     {
@@ -41,7 +41,7 @@ long long DatabaseWrapper::SaveTileFile(int tileId, std::string filename, std::s
     });
 }
 
-long long DatabaseWrapper::SaveMetadata(std::string layerName, int tileId, const Feature &buildingFeature)
+long long DatabaseWrapper::SaveMetadata(std::string layerName, long long tileId, const Feature &buildingFeature)
 {
     if (layerName.empty())
         return -1;
