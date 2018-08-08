@@ -4,4 +4,3 @@ delete from tile_files;
 delete from tile_pv;
 delete from tiles;
 delete from areaofinterest;
-delete from buildings;

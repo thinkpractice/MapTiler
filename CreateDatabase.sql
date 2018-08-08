@@ -97,9 +97,11 @@ create table pv_2017_nl
 CREATE INDEX pv_2017_nl_gix ON pv_2017_nl USING GIST ( location );
 
 insert into pv_2017_nl (postcode, number, number_add, building_id, year_in_use, date_in_use, location, bag_address_id, solar_panel_id)
-select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.object_id, sao.year_in_use, sao.date_in_use, ab.location, ab.address_id, sao.panel_id from solarpanel_addresses_orig as sao
-inner join addresses_bag as ab 
-on sao.building_id = ab.object_id and sao.postcode = ab.postcode and sao.number = ab.huisnummer;
+select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.adresseerbaarobject, sao.year_in_use, 
+	sao.date_in_use, ab.geopunt, ab.gid, sao.panel_id 
+from solarpanel_addresses_orig as sao
+inner join bagactueel.adres_full as ab 
+on sao.building_id = ab.adresseerbaarobject and sao.postcode = ab.postcode and CAST(sao.number as numeric) = ab.huisnummer;
 
 create table tile_pv
 (
@@ -117,26 +119,10 @@ create table tile_files
 	year int
 );
 
-create table buildings
-(
-	building_id serial primary key,
-	identifier varchar(15),
-	year_build int, 
-	status varchar(255),
-	purpose varchar(255),
-	area_min int,
-	area_max int,
-	number_of_residences int,
-	update_date date,		
-	building_polygon geometry(multipolygon, 28992)
-);
-
-CREATE INDEX buildings_gix ON buildings USING GIST ( building_polygon );
-
 create table tile_buildings
 (
 	tile_id int references tiles(tile_id),
-	metadata_id int references buildings(building_id),
+	metadata_id int references bagactueel.pand(gid),
 	constraint tile_building_pk primary key (tile_id, metadata_id)
 );
 

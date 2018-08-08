@@ -17,6 +17,7 @@ Lib/StepSettings.h
 Lib/json.hpp
 databaseexample.cpp
 db_polygon_pipeline.json
+ecw_pipeline_desktop.json
 polygon_pipeline.json
 CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c
 CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
