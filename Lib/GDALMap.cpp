@@ -174,7 +174,16 @@ std::shared_ptr<Layer> GDALMap::ExecuteQuery(std::string query)
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
-        _dataset = static_cast<GDALDataset*>(GDALOpen(Filename().c_str(), GA_ReadOnly));
+    {
+        //_dataset = static_cast<GDALDataset*>(GDALOpen(Filename().c_str(), GA_ReadOnly));
+        //TODO: only for ECW driver, make this configurable
+        CPLStringList optionList;
+        //set maximum memory to 2 gigabytes
+        long maximumMemory = 2L * 1024 * 1024 * 1024;
+        std::string configString = "ECW_CACHE_MAXMEM=" + to_string(maximumMemory);
+        optionList.AddString(configString.c_str());
+        _dataset = static_cast<GDALDataset*>(GDALOpenEx(Filename().c_str(), GDAL_OF_RASTER | GA_ReadOnly, nullptr, optionList.List(), nullptr));
+    }
     return _dataset;
 }
 
