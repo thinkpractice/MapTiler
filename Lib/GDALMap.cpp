@@ -106,21 +106,21 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
         for (int i = 0; i < numberOfBandsToFill; i++)
         {
             size_t rasterBandSize = static_cast<size_t>(rectangle.IntegerWidth() * rectangle.IntegerHeight());
-            GByte* data = reinterpret_cast<GByte*>(CPLMalloc(rasterBandSize));
+            GByte* data = static_cast<GByte*>(CPLMalloc(rasterBandSize));
 
             //fill alpha channel with 255, the rest of the channels with 0
             GByte fillValue = i == (numberOfBandsToFill - 1) ? 255 : 0;
             std::memset(data, fillValue, rasterBandSize);
 
-            rasterData[i] = data;
+            rasterData[RasterCount() + i] = data;
         }
     }
 
     Area tileArea = AreaForRect(rectangle);
-    GeoTile* geoTile = new GeoTile(rectangle, tileArea, RasterCount());
+    GeoTile* geoTile = new GeoTile(rectangle, tileArea, 4);
     geoTile->SetRasterData(rasterData);
 
-    for (int i = 0; i < RasterCount();i++)
+    for (int i = 0; i < 4;i++)
     {
         CPLFree(rasterData[i]);
     }
@@ -174,7 +174,7 @@ std::shared_ptr<Layer> GDALMap::ExecuteQuery(std::string query)
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
-        _dataset = reinterpret_cast<GDALDataset*>(GDALOpen(Filename().c_str(), GA_ReadOnly));
+        _dataset = static_cast<GDALDataset*>(GDALOpen(Filename().c_str(), GA_ReadOnly));
     return _dataset;
 }
 
@@ -195,7 +195,7 @@ GByte* GDALMap::GetDataForBand(int rasterIndex, int x, int y, int width, int hei
             band->GetColorInterpretation()) );*/
 
     size_t rasterBandSize = static_cast<size_t>(width * height);
-    GByte* data = reinterpret_cast<GByte*>(CPLMalloc(rasterBandSize));
+    GByte* data = static_cast<GByte*>(CPLMalloc(rasterBandSize));
 
     //TODO Use ReadBlock for efficiency and create tile rects corresponding to the block positions
     //CPLErr error = band->ReadBlock(x, y, data);

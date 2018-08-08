@@ -30,7 +30,7 @@
         {
             "name" : "Step 2a: Add BAG House Polygons",
             "type" : "AddMetadataStep",
-            "layer_name" : "bagactueel.pand",
+            "layer_name" : "bagactueel.pandactueel",
             "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
             "layer_index" : 1,
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
@@ -57,7 +57,7 @@
         {
             "name" : "Step 3: Filter Tiles to those with polygons",
             "type" : "TileFilterStep",
-            "layer_name" : "bagactueel.pand"
+            "layer_name" : "bagactueel.pandactueel"
         },
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
@@ -90,7 +90,7 @@
         {
             "name" : "Step 5: Mask tiles with polygon layer",
             "type" : "TileGpuTransferStep",
-            "masking_layer_name" : "bagactueel.pand"
+            "masking_layer_name" : "bagactueel.pandactueel"
         },
         {
             "name" : "Step 6: Write Files To Disk",
