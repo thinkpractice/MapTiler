@@ -22,7 +22,7 @@ void ProcessingPipeline::StartProcessing()
 
 void ProcessingPipeline::AddProcessingStep(shared_ptr<ProcessingStep> step)
 {
-    int previousStepIndex = (int)_processingSteps.size() - 1;
+    int previousStepIndex = static_cast<int>(_processingSteps.size() - 1);
 
     _processingSteps.push_back(step);
 

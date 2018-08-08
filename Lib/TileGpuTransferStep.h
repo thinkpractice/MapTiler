@@ -13,7 +13,7 @@
 class TileGpuTransferStep : public ProcessingStep
 {
 public:
-    TileGpuTransferStep(const AffineTransform& affineTransform, int tileWidth, int tileHeight);
+    TileGpuTransferStep(const AffineTransform& affineTransform, std::string layerName, int tileWidth, int tileHeight);
     virtual ~TileGpuTransferStep();
 
     void Run();
@@ -38,6 +38,7 @@ private:
     void DrawMultiPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, std::shared_ptr<Geometry> geometry);
 
 private:
+    std::string _layerName;
     int _tileWidth;
     int _tileHeight;
     AffineTransform _affineTransform;

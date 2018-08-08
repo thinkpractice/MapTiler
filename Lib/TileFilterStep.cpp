@@ -2,8 +2,9 @@
 #include "Rect.h"
 #include "StepData.h"
 
-TileFilterStep::TileFilterStep()
-                    :	ProcessingStep(Processing)
+TileFilterStep::TileFilterStep(std::string layerName)
+                    :	ProcessingStep(Processing),
+                        _layerName(layerName)
 {
 }
 
@@ -15,7 +16,7 @@ void TileFilterStep::Run()
 {
 	while (auto stepData = InQueue()->dequeue())
 	{
-		vector<Feature> features = stepData->GetMetadataFeatures("polygons");
+        vector<Feature> features = stepData->GetMetadataFeatures(_layerName);
 		if (features.size() > 0)
 		{
 			OutQueue()->enqueue(stepData);

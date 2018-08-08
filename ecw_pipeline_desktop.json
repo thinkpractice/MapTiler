@@ -56,7 +56,8 @@
         },
         {
             "name" : "Step 3: Filter Tiles to those with polygons",
-            "type" : "TileFilterStep"
+            "type" : "TileFilterStep",
+            "layer_name" : "bagactueel.pand"
         },
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
@@ -89,7 +90,7 @@
         {
             "name" : "Step 5: Mask tiles with polygon layer",
             "type" : "TileGpuTransferStep",
-            "masking_layer_name" : "polygons"
+            "masking_layer_name" : "bagactueel.pand"
         },
         {
             "name" : "Step 6: Write Files To Disk",

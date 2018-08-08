@@ -7,6 +7,7 @@
 #include "Rect.h"
 #include "Area.h"
 #include "GeoMap.h"
+#include "DatabaseWrapper.h"
 
 class TileProducerStep : public ProcessingStep
 {
@@ -19,6 +20,9 @@ public:
     void Run();
 
     void CreateStepData();
+
+private:
+    void CreateTile(std::shared_ptr<DatabaseWrapper> databasePersistence, long long areaId, const Rect& tileRect);
 
 private:
     TileGrid _tileGrid;

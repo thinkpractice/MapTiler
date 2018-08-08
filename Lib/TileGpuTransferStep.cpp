@@ -5,8 +5,9 @@
 
 using namespace std;
 
-TileGpuTransferStep::TileGpuTransferStep(const AffineTransform& affineTransform, int tileWidth, int tileHeight)
+TileGpuTransferStep::TileGpuTransferStep(const AffineTransform& affineTransform, std::string layerName, int tileWidth, int tileHeight)
                         :   ProcessingStep(Processing),
+                            _layerName(layerName),
                             _tileWidth(tileWidth),
                             _tileHeight(tileHeight),
                             _affineTransform(affineTransform)
@@ -37,7 +38,7 @@ void TileGpuTransferStep::Run()
 
         while(auto stepData = InQueue()->dequeue())
         {
-            vector<Feature> polygonFeatures = stepData->GetMetadataFeatures("polygons");
+            vector<Feature> polygonFeatures = stepData->GetMetadataFeatures(_layerName);
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;

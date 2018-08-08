@@ -31,7 +31,7 @@ StepFactory::StepFactory()
             "TileFilterStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileFilterStep>();
+                return std::make_shared<TileFilterStep>(stepSettings.LayerName());
             }
         },
         {
@@ -45,7 +45,7 @@ StepFactory::StepFactory()
             "TileGpuTransferStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_shared<TileGpuTransferStep>(GetAffineTransform(settings), stepSettings.TileWidth(), stepSettings.TileHeight());
+                return std::make_shared<TileGpuTransferStep>(GetAffineTransform(settings), stepSettings.MaskingLayerName(), stepSettings.TileWidth(), stepSettings.TileHeight());
             }
         },
         {
