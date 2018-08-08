@@ -50,7 +50,8 @@ long long DatabaseWrapper::SaveMetadata(std::string layerName, long long tileId,
     {
         feature.SetField("tile_id", tileId);
         //TODO: see if we can retrieve name of the metadata_id foreign key from the relationship table.
-        feature.SetField("metadata_id", buildingFeature.FeatureId());
+        auto featureId = buildingFeature.FeatureId();
+        feature.SetField("metadata_id", featureId);
     });
     return metadataRelationId;
 }

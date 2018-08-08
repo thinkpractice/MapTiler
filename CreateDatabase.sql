@@ -98,7 +98,7 @@ CREATE INDEX pv_2017_nl_gix ON pv_2017_nl USING GIST ( location );
 
 insert into pv_2017_nl (postcode, number, number_add, building_id, year_in_use, date_in_use, location, bag_address_id, solar_panel_id)
 select ab.postcode, ab.huisnummer, ab.huisnummertoevoeging, ab.adresseerbaarobject, sao.year_in_use, 
-	sao.date_in_use, ab.geopunt, ab.gid, sao.panel_id 
+	sao.date_in_use, ST_Force2D(ab.geopunt), ab.gid, sao.panel_id 
 from solarpanel_addresses_orig as sao
 inner join bagactueel.adres_full as ab 
 on sao.building_id = ab.adresseerbaarobject and sao.postcode = ab.postcode and CAST(sao.number as numeric) = ab.huisnummer;
@@ -129,6 +129,6 @@ create table tile_buildings
 create table tile_addresses
 (
 	tile_id int references tiles(tile_id),
-	metadata_id int references addresses_bag(address_id),
+	metadata_id int references bagactueel.adres_full(gid),
 	constraint tile_addresses_pk primary key (tile_id, metadata_id)
 );
