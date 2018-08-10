@@ -96,6 +96,7 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "driver_name" : "GTiff",
+            "file_extension" : "tiff",
             "output_directory" : "/media/tim/Data/Work/CBS/ZuidLimburg/",
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }

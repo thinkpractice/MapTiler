@@ -36,6 +36,7 @@ void TileGpuTransferStep::Run()
 		ShaderProgram polygonShaderProgram = SetupPolygonShaders(&polygonVao);
 		polygonShaderProgram.Create();
 
+        int numberOfTilesProcessed = 0;
         while(auto stepData = InQueue()->dequeue())
         {
             vector<Feature> polygonFeatures = stepData->GetMetadataFeatures(_layerName);
@@ -80,8 +81,11 @@ void TileGpuTransferStep::Run()
 				glfwPollEvents();
 
 				/*if (glfwGetKey(window, GLFW_KEY_ESCAPE ) == GLFW_PRESS || glfwWindowShouldClose(window) != 0)
-					break;*/
+                    break;*/
 			}
+            numberOfTilesProcessed++;
+            if (numberOfTilesProcessed > 0 && numberOfTilesProcessed % 100 == 0)
+                std::cout << "Number of tiles processed" << numberOfTilesProcessed << endl;
             OutQueue()->enqueue(std::move(stepData));
         }
 
