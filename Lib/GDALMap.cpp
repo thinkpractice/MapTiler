@@ -86,7 +86,7 @@ Area GDALMap::GetMapArea()
     return Area(ProjectionReference(), Point(minX, minY), Point(maxX, maxY));
 }
 
-GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
+unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
 {
     int width, height = 0;
     tie(width, height) = GetTileSize();
@@ -117,7 +117,7 @@ GeoTile* GDALMap::GetTileForRect(const Rect& rectangle)
     }
 
     Area tileArea = AreaForRect(rectangle);
-    GeoTile* geoTile = new GeoTile(rectangle, tileArea, 4);
+    auto geoTile = make_unique<GeoTile>(rectangle, tileArea, 4);
     geoTile->SetRasterData(rasterData);
 
     for (int i = 0; i < 4;i++)

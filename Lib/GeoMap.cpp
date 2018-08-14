@@ -39,11 +39,10 @@ Area GeoMap::ConvertToMapProjection(const Area& area)
     return CoordinateTransformation::MapArea(area, ProjectionReference());
 }
 
-void GeoMap::GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)> callback)
+void GeoMap::GetTilesForArea(const Area& area, function<void(unique_ptr<GeoTile>, int, int)> callback)
 {
     Area projectedArea = ConvertToMapProjection(area);
 
-    vector <GeoTile*> tiles;
     Rect fullAreaRect = RectForArea(projectedArea);
     cout << "fullAreaRect= " << fullAreaRect.Left() << "," << fullAreaRect.Top() << "," << fullAreaRect.Width() << "," << fullAreaRect.Height() << endl;
 
@@ -51,8 +50,8 @@ void GeoMap::GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)
     vector<Rect> tilesForRect = GetTilesForRect(fullAreaRect);
     for (auto& tileRect : tilesForRect)
     {
-        GeoTile* geoTile = GetTileForRect(tileRect);
-        callback(geoTile, i, tilesForRect.size());
+        auto geoTile = GetTileForRect(tileRect);
+        callback(std::move(geoTile), i, tilesForRect.size());
         i++;
     }
 }

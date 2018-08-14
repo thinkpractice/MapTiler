@@ -28,7 +28,7 @@ class GeoMap
         void SetTitle(string title);
 
         Area ConvertToMapProjection(const Area& area);
-        void GetTilesForArea(const Area& area, function<void(GeoTile*, int, int)> callback);
+        void GetTilesForArea(const Area& area, function<void(unique_ptr<GeoTile>, int, int)> callback);
 
         virtual GeoMap* Clone() = 0;
         virtual int LayerCount() = 0;
@@ -45,7 +45,7 @@ class GeoMap
 
         vector<Rect> GetTileRectsForArea(const Area& area);
         vector<Rect> GetTilesForRect(const Rect& rect);
-        virtual GeoTile* GetTileForRect(const Rect& rect) = 0;
+        virtual unique_ptr<GeoTile> GetTileForRect(const Rect& rect) = 0;
         virtual void WriteTile(shared_ptr<GeoTile> tile) = 0;
 
         virtual tuple<int, int> GetTileSize() = 0;

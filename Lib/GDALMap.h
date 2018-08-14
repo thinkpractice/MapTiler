@@ -31,7 +31,7 @@ class GDALMap : public GeoMap
         void SetMapTransform(const AffineTransform& affineTransform);
 
         Area GetMapArea();
-        GeoTile* GetTileForRect(const Rect& rectangle);
+        unique_ptr<GeoTile> GetTileForRect(const Rect& rectangle);
         void WriteTile(shared_ptr<GeoTile> tile);
 
         std::tuple<int, int> GetTileSize();

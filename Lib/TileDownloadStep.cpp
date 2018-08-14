@@ -30,7 +30,7 @@ void TileDownloadStep::Run()
 	{
 		try
 		{
-            auto tile = std::shared_ptr<GeoTile>(_map->GetTileForRect(stepData->BoundingRect()));
+            std::shared_ptr<GeoTile> tile = _map->GetTileForRect(stepData->BoundingRect());
             stepData->AddTile(_tileName, tile, _year);
 
             OutQueue()->enqueue(std::move(stepData));
