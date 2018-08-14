@@ -19,7 +19,7 @@ public:
     long long SaveTileFile(long long tileId, std::string filename, std::string layerName, int year);
     long long SaveMetadata(std::string layerName, long long tileId, const Feature& buildingFeature);
 
-    static shared_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename);
+    static unique_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename);
 
 private:
     long long SaveFeature(std::string tableName, std::function<void(Feature&)> saveFunction);

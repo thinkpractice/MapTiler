@@ -56,12 +56,12 @@ long long DatabaseWrapper::SaveMetadata(std::string layerName, long long tileId,
     return metadataRelationId;
 }
 
-shared_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
+unique_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
 {
     if (vectorFilename.empty())
         return nullptr;
     auto vectorFile = Utils::LoadVectorFile(vectorFilename, VectorFile::OpenMode::Update);
-    return make_shared<DatabaseWrapper>(vectorFile);
+    return make_unique<DatabaseWrapper>(vectorFile);
 }
 
 long long DatabaseWrapper::SaveFeature(std::string tableName, std::function<void (Feature &)> saveFunction)

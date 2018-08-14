@@ -64,8 +64,6 @@ void TileGpuTransferStep::Run()
                 TileToTexture(geoTile.tile);
 
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-                /*glClearColor(0,0,0,1);
-                glClear(GL_COLOR_BUFFER_BIT);*/
 				
 				maskingShaderProgram.Use();
                 DrawOnScreen(maskingShaderProgram, frameBuffer.TextureId(), polygonBuffer.TextureId());
