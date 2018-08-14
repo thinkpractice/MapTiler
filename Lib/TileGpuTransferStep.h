@@ -31,8 +31,6 @@ private:
    
     Point MapGeoTileCoordinateToGL(std::shared_ptr<GeoTile> geoTile, const Point& point);
 
-    GLenum ColorFormatForTile(std::shared_ptr<GeoTile> geoTile);
-
 private:
     void DrawPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, Polygon& polygon);
     void DrawMultiPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, std::shared_ptr<Geometry> geometry);

@@ -43,11 +43,9 @@ void TileGpuTransferStep::Run()
 			for (auto tilePair : stepData->Tiles())
 			{
 				auto geoTile = tilePair.second;
-                GLenum colorFormat = ColorFormatForTile(geoTile.tile);
-
                 glBindVertexArray(polygonVao);
 
-                FrameBuffer polygonBuffer(_tileWidth, _tileHeight, colorFormat);
+                FrameBuffer polygonBuffer(_tileWidth, _tileHeight, GL_RGBA);
                 polygonBuffer.Bind();
 				polygonBuffer.Clear();
 
@@ -57,7 +55,7 @@ void TileGpuTransferStep::Run()
 			
 				//Do onscreen drawing
                 glBindVertexArray(maskingVao);
-                FrameBuffer frameBuffer(_tileWidth, _tileHeight, colorFormat);
+                FrameBuffer frameBuffer(_tileWidth, _tileHeight, GL_RGBA);
                 frameBuffer.Bind();
                 frameBuffer.Clear();
 
@@ -230,9 +228,7 @@ void TileGpuTransferStep::TileToTexture(shared_ptr<GeoTile> geoTile)
 {
     int textureWidth = geoTile->BoundingRect().IntegerWidth();
     int textureHeight = geoTile->BoundingRect().IntegerHeight();
-
-    GLenum colorFormat = ColorFormatForTile(geoTile);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, colorFormat, GL_UNSIGNED_BYTE, geoTile->Data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, geoTile->Data());
 }
 
 void TileGpuTransferStep::DrawPolygon(Tesselator& tesselator, std::shared_ptr<GeoTile> geoTile, Polygon& polygon)
@@ -339,9 +335,4 @@ Point TileGpuTransferStep::MapGeoTileCoordinateToGL(shared_ptr< GeoTile > geoTil
 	double y = -1.0 + (point.Y - geoTile->BoundingRect().Top()) / height;
 	
 	return Point(x, y);
-}
-
-GLenum TileGpuTransferStep::ColorFormatForTile(shared_ptr<GeoTile> geoTile)
-{
-    return geoTile->NumberOfLayers() == 4 ? GL_RGBA : GL_RGB;
 }
