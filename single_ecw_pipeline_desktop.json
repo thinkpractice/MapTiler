@@ -1,0 +1,83 @@
+{
+    "mainRaster" :
+    {
+        "layer_name" : "rgb_2016",
+        "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_RGB_lrl.ecw"
+    },
+    "tile_width" : 256,
+    "tile_height" : 256,
+    "area" :
+    {
+        "description" : "Zuid Limburg",
+        "epsg" : "epsg:4326",
+        "top_left" :
+        {
+            "lat" : 51.033045,
+            "lon" : 5.631389
+        },
+        "bottom_right" :
+        {
+            "lat" : 50.747172,
+            "lon" : 6.103801
+        }
+    },
+    "steps" : [
+        {
+            "name" : "Step 1: Produces Tiles for Map",
+            "type" : "TileProducerStep",
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
+        },
+        {
+            "name" : "Step 2a: Add BAG House Polygons",
+            "type" : "AddMetadataStep",
+            "layer_name" : "bagactueel.pand",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_buildings"
+        },
+        {
+            "name" : "Step 2b: Add BAG House Addresses",
+            "type" : "AddMetadataStep",
+            "layer_name" : "bagactueel.adres_full",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_addresses"
+        },
+        {
+            "name" : "Step 2c: Add Solar Panel Addresses",
+            "type" : "AddMetadataStep",
+            "layer_name" : "pv_2017_nl",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_pv"
+        },
+        {
+            "name" : "Step 3: Filter Tiles to those with polygons",
+            "type" : "TileFilterStep",
+            "layer_name" : "bagactueel.pand"
+        },
+        {
+            "name" : "Step 4a: Download RGB tiles for 2016",
+            "type" : "TileDownloadStep",
+            "layer_name" : "rgb_2016",
+            "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_RGB_lrl.ecw",
+            "year" : 2016
+        },
+        {
+            "name" : "Step 5: Mask tiles with polygon layer",
+            "type" : "TileGpuTransferStep",
+            "masking_layer_name" : "bagactueel.pand"
+        },
+        {
+            "name" : "Step 6: Write Files To Disk",
+            "type" : "TileWriterStep",
+            "driver_name" : "GTiff",
+            "file_extension" : "tiff",
+            "output_directory" : "/media/tim/Data/Work/CBS/ZuidLimburg/",
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
+        }
+    ]
+}
