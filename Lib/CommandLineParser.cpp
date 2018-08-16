@@ -16,13 +16,13 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
 
     _parser.addOptions({{"display_datasets", QCoreApplication::translate("main", "Displays the datasets available at <url>, the ends the app."), "url", ""},
         {{"p", "pipeline_settings"}, QCoreApplication::translate("main", "Loads a Json file with a pipeline settings, with the filename <pipeline_settings>"), "pipeline_settings", ""},
-        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded."), "location", ""},
+        {"address", QCoreApplication::translate("main", "The <location> (address/city name/region) for which the tiles should be downloaded.")},
         {{"a","addressoption"}, QCoreApplication::translate("main", "The location option to choose if the address gives back multiple option (default=first)"), "locationoption", "0"},
         {{"t", "target-directory"},
             QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
             QCoreApplication::translate("main", "directory"), "/media/tim/Data/Work/CBS/Tiles/"},
-        {{"c","tilewidth"}, QCoreApplication::translate("main","The <width> (number of columns) of the tiles to be written to disk"), "width", "256"},
-        {{"r","tileheight"}, QCoreApplication::translate("main","The <height> (number of rows) of the tiles to be written to disk"), "height", "256"}
+        {{"c","tilewidth"}, QCoreApplication::translate("main","The <width> (number of columns) of the tiles to be written to disk")},
+        {{"r","tileheight"}, QCoreApplication::translate("main","The <height> (number of rows) of the tiles to be written to disk")}
     });
 
     if (!_parser.parse(QCoreApplication::arguments()))
@@ -57,7 +57,7 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
     std::string pipelineSettingsFilename = GetStringValue("pipeline_settings");
     _settings = Settings::Open(pipelineSettingsFilename);
 
-    _settings.SetAddress(GetStringValue("address"));
+    _settings.SetAddress(GetStringValue("address", _settings.Address()));
     _settings.SetAddressOption(GetIntValue("addressoption"));
     _settings.SetOutputDirectory(GetStringValue("t"));
 

@@ -32,8 +32,7 @@
             "type" : "AddMetadataStep",
             "layer_name" : "polygons",
             "layer_url" : "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs",
-            "layer_index" : 1,
-            "persistence_url" : "PG:dbname='addresses' host='localhost' port='5432' user='postgres' password='tim2839'"
+            "layer_index" : 1
         },
         {
             "name" : "Step 2b: Add BAG House Addresses",
@@ -55,7 +54,8 @@
         },
         {
             "name" : "Step 3: Filter Tiles to those with polygons",
-            "type" : "TileFilterStep"
+            "type" : "TileFilterStep",
+            "layer_name" : "polygons"
         },
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
