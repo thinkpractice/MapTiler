@@ -145,11 +145,8 @@ Rect GDALMap::RectForArea(const Area& area)
 {
     Area mappedArea = CoordinateTransformation::MapArea(area, ProjectionReference());
 
-    Point areaLeftTop = mappedArea.LeftTop();
-    Point areaRightBottom = mappedArea.BottomRight();
-
-    Point leftTop = ProjectionToRasterCoord(areaLeftTop);
-    Point rightBottom = ProjectionToRasterCoord(areaRightBottom);
+    Point leftTop = ProjectionToRasterCoord(mappedArea.LeftTop());
+    Point rightBottom = ProjectionToRasterCoord(mappedArea.BottomRight());
     return Rect(leftTop, rightBottom);
 }
 
