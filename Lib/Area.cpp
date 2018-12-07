@@ -25,6 +25,11 @@ Area::Area(double minX, double minY, double maxX, double maxY, string epsgCode, 
 {
 }
 
+Area::Area(const shared_ptr<Geometry> geometry)
+{
+   SetAreaFromGeometry(geometry);
+}
+
 SpatialReference Area::ProjectionReference() const
 {
     return _spatialReference;
@@ -68,4 +73,17 @@ void Area::SetDescription(string description)
 string Area::Description() const
 {
     return _description;
+}
+
+void Area::SetAreaFromGeometry(const std::shared_ptr<Geometry> geometry)
+{
+    SetProjectionReference(geometry->GetSpatialReference());
+    if (geometry->IsPolygon())
+    {
+        auto polygon = dynamic_pointer_cast<Polygon>(geometry);
+        Rect boundingBox = polygon->BoundingBox();
+
+        SetLeftTop(boundingBox.LeftTop());
+        SetBottomRight(boundingBox.BottomRight());
+    }
 }

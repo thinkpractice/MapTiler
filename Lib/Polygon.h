@@ -9,6 +9,7 @@
 #include "Point.h"
 #include "Geometry.h"
 #include "Ring.h"
+#include "Rect.h"
 
 
 class Polygon : public Geometry
@@ -18,6 +19,8 @@ class Polygon : public Geometry
         Polygon(Ring externalRing, std::vector<Ring> internalRings);
         Polygon(const OGRGeometry* geometry);
         virtual ~Polygon();
+
+        Rect BoundingBox();
 
         operator OGRGeometry*() const;
         Polygon& operator=(const OGRGeometry* geometry);

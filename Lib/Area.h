@@ -2,6 +2,7 @@
 #define AREA_H
 
 #include <string>
+#include <float.h>
 #include "SpatialReference.h"
 #include "Point.h"
 #include "Polygon.h"
@@ -13,6 +14,7 @@ class Area
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight, string description);
         Area(double minX, double minY, double maxX, double maxY, string wellKnownGeogCS = "EPSG:4326", string description="");
+        Area(const shared_ptr<Geometry> geometry);
 
         operator shared_ptr<Geometry>() const
         {
@@ -30,6 +32,12 @@ class Area
             return polygon;
         }
 
+        Area& operator=(const std::shared_ptr<Geometry> geometry)
+        {
+            SetAreaFromGeometry(geometry);
+            return *this;
+        }
+
         SpatialReference ProjectionReference() const;
         void SetProjectionReference(const SpatialReference& projectionReference);
         void SetEPSG(std::string epsg);
@@ -42,6 +50,9 @@ class Area
 
         void SetDescription(string description);
         string Description() const;
+
+    private:
+        void SetAreaFromGeometry(const std::shared_ptr<Geometry> geometry);
 
     private:
         SpatialReference _spatialReference;

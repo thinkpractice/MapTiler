@@ -25,6 +25,27 @@ Polygon::~Polygon()
 {
 }
 
+Rect Polygon::BoundingBox()
+{
+    double minX = std::numeric_limits<double>::max(),
+                    maxX = 0,
+                    minY = std::numeric_limits<double>::max(),
+                    maxY = 0;
+
+    for (auto point : ExternalRing())
+    {
+        if (point.X < minX)
+            minX = point.X;
+        if (point.X > maxX)
+            maxX = point.X;
+        if (point.Y < minY)
+            minY = point.Y;
+        if (point.Y > maxY)
+            maxY = point.Y;
+    }
+    return Rect(minX, minY, maxX-minX, maxY-minY);
+}
+
 Polygon::operator OGRGeometry *() const
 {
     OGRPolygon* ogrPolygon = new OGRPolygon();

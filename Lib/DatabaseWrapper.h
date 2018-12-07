@@ -19,6 +19,7 @@ public:
     long long SaveTileFile(long long tileId, std::string filename, std::string layerName, int year);
     long long SaveMetadata(std::string layerName, long long tileId, const Feature& buildingFeature);
     std::unique_ptr<Feature> GetAreaFor(std::string areaName);
+    std::vector<Feature> GetTilesForArea(std::string areaName);
 
     static unique_ptr<DatabaseWrapper> DatabaseWrapperFor(std::string vectorFilename);
 

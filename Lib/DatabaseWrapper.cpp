@@ -58,10 +58,17 @@ long long DatabaseWrapper::SaveMetadata(std::string layerName, long long tileId,
 
 std::unique_ptr<Feature> DatabaseWrapper::GetAreaFor(std::string areaName)
 {
-    auto results = _vectorFile->ExecuteSql("select * from areaofinterest where description = " + areaName);
+    auto results = _vectorFile->ExecuteSql("select * from areaofinterest where description = '" + areaName + "'");
     if (results.size() > 0)
         return make_unique<Feature>(results[0]);
     return nullptr;
+}
+
+std::vector<Feature> DatabaseWrapper::GetTilesForArea(std::string areaName)
+{
+   return _vectorFile->ExecuteSql("select ti.* from areaofinterest ai "
+                                  "inner join tiles as ti on ai.area_id = ti.area_id "
+                                  "where description = '" + areaName + "'");
 }
 
 unique_ptr<DatabaseWrapper> DatabaseWrapper::DatabaseWrapperFor(std::string vectorFilename)
