@@ -75,7 +75,17 @@ Point Rect::LeftTop() const
     return Point(Left(), Top());
 }
 
+Point Rect::RightTop() const
+{
+    return Point(Right(), Top());
+}
+
 Point Rect::BottomRight() const
 {
     return Point(Right(), Bottom());
+}
+
+Point Rect::BottomLeft() const
+{
+    return Point(Left(), Bottom());
 }

@@ -83,7 +83,9 @@ void Area::SetAreaFromGeometry(const std::shared_ptr<Geometry> geometry)
         auto polygon = dynamic_pointer_cast<Polygon>(geometry);
         Rect boundingBox = polygon->BoundingBox();
 
-        SetLeftTop(boundingBox.LeftTop());
-        SetBottomRight(boundingBox.BottomRight());
+        //Y-direction is mirrored here, a latitude starts at the equator,
+        //while a computer screen starts at the top left.
+        SetLeftTop(boundingBox.BottomLeft());
+        SetBottomRight(boundingBox.RightTop());
     }
 }

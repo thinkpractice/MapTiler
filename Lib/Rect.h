@@ -25,7 +25,9 @@ class Rect
         int IntegerHeight() const;
 
         Point LeftTop() const;
+        Point RightTop() const;
         Point BottomRight() const;
+        Point BottomLeft() const;
 
     private:
         double _x, _y, _width, _height;

@@ -8,7 +8,7 @@
     "tile_height" : 256,
     "area" :
     {
-        "description" : "Leenhof",
+        "description" : "Leenhof2",
         "epsg" : "epsg:4326",
         "top_left" :
         {
@@ -89,7 +89,7 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "/media/tim/Data/Work/CBS/Leenhof/",
+            "output_directory" : "/media/tim/Data/Work/CBS/Leenhof3/",
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }
     ]
