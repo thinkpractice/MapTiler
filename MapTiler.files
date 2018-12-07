@@ -14,6 +14,8 @@ Lib/StepFactory.cpp
 Lib/StepFactory.h
 Lib/StepSettings.cpp
 Lib/StepSettings.h
+Lib/Value.cpp
+Lib/Value.h
 Lib/json.hpp
 databaseexample.cpp
 db_polygon_pipeline.json
