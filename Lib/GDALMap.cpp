@@ -152,11 +152,8 @@ Rect GDALMap::RectForArea(const Area& area)
 
 Area GDALMap::AreaForRect(const Rect& rect)
 {
-    Point rasterLeftTop = rect.LeftTop();
-    Point rasterBottomRight = rect.BottomRight();
-
-    Point leftTop = RasterToProjectionCoord(rasterLeftTop);
-    Point bottomRight = RasterToProjectionCoord(rasterBottomRight);
+    Point leftTop = RasterToProjectionCoord(rect.LeftTop());
+    Point bottomRight = RasterToProjectionCoord(rect.BottomRight());
     return Area(ProjectionReference(), leftTop, bottomRight);
 }
 
