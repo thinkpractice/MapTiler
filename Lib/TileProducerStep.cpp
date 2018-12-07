@@ -87,6 +87,7 @@ void TileProducerStep::LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersis
         {
             long long areaId = std::strtoll(tileFeature["area_id"].Value().c_str(), nullptr, 10);
             long long tileId = std::strtoll(tileFeature["tile_id"].Value().c_str(), nullptr, 10);
+            std::string uuid = tileFeature["uuid"].Value();
 
             Area area = tileFeature.GetGeometry();
             Rect tileRect = _map->RectForArea(area);
@@ -94,6 +95,7 @@ void TileProducerStep::LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersis
             auto stepData = make_unique<StepData>(tileRect, area);
             stepData->SetAreaId(areaId);
             stepData->SetTileId(tileId);
+            stepData->SetUniqueId(uuid);
 
             OutQueue()->enqueue(std::move(stepData));
         }
