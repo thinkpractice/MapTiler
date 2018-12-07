@@ -8,7 +8,7 @@
     "tile_height" : 256,
     "area" :
     {
-        "description" : "Heerlen",
+        "description" : "Leenhof",
         "epsg" : "epsg:4326",
         "top_left" :
         {
@@ -30,28 +30,34 @@
         {
             "name" : "Step 2a: Add BAG House Polygons",
             "type" : "AddMetadataStep",
-            "layer_name" : "polygons",
-            "layer_url" : "WFS:https://geodata.nationaalgeoregister.nl/bag/wfs?SERVICE=wfs",
-            "layer_index" : 1,
-            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
+            "layer_name" : "bagactueel.pand",
+            "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_buildings"
         },
         {
             "name" : "Step 2b: Add BAG House Addresses",
             "type" : "AddMetadataStep",
             "layer_name" : "bagactueel.adres_full",
             "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
-            "layer_index" : -1
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_addresses"
         },
         {
             "name" : "Step 2c: Add Solar Panel Addresses",
             "type" : "AddMetadataStep",
             "layer_name" : "pv_2017_nl",
             "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
-            "layer_index" : -1
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
+            "persistence_layer_name" : "tile_pv"
         },
         {
             "name" : "Step 3: Filter Tiles to those with polygons",
-            "type" : "TileFilterStep"
+            "type" : "TileFilterStep",	 
+            "layer_name" : "bagactueel.pand"
         },
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
@@ -83,7 +89,7 @@
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "/media/tim/Data/Work/CBS/Heerlen/",
+            "output_directory" : "/media/tim/Data/Work/CBS/Leenhof/",
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }
     ]
