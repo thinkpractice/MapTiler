@@ -58,7 +58,7 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
     std::string pipelineSettingsFilename = GetStringValue("pipeline_settings");
     if (!Utils::FileExists(pipelineSettingsFilename))
     {
-        std::cerr << "PipeLine File: " << pipelineSettingsFilename << " does not exist.";
+        std::cerr << "PipeLine File: " << pipelineSettingsFilename << " does not exist." << std::endl;
         return CommandLineError;
     }
     _settings = Settings::Open(pipelineSettingsFilename);
