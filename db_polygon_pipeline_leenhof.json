@@ -38,7 +38,7 @@
         {
             "name" : "Step 2b: Add BAG House Addresses",
             "type" : "AddMetadataStep",
-            "layer_name" : "addresses_bag",
+            "layer_name" : "bagactueel.adres_full",
             "layer_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'",
             "layer_index" : -1
         },

@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QCoreApplication>
+#include <QtCore>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -10,17 +11,66 @@
 #include "Lib/StepFactory.h"
 #include "Lib/CommandLineParser.h"
 
-void DownloadTilesForArea(const Settings& settings)
+class Task : public QObject
 {
-    Utils::TimeIt([&]
+    Q_OBJECT
+public:
+    Task(QObject *parent, const Settings& settings)
+        : QObject(parent), _settings(settings)
     {
-        StepFactory stepFactory;
-        auto processingPipeline = stepFactory.PipelineFor(settings);
-        processingPipeline->StartProcessing();
-    });
-    std::cout << "Finished" << std::endl;
-    QCoreApplication::exit(0);
-}
+    }
+
+protected:
+    void DownloadTilesForArea(const Settings& settings)
+    {
+        Utils::TimeIt([&]
+        {
+            StepFactory stepFactory;
+            auto processingPipeline = stepFactory.PipelineFor(settings);
+            processingPipeline->StartProcessing();
+        });
+        std::cout << "Finished" << std::endl;
+    }
+
+public slots:
+    void run()
+    {
+        std::cout << "Target directory: " << _settings.OutputDirectory() << std::endl;
+        std::cout << "Address: " << _settings.Address() << std::endl;
+        std::cout << "Tile width: " << _settings.TileWidth() << std::endl;
+        std::cout << "Tile height: " << _settings.TileHeight() << std::endl;
+
+        AreaLookup areaLookup;
+        areaLookup.AddListener([&](std::vector<Area> areas){
+
+            if (areas.size() > 0)
+            {
+                Area chosenArea = areas.front();
+                if (areas.size() > 1)
+                {
+                    chosenArea = areas[_settings.AddressOption()];
+                }
+                _settings.SetChosenArea(chosenArea);
+                std::cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << std::endl;
+                DownloadTilesForArea(_settings);
+            }
+            });
+
+        if (_settings.Address().empty())
+            DownloadTilesForArea(_settings);
+        else
+            areaLookup.GetAreaForAddress(_settings.Address());
+        emit finished();
+    }
+
+signals:
+    void finished();
+
+private:
+    Settings _settings;
+};
+
+#include "MapTiler.moc"
 
 int main(int argc, char** argv)
 {
@@ -41,31 +91,9 @@ int main(int argc, char** argv)
 
     Settings settings = parser.GetSettings();
 	
-    std::cout << "Target directory: " << settings.OutputDirectory() << std::endl;
-    std::cout << "Address: " << settings.Address() << std::endl;
-    std::cout << "Tile width: " << settings.TileWidth() << std::endl;
-    std::cout << "Tile height: " << settings.TileHeight() << std::endl;
-
-    AreaLookup areaLookup;
-    areaLookup.AddListener([&](std::vector<Area> areas){
-
-                if (areas.size() > 0)
-                {
-                    Area chosenArea = areas.front();
-                    if (areas.size() > 1)
-                    {
-                            chosenArea = areas[settings.AddressOption()];
-                    }
-                    settings.SetChosenArea(chosenArea);
-                    std::cout << "area=" << chosenArea.LeftTop() << "," << chosenArea.BottomRight() << std::endl;
-                    DownloadTilesForArea(settings);
-                }
-            });
-
-    if (settings.Address().empty())
-        DownloadTilesForArea(settings);
-    else
-        areaLookup.GetAreaForAddress(settings.Address());
+    Task *task = new Task(&app, settings);
+    QObject::connect(task, SIGNAL(finished()), &app, SLOT(quit()));
+    QTimer::singleShot(0, task, SLOT(run()));
 
     return app.exec();
 }
