@@ -83,7 +83,7 @@
         {
             "name" : "Step 5: Mask tiles with polygon layer",
             "type" : "TileGpuTransferStep",
-            "masking_layer_name" : "polygons"
+            "masking_layer_name" : "bagactueel.pand"
         },
         {
             "name" : "Step 6: Write Files To Disk",
