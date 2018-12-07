@@ -3,6 +3,7 @@
 #include <uuid/uuid.h>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include "GeoMapProvider.h"
 
 std::vector<std::string> Utils::SplitKeyValuePair(const char* keyValueString)
@@ -52,6 +53,12 @@ void Utils::TimeIt(std::function<void()> function)
 
     std::chrono::duration<double, std::ratio<1>> elapsed_seconds = end - start;
     std::cout << "Elapsed seconds " << elapsed_seconds.count() <<endl;
+}
+
+bool Utils::FileExists(const string &path)
+{
+   std::ifstream infile(path.c_str());
+   return infile.good();
 }
 
 std::string Utils::GetFileExtension(const std::string& fileName)

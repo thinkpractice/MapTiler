@@ -68,6 +68,11 @@ vector<Feature> VectorFile::ExecuteSql(const char* sqlStatement)
     return resultSetFeatures;
 }
 
+vector<Feature> VectorFile::ExecuteSql(string sqlStatement)
+{
+   return ExecuteSql(sqlStatement.c_str());
+}
+
 shared_ptr<Layer> VectorFile::LayerFor(OGRLayer* layer)
 {
     return make_shared<Layer>(layer);

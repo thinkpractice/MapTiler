@@ -1,6 +1,7 @@
 #include "CommandLineParser.h"
 #include <QCoreApplication>
 #include "GeoMapProvider.h"
+#include "Utils.h"
 
 CommandLineParser::CommandLineParser()
 {
@@ -55,6 +56,11 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
 
     //TODO add default pipeline
     std::string pipelineSettingsFilename = GetStringValue("pipeline_settings");
+    if (!Utils::FileExists(pipelineSettingsFilename))
+    {
+        std::cerr << "PipeLine File: " << pipelineSettingsFilename << " does not exist.";
+        return CommandLineError;
+    }
     _settings = Settings::Open(pipelineSettingsFilename);
 
     _settings.SetAddress(GetStringValue("address", _settings.Address()));

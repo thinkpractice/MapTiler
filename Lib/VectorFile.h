@@ -30,6 +30,7 @@ class VectorFile
         vector<shared_ptr<Layer>>& Layers();
 
         vector<Feature> ExecuteSql(const char* sqlStatement);
+        vector<Feature> ExecuteSql(std::string sqlStatement);
 
     protected:
         GDALDataset* Dataset();
