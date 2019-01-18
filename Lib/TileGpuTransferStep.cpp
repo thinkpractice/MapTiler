@@ -42,10 +42,11 @@ void TileGpuTransferStep::Run()
             vector<Feature> polygonFeatures = stepData->GetMetadataFeatures(_layerName);
 			for (auto tilePair : stepData->Tiles())
 			{
-				auto geoTile = tilePair.second;
+                auto geoTile = tilePair.second;
                 glBindVertexArray(polygonVao);
 
-                FrameBuffer polygonBuffer(_tileWidth, _tileHeight, GL_RGBA);
+                Rect boundingRect = geoTile.tile->BoundingRect();
+                FrameBuffer polygonBuffer(boundingRect.IntegerWidth(), boundingRect.IntegerHeight(), GL_RGBA);
                 polygonBuffer.Bind();
 				polygonBuffer.Clear();
 
@@ -55,7 +56,7 @@ void TileGpuTransferStep::Run()
 			
 				//Do onscreen drawing
                 glBindVertexArray(maskingVao);
-                FrameBuffer frameBuffer(_tileWidth, _tileHeight, GL_RGBA);
+                FrameBuffer frameBuffer(boundingRect.IntegerWidth(), boundingRect.IntegerHeight(), GL_RGBA);
                 frameBuffer.Bind();
                 frameBuffer.Clear();
 
