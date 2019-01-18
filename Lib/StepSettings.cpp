@@ -81,6 +81,15 @@ void StepSettings::SetDriverName(const std::string &driverName)
     _driverName = driverName;
 }
 
+std::vector<std::string> StepSettings::DriverOptions() const
+{
+    return _driverOptions;
+}
+
+void StepSettings::SetDriverOptions(const std::vector<std::string> &driverOptions)
+{
+    _driverOptions = driverOptions;
+}
 
 std::string StepSettings::EpsgFormat() const
 {

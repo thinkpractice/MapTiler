@@ -71,6 +71,7 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetLayerIndex(j.value("layer_index", 0));
     stepSettings.SetMaskingLayerName(j.value("masking_layer_name", ""));
     stepSettings.SetDriverName(j.value("driver_name", "GTiff"));
+    stepSettings.SetDriverOptions(j.value("driver_options", std::vector<std::string>()));
     stepSettings.SetEpsgFormat(j.value("epsg_format", "EPSG:4326"));
     stepSettings.SetFileExtension(j.value("file_extension", "tiff"));
     stepSettings.SetOutputDirectory(j.value("output_directory", ""));

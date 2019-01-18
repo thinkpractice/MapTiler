@@ -2,6 +2,7 @@
 #define STEPSETTINGS_H
 
 #include <string>
+#include <vector>
 
 class StepSettings
 {
@@ -29,6 +30,9 @@ public:
 
     std::string DriverName() const;
     void SetDriverName(const std::string &driverName);
+
+    std::vector<std::string> DriverOptions() const;
+    void SetDriverOptions(const std::vector<std::string>& driverOptions);
 
     std::string EpsgFormat() const;
     void SetEpsgFormat(const std::string &epsgFormat);
@@ -67,6 +71,7 @@ private:
 
     std::string _maskingLayerName;
     std::string _driverName;
+    std::vector<std::string> _driverOptions;
     std::string _epsgFormat;
     std::string _fileExtension;
     std::string _outputDirectory;

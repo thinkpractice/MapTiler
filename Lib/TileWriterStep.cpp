@@ -3,14 +3,15 @@
 #include <algorithm>
 #include <iostream>
 
-TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, std::string epsgFormat, std::string fileExtension)
+TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, std::string epsgFormat, std::string fileExtension, std::vector<std::string> driverOptions)
                     :   ProcessingStep(Sink),
                         _tileDirectory(tileDirectory),
                         _persistenceUrl(persistenceUrl),
                         _driverName(driverName),
                         _epsgFormat(epsgFormat),
                         _fileExtension(fileExtension),
-                        _tileWriter(make_unique<GdalWriter>(EpsgFormat(), DriverName(), FileExtension())),
+                        _driverOptions(driverOptions),
+                        _tileWriter(make_unique<GdalWriter>(EpsgFormat(), DriverName(), FileExtension(), DriverOptions())),
                         _numberOfTilesWritten(0)
 {
 }
@@ -67,4 +68,9 @@ std::string TileWriterStep::EpsgFormat() const
 std::string TileWriterStep::FileExtension() const
 {
     return _fileExtension;
+}
+
+std::vector<string> TileWriterStep::DriverOptions() const
+{
+    return _driverOptions;
 }

@@ -38,14 +38,15 @@ class TileWriter
 class GdalWriter : public GeoTileWriter
 {
 public:
-    GdalWriter(std::string epsgFormat = "EPSG:4326", std::string driverName = "GTiff", std::string fileExtension = "tiff");
-    GdalWriter(const SpatialReference& targetProjection, std::string driverName = "GTiff", std::string fileExtension = "tiff");
+    GdalWriter(std::string epsgFormat = "EPSG:4326", std::string driverName = "GTiff", std::string fileExtension = "tiff", std::vector<std::string> driverOptions = {});
+    GdalWriter(const SpatialReference& targetProjection, std::string driverName = "GTiff", std::string fileExtension = "tiff", std::vector<std::string> driverOptions = {});
     virtual ~GdalWriter();
 
     bool HandlesFile(string filename);
     void Save(shared_ptr<GeoTile> tile, string filename);
     std::string DriverName() const;
     std::string FileExtension() const;
+    std::vector<std::string> DriverOptions() const;
 
 private:
     shared_ptr<GeoMap> MapFor(shared_ptr<GeoTile> tile, string filename);
@@ -57,6 +58,7 @@ private:
     SpatialReference _targetProjection;
     std::string _driverName;
     std::string _fileExtension;
+    std::vector<std::string> _driverOptions;
 };
 
 #endif
