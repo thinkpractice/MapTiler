@@ -180,9 +180,6 @@ GDALDataset* GDALMap::Dataset()
         {
             optionList.AddString(driverOption.c_str());
         }
-        //set maximum memory to 2 gigabytes
-        //long maximumMemory = 2L * 1024 * 1024 * 1024;
-        //std::string configString = "ECW_CACHE_MAXMEM=" + to_string(maximumMemory);
         _dataset = static_cast<GDALDataset*>(GDALOpenEx(Filename().c_str(), GDAL_OF_RASTER | GA_ReadOnly, nullptr, optionList.List(), nullptr));
     }
     return _dataset;
