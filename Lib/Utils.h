@@ -17,7 +17,7 @@ class Utils
         static void TimeIt(std::function<void()> function);
         static bool FileExists(const std::string& path);
         static std::string GetFileExtension(const std::string& fileName);
-        static std::shared_ptr<GeoMap> LoadRasterMap(std::string layerUrl, int layerIndex);
+        static std::shared_ptr<GeoMap> LoadRasterMap(std::string layerUrl, int layerIndex, std::vector<std::string> driverOptions = {});
         static std::shared_ptr<VectorFile> LoadVectorFile(std::string filename, VectorFile::OpenMode mode = VectorFile::OpenMode::ReadOnly);
 };
 

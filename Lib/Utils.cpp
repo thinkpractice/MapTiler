@@ -68,9 +68,9 @@ std::string Utils::GetFileExtension(const std::string& fileName)
     return "";
 }
 
-std::shared_ptr<GeoMap> Utils::LoadRasterMap(std::string layerUrl, int layerIndex)
+std::shared_ptr<GeoMap> Utils::LoadRasterMap(std::string layerUrl, int layerIndex, std::vector<std::string> driverOptions)
 {
-    GeoMapProvider mapProvider(layerUrl);
+    GeoMapProvider mapProvider(layerUrl, driverOptions);
     if (mapProvider.Maps().size() == 0)
     {
         std::cerr << "No maps at url/in file" << std::endl;

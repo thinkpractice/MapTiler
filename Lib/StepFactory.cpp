@@ -38,7 +38,7 @@ StepFactory::StepFactory()
             "TileDownloadStep",
             [&] (const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_unique<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex(), stepSettings.MapYear());
+                return std::make_unique<TileDownloadStep>(stepSettings.LayerName(), stepSettings.LayerUrl(), stepSettings.LayerIndex(), stepSettings.MapYear(), stepSettings.DriverOptions());
             }
         },
         {

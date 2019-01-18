@@ -5,8 +5,8 @@
 #include <chrono>
 #include <thread>
 
-TileDownloadStep::TileDownloadStep(std::string layerName, std::string layerUrl, int layerIndex, int year)
-                    :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex), year)
+TileDownloadStep::TileDownloadStep(std::string layerName, std::string layerUrl, int layerIndex, int year, std::vector<std::string> driverOptions)
+                    :	TileDownloadStep(layerName, Utils::LoadRasterMap(layerUrl, layerIndex, driverOptions), year)
 {
 }
 
