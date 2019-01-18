@@ -7,8 +7,9 @@
 #define kNameFieldKey "NAME"
 #define kDescriptionFieldKey "DESC"
 
-GeoMapProvider::GeoMapProvider(string filename)
-					:	_filename(filename)
+GeoMapProvider::GeoMapProvider(std::string filename, std::vector<std::string> driverOptions)
+                    :	_filename(filename),
+                        _driverOptions(driverOptions)
 {
     GDALAllRegister();
 }
@@ -26,6 +27,11 @@ vector< shared_ptr< GeoMap > > GeoMapProvider::Maps()
     return _maps;
 }
 
+std::vector<string> GeoMapProvider::DriverOptions() const
+{
+    return _driverOptions;
+}
+
 vector< shared_ptr< GeoMap > > GeoMapProvider::RetrieveMaps()
 {
     vector<shared_ptr<GeoMap>> maps;
@@ -40,7 +46,7 @@ vector< shared_ptr< GeoMap > > GeoMapProvider::RetrieveMaps()
     char** metadata = dataset->GetMetadata("SUBDATASETS");
     if (!metadata)
     {
-        maps.push_back(make_shared<GDALMap>(_filename));
+        maps.push_back(make_shared<GDALMap>(_filename, DriverOptions()));
     }
     else
     {
@@ -52,7 +58,7 @@ vector< shared_ptr< GeoMap > > GeoMapProvider::RetrieveMaps()
             string keyType = Utils::GetKeyType(key);
             if (keyType == kNameFieldKey)
             {
-                maps.push_back(make_shared<GDALMap>(value));
+                maps.push_back(make_shared<GDALMap>(value, DriverOptions()));
             }
             else if (keyType  == kDescriptionFieldKey)
             {

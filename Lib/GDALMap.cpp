@@ -3,14 +3,15 @@
 #include <cstring>
 #include "CoordinateTransformation.h"
 
-GDALMap::GDALMap(std::string filename)
-            :   GDALMap(filename, nullptr)
+GDALMap::GDALMap(std::string filename, std::vector<std::string> driverOptions)
+            :   GDALMap(filename, nullptr, driverOptions)
 {
 }
 
-GDALMap::GDALMap(std::string filename, GDALDataset* dataset)
+GDALMap::GDALMap(std::string filename, GDALDataset* dataset, std::vector<std::string> driverOptions)
             :   GeoMap(filename),
-                _dataset(dataset)
+                _dataset(dataset),
+                _driverOptions(driverOptions)
 {
 }
 
@@ -22,7 +23,7 @@ GDALMap::~GDALMap()
 
 GeoMap* GDALMap::Clone()
 {
-    return new GDALMap(Filename());
+    return new GDALMap(Filename(), DriverOptions());
 }
 
 int GDALMap::LayerCount()
@@ -165,17 +166,23 @@ std::shared_ptr<Layer> GDALMap::ExecuteQuery(std::string query)
     return make_shared<Layer>(layer);
 }
 
+std::vector<string> GDALMap::DriverOptions() const
+{
+    return _driverOptions;
+}
+
 GDALDataset* GDALMap::Dataset()
 {
     if (!_dataset)
     {
-        //_dataset = static_cast<GDALDataset*>(GDALOpen(Filename().c_str(), GA_ReadOnly));
-        //TODO: only for ECW driver, make this configurable
         CPLStringList optionList;
+        for (auto& driverOption : DriverOptions())
+        {
+            optionList.AddString(driverOption.c_str());
+        }
         //set maximum memory to 2 gigabytes
-        long maximumMemory = 2L * 1024 * 1024 * 1024;
-        std::string configString = "ECW_CACHE_MAXMEM=" + to_string(maximumMemory);
-        optionList.AddString(configString.c_str());
+        //long maximumMemory = 2L * 1024 * 1024 * 1024;
+        //std::string configString = "ECW_CACHE_MAXMEM=" + to_string(maximumMemory);
         _dataset = static_cast<GDALDataset*>(GDALOpenEx(Filename().c_str(), GDAL_OF_RASTER | GA_ReadOnly, nullptr, optionList.List(), nullptr));
     }
     return _dataset;

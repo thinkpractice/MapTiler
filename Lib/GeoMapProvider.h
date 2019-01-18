@@ -6,22 +6,22 @@
 #include <vector>
 #include "GeoMap.h"
 
-using namespace std;
-
 class GeoMapProvider
 {
     public:
-		GeoMapProvider(string filename);		
+    GeoMapProvider(std::string filename, std::vector<std::string> driverOptions = {});
         virtual ~GeoMapProvider();
 		
-        vector<shared_ptr<GeoMap>> Maps();
+        std::vector<std::shared_ptr<GeoMap>> Maps();
+        std::vector<std::string> DriverOptions() const;
 
     private:
-        vector<shared_ptr<GeoMap>> RetrieveMaps();
+        std::vector<std::shared_ptr<GeoMap>> RetrieveMaps();
 
     private:
-        string _filename;
-        vector<shared_ptr<GeoMap>> _maps;
+        std::string _filename;
+        std::vector<std::string> _driverOptions;
+        std::vector<std::shared_ptr<GeoMap>> _maps;
 
 };
 

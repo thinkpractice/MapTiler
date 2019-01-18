@@ -2,6 +2,7 @@
 #define GDAL_MAP_H
 
 #include <string>
+#include <vector>
 #include <tuple>
 #include <memory>
 #include "GeoTile.h"
@@ -14,8 +15,8 @@
 class GDALMap : public GeoMap
 {
     public:
-        GDALMap(std::string filename);
-        GDALMap(std::string filename, GDALDataset* dataset);
+        GDALMap(std::string filename, std::vector<std::string> driverOptions = {});
+        GDALMap(std::string filename, GDALDataset* dataset, std::vector<std::string> driverOptions = {});
         virtual ~GDALMap();
 
         GeoMap* Clone();
@@ -40,6 +41,8 @@ class GDALMap : public GeoMap
 
         std::shared_ptr<Layer> ExecuteQuery(std::string query);
 
+        std::vector<std::string> DriverOptions() const;
+
     private:
         GDALDataset* Dataset();
         GByte* GetDataForBand(int rasterIndex, int x, int y, int width, int height);
@@ -48,6 +51,7 @@ class GDALMap : public GeoMap
         Point ProjectionToRasterCoord(Point projectionCoord);
     private:
         GDALDataset* _dataset;
+        std::vector<std::string> _driverOptions;
 };
 
 #endif
