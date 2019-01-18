@@ -64,6 +64,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2016",
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_RGB_lrl.ecw",
+	    "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "year" : 2016
         },
         {
@@ -71,6 +72,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "ir_2016",
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_CIR_lrl.ecw",
+	    "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "year" : 2016
         },
         {
@@ -78,6 +80,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2017",
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2017_totaalmozaiek_RGB_lrl.ecw",
+	    "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "year" : 2017
         },
         {
@@ -85,6 +88,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "ir_2017",
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2017_totaalmozaiek_CIR_lrl.ecw",
+	    "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "year" : 2017
         },
         {
@@ -97,6 +101,7 @@
             "type" : "TileWriterStep",
             "driver_name" : "GTiff",
             "file_extension" : "tiff",
+	    "driver_options" :["COMPRESS=DEFLATE"],
             "output_directory" : "/media/tim/Data/Work/CBS/ZuidLimburg/",
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }

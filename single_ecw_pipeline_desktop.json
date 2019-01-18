@@ -64,6 +64,7 @@
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2016",
             "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_RGB_lrl.ecw",
+            "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "year" : 2016
         },
         {
