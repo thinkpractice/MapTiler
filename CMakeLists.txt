@@ -17,13 +17,13 @@ include_directories(${GDAL_INCLUDE_DIR} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Location
 add_subdirectory(Lib)
 
 add_executable(MapTiler MapTiler.cpp)
-target_link_libraries(MapTiler Lib Qt5::Core)
+target_link_libraries(MapTiler LibMapTiler Qt5::Core)
 
 add_executable(ShapeFileExample ShapeFileExample.cpp)
-target_link_libraries(ShapeFileExample Lib)
+target_link_libraries(ShapeFileExample LibMapTiler)
 
 add_executable(GLTest GLTest.cpp)
-target_link_libraries(GLTest Lib)
+target_link_libraries(GLTest LibMapTiler)
 
 add_executable(DatabaseExample databaseexample.cpp)
-target_link_libraries(DatabaseExample Lib)
+target_link_libraries(DatabaseExample LibMapTiler)
