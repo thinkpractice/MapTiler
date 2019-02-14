@@ -9,7 +9,7 @@
     "area" :
     {
         "description" : "Zuid Limburg",
-        "epsg" : "epsg:4326",
+        "epsg" : 4326,
         "top_left" :
         {
             "lat" : 51.033045,

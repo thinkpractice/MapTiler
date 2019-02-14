@@ -91,12 +91,12 @@ void StepSettings::SetDriverOptions(const std::vector<std::string> &driverOption
     _driverOptions = driverOptions;
 }
 
-std::string StepSettings::EpsgFormat() const
+int StepSettings::EpsgFormat() const
 {
     return _epsgFormat;
 }
 
-void StepSettings::SetEpsgFormat(const std::string &epsgFormat)
+void StepSettings::SetEpsgFormat(const int epsgFormat)
 {
     _epsgFormat = epsgFormat;
 }

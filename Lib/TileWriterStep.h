@@ -13,7 +13,7 @@ class TileWriterStep : public ProcessingStep
 {
     public:
         TileWriterStep(std::string tileDirectory, std::string persistenceUrl,
-                       std::string driverName, std::string epsgFormat,
+                       std::string driverName, int epsgFormat,
                        std::string fileExtension, std::vector<std::string> driverOptions);
         virtual ~TileWriterStep();
 
@@ -21,7 +21,7 @@ class TileWriterStep : public ProcessingStep
         void SaveTile(std::shared_ptr<GeoTile> tile, string tileFilename);
 
         std::string DriverName() const;
-        std::string EpsgFormat() const;
+        int EpsgFormat() const;
         std::string FileExtension() const;
         std::vector<std::string> DriverOptions() const;
 
@@ -32,7 +32,7 @@ private:
         std::string _tileDirectory;
         std::string _persistenceUrl;
         std::string _driverName;
-        std::string _epsgFormat;
+        int _epsgFormat;
         std::string _fileExtension;
         std::vector<std::string> _driverOptions;
         TileWriter _tileWriter;

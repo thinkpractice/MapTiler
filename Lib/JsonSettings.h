@@ -57,7 +57,7 @@ void from_json(const json &j, Point &p)
 void from_json(const json& j, Area& area)
 {
     area.SetDescription(j.at("description").get<std::string>());
-    area.SetEPSG(j.at("epsg").get<std::string>());
+    area.SetEPSG(j.at("epsg").get<int>());
     area.SetLeftTop(j.at("top_left").get<Point>());
     area.SetBottomRight(j.at("bottom_right").get<Point>());
 }
@@ -72,7 +72,7 @@ void from_json(const json &j, StepSettings &stepSettings)
     stepSettings.SetMaskingLayerName(j.value("masking_layer_name", ""));
     stepSettings.SetDriverName(j.value("driver_name", "GTiff"));
     stepSettings.SetDriverOptions(j.value("driver_options", std::vector<std::string>()));
-    stepSettings.SetEpsgFormat(j.value("epsg_format", "EPSG:4326"));
+    stepSettings.SetEpsgFormat(j.value("epsg_format", 4326));
     stepSettings.SetFileExtension(j.value("file_extension", "tiff"));
     stepSettings.SetOutputDirectory(j.value("output_directory", ""));
     stepSettings.SetTileWidth(j.value("tile_width", StepSettings::TileWidthNotSet));

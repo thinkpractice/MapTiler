@@ -29,8 +29,8 @@ string TileWriter::FileExtension() const
     return _writer->FileExtension();
 }
 
-GdalWriter::GdalWriter(std::string epsgFormat, std::string driverName, std::string fileExtension, std::vector<std::string> driverOptions)
-                :   GdalWriter(SpatialReference::FromEPSG(epsgFormat), driverName, fileExtension, driverOptions)
+GdalWriter::GdalWriter(int epsg, std::string driverName, std::string fileExtension, std::vector<std::string> driverOptions)
+                :   GdalWriter(SpatialReference::FromEPSG(epsg), driverName, fileExtension, driverOptions)
 {
 }
 

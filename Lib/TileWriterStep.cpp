@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, std::string epsgFormat, std::string fileExtension, std::vector<std::string> driverOptions)
+TileWriterStep::TileWriterStep(std::string tileDirectory, std::string persistenceUrl, std::string driverName, int epsgFormat, std::string fileExtension, std::vector<std::string> driverOptions)
                     :   ProcessingStep(Sink),
                         _tileDirectory(tileDirectory),
                         _persistenceUrl(persistenceUrl),
@@ -60,7 +60,7 @@ std::string TileWriterStep::DriverName() const
     return _driverName;
 }
 
-std::string TileWriterStep::EpsgFormat() const
+int TileWriterStep::EpsgFormat() const
 {
     return _epsgFormat;
 }

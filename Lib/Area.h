@@ -13,7 +13,7 @@ class Area
         Area();
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight);
         Area(const SpatialReference& projectionReference, const Point& leftTop, const Point &bottomRight, string description);
-        Area(double minX, double minY, double maxX, double maxY, string wellKnownGeogCS = "EPSG:4326", string description="");
+        Area(double minX, double minY, double maxX, double maxY, int epsg = 4326, string description="");
         Area(const shared_ptr<Geometry> geometry);
 
         operator shared_ptr<Geometry>() const
@@ -40,7 +40,7 @@ class Area
 
         SpatialReference ProjectionReference() const;
         void SetProjectionReference(const SpatialReference& projectionReference);
-        void SetEPSG(std::string epsg);
+        void SetEPSG(int epsg);
 
         Point LeftTop() const;
         void SetLeftTop(const Point& leftTop);

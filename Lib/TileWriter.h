@@ -38,7 +38,7 @@ class TileWriter
 class GdalWriter : public GeoTileWriter
 {
 public:
-    GdalWriter(std::string epsgFormat = "EPSG:4326", std::string driverName = "GTiff", std::string fileExtension = "tiff", std::vector<std::string> driverOptions = {});
+    GdalWriter(int epsg = 4326, std::string driverName = "GTiff", std::string fileExtension = "tiff", std::vector<std::string> driverOptions = {});
     GdalWriter(const SpatialReference& targetProjection, std::string driverName = "GTiff", std::string fileExtension = "tiff", std::vector<std::string> driverOptions = {});
     virtual ~GdalWriter();
 

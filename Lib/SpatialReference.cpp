@@ -21,6 +21,11 @@ void SpatialReference::SetWellKnownGeogCS(const char* geoCs)
     _spatialReference.SetWellKnownGeogCS(geoCs);
 }
 
+void SpatialReference::ImportFromEPSG(int epsg)
+{
+    _spatialReference.importFromEPSG(epsg);
+}
+
 bool SpatialReference::IsSame(SpatialReference& reference)
 {
     OGRSpatialReference otherReference = reference.InnerReference();
@@ -44,9 +49,9 @@ std::string SpatialReference::ToWkt() const
     return wkt;
 }
 
-SpatialReference SpatialReference::FromEPSG(string epsgCode)
+SpatialReference SpatialReference::FromEPSG(int epsg)
 {
     SpatialReference reference;
-    reference.SetWellKnownGeogCS(epsgCode.c_str());
+    reference.ImportFromEPSG(epsg);
     return reference;
 }

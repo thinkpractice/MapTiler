@@ -20,7 +20,7 @@ Area::Area(const SpatialReference& projectionReference,
 {
 }
 
-Area::Area(double minX, double minY, double maxX, double maxY, string epsgCode, string description)
+Area::Area(double minX, double minY, double maxX, double maxY, int epsgCode, string description)
         :   Area(SpatialReference::FromEPSG(epsgCode), Point(minX, minY), Point(maxX, maxY), description)
 {
 }
@@ -40,7 +40,7 @@ void Area::SetProjectionReference(const SpatialReference &projectionReference)
     _spatialReference = projectionReference;
 }
 
-void Area::SetEPSG(string epsg)
+void Area::SetEPSG(int epsg)
 {
     SetProjectionReference(SpatialReference::FromEPSG(epsg));
 }

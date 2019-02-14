@@ -14,13 +14,14 @@ class SpatialReference
         SpatialReference(const OGRSpatialReference* reference);
 
         void SetWellKnownGeogCS(const char* geoCs);
+        void ImportFromEPSG(int epsg);
         bool IsSame(SpatialReference& reference);
 
         OGRSpatialReference InnerReference() const;
         string ToWkt() const;
 
     public:
-        static SpatialReference FromEPSG(string epsgCode);
+        static SpatialReference FromEPSG(int epsg);
 
     private:
         OGRSpatialReference _spatialReference;

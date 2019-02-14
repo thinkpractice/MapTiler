@@ -34,8 +34,8 @@ public:
     std::vector<std::string> DriverOptions() const;
     void SetDriverOptions(const std::vector<std::string>& driverOptions);
 
-    std::string EpsgFormat() const;
-    void SetEpsgFormat(const std::string &epsgFormat);
+    int EpsgFormat() const;
+    void SetEpsgFormat(const int epsgFormat);
 
     std::string FileExtension() const;
     void SetFileExtension(const std::string &fileExtension);
@@ -72,7 +72,7 @@ private:
     std::string _maskingLayerName;
     std::string _driverName;
     std::vector<std::string> _driverOptions;
-    std::string _epsgFormat;
+    int _epsgFormat;
     std::string _fileExtension;
     std::string _outputDirectory;
 
