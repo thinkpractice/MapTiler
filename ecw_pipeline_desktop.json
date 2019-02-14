@@ -4,8 +4,6 @@
         "layer_name" : "rgb_2016",
         "layer_url" : "/media/tim/Data/Work/CBS/NL/2016_totaalmozaiek_RGB_lrl.ecw"
     },
-    "tile_width" : 256,
-    "tile_height" : 256,
     "area" :
     {
         "description" : "Zuid Limburg",
@@ -25,6 +23,8 @@
         {
             "name" : "Step 1: Produces Tiles for Map",
             "type" : "TileProducerStep",
+            "tile_width" : 256,
+            "tile_height" : 256,
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         },
         {
