@@ -9,26 +9,6 @@ Settings::~Settings()
 {
 }
 
-int Settings::TileWidth() const
-{
-    return _tileWidth;
-}
-
-void Settings::SetTileWidth(int width)
-{
-    _tileWidth = width;
-}
-
-int Settings::TileHeight() const
-{
-    return _tileHeight;
-}
-
-void Settings::SetTileHeight(int height)
-{
-    _tileHeight = height;
-}
-
 Area Settings::ChosenArea() const
 {
     return _chosenArea;

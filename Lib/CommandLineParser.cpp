@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include "GeoMapProvider.h"
 #include "Utils.h"
+#include <iostream>
 
 CommandLineParser::CommandLineParser()
 {
@@ -22,15 +23,13 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
         {{"t", "target-directory"},
             QCoreApplication::translate("main", "Copy all the tiles into <directory>."),
             QCoreApplication::translate("main", "directory"), "/media/tim/Data/Work/CBS/Tiles/"},
-        {{"c","tilewidth"}, QCoreApplication::translate("main","The <width> (number of columns) of the tiles to be written to disk")},
-        {{"r","tileheight"}, QCoreApplication::translate("main","The <height> (number of rows) of the tiles to be written to disk")}
     });
 
     if (!_parser.parse(QCoreApplication::arguments()))
     {
-        cerr << _parser.errorText().toStdString() << endl;
-        cerr << endl << endl;
-        cerr << qPrintable(_parser.helpText()) << endl;
+        std::cerr << _parser.errorText().toStdString() << std::endl;
+        std::cerr << std::endl << std::endl;
+        std::cerr << qPrintable(_parser.helpText()) << std::endl;
         return CommandLineError;
     }
 
@@ -66,9 +65,6 @@ CommandLineParser::CommandLineParseResult CommandLineParser::Parse()
     _settings.SetAddress(GetStringValue("address", _settings.Address()));
     _settings.SetAddressOption(GetIntValue("addressoption"));
     _settings.SetOutputDirectory(GetStringValue("t"));
-
-    _settings.SetTileWidth(GetIntValue("c", _settings.TileWidth()));
-    _settings.SetTileHeight(GetIntValue("r", _settings.TileHeight()));
 
     const QStringList positionalArguments = _parser.positionalArguments();
     std::string mainRasterUrl = _settings.MainRasterUrl();
@@ -110,6 +106,6 @@ void CommandLineParser::DisplayUrl(std::string displayUrl)
     GeoMapProvider mapProvider(displayUrl);
     for (auto map : mapProvider.Maps())
     {
-        cout << "title=" + map->Title() + ", url=" + map->Filename() << endl;
+        std::cout << "title=" + map->Title() + ", url=" + map->Filename() << std::endl;
     }
 }

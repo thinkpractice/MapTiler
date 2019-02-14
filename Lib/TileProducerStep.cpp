@@ -109,6 +109,8 @@ void TileProducerStep::LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersis
 void TileProducerStep::Run()
 {
     cout << "Map dimensions = (" << _map->WidthInPixels() << "," << _map->HeightInPixels() << ")" << endl;
+    std::cout << "Tile width: " << _tileGrid.TileWidth() << std::endl;
+    std::cout << "Tile height: " << _tileGrid.TileHeight() << std::endl;
     cout << "TileGrid dimensions=(" << _tileGrid.WidthInTiles() << "," << _tileGrid.HeightInTiles() << ")" << endl;
     cout << "Pixel dimensions" << _tileGrid.PixelDimensions().Left() << "," << _tileGrid.PixelDimensions().Top() << "," << _tileGrid.PixelDimensions().Width() << "," << _tileGrid.PixelDimensions().Height() << endl;
     cout << "Tile Dimensions=(" << _tileGrid.TileWidth() << "," << _tileGrid.TileHeight() << ")" << endl;

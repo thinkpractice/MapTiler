@@ -37,8 +37,6 @@ public slots:
     {
         std::cout << "Target directory: " << _settings.OutputDirectory() << std::endl;
         std::cout << "Address: " << _settings.Address() << std::endl;
-        std::cout << "Tile width: " << _settings.TileWidth() << std::endl;
-        std::cout << "Tile height: " << _settings.TileHeight() << std::endl;
 
         AreaLookup areaLookup;
         areaLookup.AddListener([&](std::vector<Area> areas){

@@ -12,12 +12,6 @@ public:
     Settings();
     virtual ~Settings();
 
-    int TileWidth() const;
-    void SetTileWidth(int width);
-
-    int TileHeight() const;
-    void SetTileHeight(int height);
-
     Area ChosenArea() const;
     void SetChosenArea(const Area& area);
 

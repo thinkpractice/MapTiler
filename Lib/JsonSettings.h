@@ -87,18 +87,9 @@ void from_json(const json& j, Settings& settings)
     settings.SetMainRasterName(j.at("mainRaster").at("layer_name").get<std::string>());
     settings.SetMainRasterUrl(j.at("mainRaster").at("layer_url").get<std::string>());
     settings.SetMainRasterLayerIndex(j.value("layer_index", 0));
-    settings.SetTileWidth(j.at("tile_width").get<int>());
-    settings.SetTileHeight(j.at("tile_height").get<int>());
     settings.SetChosenArea(j.at("area").get<Area>());
 
     vector<StepSettings> stepSettingsCollection = j.at("steps").get<std::vector<StepSettings>>();
-    for (auto& stepSettings : stepSettingsCollection)
-    {
-        if (stepSettings.TileWidth() == StepSettings::TileWidthNotSet)
-            stepSettings.SetTileWidth(settings.TileWidth());
-        if (stepSettings.TileHeight() == StepSettings::TileHeightNotSet)
-            stepSettings.SetTileHeight(settings.TileHeight());
-    }
     settings.SetStepSettingsCollection(stepSettingsCollection);
 }
 
