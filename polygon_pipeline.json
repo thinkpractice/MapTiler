@@ -9,7 +9,7 @@
     "area" :
     {
         "description" : "Heerlen",
-        "epsg" : "epsg:4326",
+        "epsg" : 4326,
         "top_left" :
         {
             "lat" : 5,
