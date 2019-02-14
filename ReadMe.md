@@ -49,7 +49,7 @@ make
 To run MapTiler, several options have to specified first. The general syntax to run MapTiler looks like this:
 
 ~~~~
-./MapTiler [options] rasterurl polygonurl
+./MapTiler [options] rasterurl 
 ~~~~
 
 ### Options
@@ -57,16 +57,26 @@ To run MapTiler, several options have to specified first. The general syntax to 
 The following options can be provided to the application:
 * **-h**, **--help**, displays a help message.
 * **-v**, **--version**, displays version information.
-* **-d**, **--defaulturls**, uses default urls for rasterurl and vectorurl.
+* **-p**, **--pipeline_settings**, a json file containing the settings for a MapTiler processing pipeline.
 * **--address** *location*, the *location* (address/city name/region) for which the tiles should be downloaded.
 * **-a**, **--addressoption** *locationoption*, the location option to choose if the address gives back multiple option (default=first).
 * **-t**, **--target-directory** *directory*, copy all the tiles into *directory*.
-* **-c**, **--tilewidth** *width*, the *width* (number of columns) of the tiles to be written to disk.
-* **-r**, **--tileheight** *height*, the *height* (number of rows) of the tiles to be written to disk.
 
 ### Arguments
 
-Unless the -d, --defaulturls option (see above) has been specified MapTiler also needs the following arguments:
+Unless the a polygon file has been specified MapTiler also needs the following argument:
 * **rasterurl**, *url* to raster webservice (WMS/WMTS) with the aerial image.
-* **vectorurl**, *url* to the vector webservice (WFS) with the polygons.
+
+## Pipeline settings file
+
+To process map files and create tiles out of them, MapTiler uses pipelines. Pipelines consist of several processing steps and can be configured using json setting files. Currently, a pipeline can consist of the following processing steps:
+
+* **AddMetadataStep**, to add extra metadata from another information source to each tiles. For example, the addresses present in each tile can be added from a register/table containing geoinformation about addresses.
+* **TileProducerStep**, a step that creates the tiles from a bounding box specified.
+* **TileFilterStep**, a step that can filter tiles according to some metadata source added earlier by AddMetadataStep. This step can be used to for example filter out all tiles without addresses.
+* **TileDownloadStep**, downloads the tile from a map file or webservice.
+* **TileGpuTransferStep**, masks the tiles with information from a certain metadata source added earlier by AddMetadataStep. For example, a data source containing the building polygons can be used to cutout the buildings from a tile.
+* **TileWriterStep**, writes the tiles to disk in a specified format (jpeg, tiff, etc.)
+
+
 
