@@ -140,6 +140,7 @@ void GDALMap::WriteTile(shared_ptr<GeoTile> tile)
         rasterBand->RasterIO(GF_Write, 0, 0, tileWidth, tileHeight, rasterData, tileWidth, tileHeight, GDT_Byte, 0, 0 );
         delete[] rasterData;
     }
+    Dataset()->FlushCache();
 }
 
 Rect GDALMap::RectForArea(const Area& area)

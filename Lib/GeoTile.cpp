@@ -5,8 +5,8 @@
 using namespace std;
 
 GeoTile::GeoTile(const Rect& rect, const Area& area, int numberOfLayers)
-            :   _rect(rect),
-                _area(area),
+            :   _area(area),
+                _rect(rect),
                 _numberOfLayers(numberOfLayers)
 {
     _data = new unsigned char[NumberOfBytes()];
