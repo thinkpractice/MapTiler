@@ -16,8 +16,6 @@ class GeoTile
         Area BoundingArea();
 
         unsigned char* Data();
-        void SetRasterData(unsigned char** rasterData);
-
         unsigned char* GetRasterBand(int rasterIndex);
 
     private:

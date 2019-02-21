@@ -89,43 +89,30 @@ Area GDALMap::GetMapArea()
 
 unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
 {
-    int width, height = 0;
-    tie(width, height) = GetTileSize();
+    Area tileArea = AreaForRect(rectangle);
+    //Always return a GeoTile with 4 bands; an image in RGBA format
+    uint numberOfBands = 4;
+    auto geoTile = make_unique<GeoTile>(rectangle, tileArea, numberOfBands);
 
-    //Make sure images with less bands are converted to RGBA
-    GByte *rasterData[4];
+    int width = rectangle.IntegerWidth();
+    int height = rectangle.IntegerHeight();
     for (int i = 0; i < RasterCount(); i++)
     {
-		//cout << "Getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << endl;
-        rasterData[i] = GetDataForBand(i+1, static_cast<int>(rectangle.Left()), static_cast<int>(rectangle.Top()), rectangle.IntegerWidth(), rectangle.IntegerHeight());
-    }
-
-    //Add extra channels if not present
-    int numberOfBandsToFill = 4 - RasterCount();
-    if (numberOfBandsToFill > 0)
-    {
-        for (int i = 0; i < numberOfBandsToFill; i++)
+        GDALRasterBand* band = Dataset()->GetRasterBand(i);
+        CPLErr error = band->RasterIO(GDALRWFlag::GF_Read,
+                                      static_cast<int>(rectangle.Left()), static_cast<int>(rectangle.Top()),
+                                      width, height,
+                                      geoTile->Data(),
+                                      width, height,
+                                      GDALDataType::GDT_Byte, numberOfBands,
+                                      static_cast<int>(numberOfBands) * width);
+        if (error != CPLErr::CE_None)
         {
-            size_t rasterBandSize = static_cast<size_t>(rectangle.IntegerWidth() * rectangle.IntegerHeight());
-            GByte* data = static_cast<GByte*>(CPLMalloc(rasterBandSize));
-
-            //fill alpha channel with 255, the rest of the channels with 0
-            GByte fillValue = i == (numberOfBandsToFill - 1) ? 255 : 0;
-            std::memset(data, fillValue, rasterBandSize);
-
-            rasterData[RasterCount() + i] = data;
+            std::cerr << "error=" << error << " requesting a tile of " << (width * height) << " bytes" << std::endl;
+            std::cerr << "Error getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << std::endl;
+            return nullptr;
         }
     }
-
-    Area tileArea = AreaForRect(rectangle);
-    auto geoTile = make_unique<GeoTile>(rectangle, tileArea, 4);
-    geoTile->SetRasterData(rasterData);
-
-    for (int i = 0; i < 4;i++)
-    {
-        CPLFree(rasterData[i]);
-    }
-
     return geoTile;
 }
 
@@ -186,7 +173,7 @@ GDALDataset* GDALMap::Dataset()
     return _dataset;
 }
 
-std::tuple<int, int> GDALMap::GetTileSize()
+std::tuple<int, int> GDALMap::GetBlockSize()
 {
     int width, height = 0;
     GDALRasterBand* band = Dataset()->GetRasterBand(1);

@@ -48,7 +48,7 @@ class GeoMap
         virtual unique_ptr<GeoTile> GetTileForRect(const Rect& rect) = 0;
         virtual void WriteTile(shared_ptr<GeoTile> tile) = 0;
 
-        virtual tuple<int, int> GetTileSize() = 0;
+        virtual tuple<int, int> GetBlockSize() = 0;
         virtual Rect RectForArea(const Area& area) = 0;
         virtual Area AreaForRect(const Rect& rect) = 0;
 

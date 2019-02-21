@@ -35,7 +35,7 @@ class GDALMap : public GeoMap
         unique_ptr<GeoTile> GetTileForRect(const Rect& rectangle);
         void WriteTile(shared_ptr<GeoTile> tile);
 
-        std::tuple<int, int> GetTileSize();
+        std::tuple<int, int> GetBlockSize();
         Rect RectForArea(const Area& area);
         Area AreaForRect(const Rect& rect);
 

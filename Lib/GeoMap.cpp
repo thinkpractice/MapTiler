@@ -67,7 +67,7 @@ vector<Rect> GeoMap::GetTilesForRect(const Rect& rect)
 {
     vector<Rect> tileRectangles;
     int tileWidth, tileHeight = 0;
-    tie(tileWidth, tileHeight) = GetTileSize();
+    tie(tileWidth, tileHeight) = GetBlockSize();
     for (int x = rect.Left(); x <= rect.Right() && x < WidthInPixels() ; x += tileWidth)
     {
         for (int y = rect.Top(); y <= rect.Bottom() && y < HeightInPixels(); y += tileHeight)

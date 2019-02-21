@@ -1,6 +1,7 @@
 #include "GeoTile.h"
 #include "Utils.h"
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -10,6 +11,7 @@ GeoTile::GeoTile(const Rect& rect, const Area& area, int numberOfLayers)
                 _numberOfLayers(numberOfLayers)
 {
     _data = new unsigned char[NumberOfBytes()];
+    std::memset(_data, 255, NumberOfBytes());
 }
 
 GeoTile::~GeoTile()
@@ -40,18 +42,6 @@ Area GeoTile::BoundingArea()
 unsigned char* GeoTile::Data()
 {
     return _data;
-}
-
-void GeoTile::SetRasterData(unsigned char** rasterData)
-{
-    unsigned char* data = Data();
-    for (size_t arrayIndex = 0, i = 0; arrayIndex < NumberOfBytes(); arrayIndex += NumberOfLayers(), i++)
-    {
-        for (int layerIndex = 0; layerIndex < NumberOfLayers(); layerIndex++)
-        {
-            data[arrayIndex+layerIndex] = rasterData[layerIndex][i];
-        }
-    }
 }
 
 unsigned char* GeoTile::GetRasterBand(int rasterIndex)
