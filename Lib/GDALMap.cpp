@@ -119,13 +119,25 @@ void GDALMap::WriteTile(shared_ptr<GeoTile> tile)
 {
     int tileWidth = tile->BoundingRect().IntegerWidth();
     int tileHeight = tile->BoundingRect().IntegerHeight();
-    for (int rasterIndex = 1; rasterIndex <= RasterCount(); rasterIndex++)
+    int numberOfBands = tile->NumberOfLayers();
+
+    CPLErr error = Dataset()->RasterIO(GDALRWFlag::GF_Write,
+                      0, 0,
+                      tileWidth, tileHeight,
+                      tile->Data(),
+                      tileWidth, tileHeight,
+                      GDALDataType::GDT_Byte,
+                      numberOfBands,
+                      nullptr,
+                      numberOfBands, tileWidth * static_cast<int>(numberOfBands), 1, nullptr);
+
+    if (error != CPLErr::CE_None)
     {
-        GDALRasterBand* rasterBand = Dataset()->GetRasterBand(rasterIndex);
-        unsigned char* rasterData = tile->GetRasterBand(rasterIndex);
-        rasterBand->RasterIO(GF_Write, 0, 0, tileWidth, tileHeight, rasterData, tileWidth, tileHeight, GDT_Byte, 0, 0 );
-        delete[] rasterData;
+        Rect rectangle = tile->BoundingRect();
+        std::cerr << "error=" << error << " writing a tile of " << tile->NumberOfBytes() << " bytes" << std::endl;
+        std::cerr << "Error getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << std::endl;
     }
+
     Dataset()->FlushCache();
 }
 
