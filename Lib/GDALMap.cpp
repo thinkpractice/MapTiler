@@ -102,7 +102,8 @@ unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
                       width, height,
                       geoTile->Data(),
                       width, height,
-                      GDALDataType::GDT_Byte, static_cast<int>(numberOfBands),
+                      GDALDataType::GDT_Byte,
+                      RasterCount(),
                       nullptr,
                       0, 0, 0, nullptr);
 
