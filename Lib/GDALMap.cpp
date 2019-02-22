@@ -96,7 +96,6 @@ unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
 
     int width = rectangle.IntegerWidth();
     int height = rectangle.IntegerHeight();
-
     CPLErr error = Dataset()->RasterIO(GDALRWFlag::GF_Read,
                       static_cast<int>(rectangle.Left()), static_cast<int>(rectangle.Top()),
                       width, height,
@@ -105,7 +104,7 @@ unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
                       GDALDataType::GDT_Byte,
                       RasterCount(),
                       nullptr,
-                      0, 0, 0, nullptr);
+                      numberOfBands, width * static_cast<int>(numberOfBands), 1, nullptr);
 
     if (error != CPLErr::CE_None)
     {
