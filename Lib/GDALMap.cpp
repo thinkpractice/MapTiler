@@ -96,22 +96,21 @@ unique_ptr<GeoTile> GDALMap::GetTileForRect(const Rect& rectangle)
 
     int width = rectangle.IntegerWidth();
     int height = rectangle.IntegerHeight();
-    for (int i = 0; i < RasterCount(); i++)
+
+    CPLErr error = Dataset()->RasterIO(GDALRWFlag::GF_Read,
+                      static_cast<int>(rectangle.Left()), static_cast<int>(rectangle.Top()),
+                      width, height,
+                      geoTile->Data(),
+                      width, height,
+                      GDALDataType::GDT_Byte, static_cast<int>(numberOfBands),
+                      nullptr,
+                      0, 0, 0, nullptr);
+
+    if (error != CPLErr::CE_None)
     {
-        GDALRasterBand* band = Dataset()->GetRasterBand(i+1);
-        CPLErr error = band->RasterIO(GDALRWFlag::GF_Read,
-                                      static_cast<int>(rectangle.Left()), static_cast<int>(rectangle.Top()),
-                                      width, height,
-                                      geoTile->Data(),
-                                      width, height,
-                                      GDALDataType::GDT_Byte, numberOfBands,
-                                      static_cast<int>(numberOfBands) * width);
-        if (error != CPLErr::CE_None)
-        {
-            std::cerr << "error=" << error << " requesting a tile of " << (width * height) << " bytes" << std::endl;
-            std::cerr << "Error getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << std::endl;
-            return nullptr;
-        }
+        std::cerr << "error=" << error << " requesting a tile of " << (width * height) << " bytes" << std::endl;
+        std::cerr << "Error getting Rectangle " << rectangle.Left() << "," << rectangle.Top() << "," << rectangle.Width() << "," << rectangle.Height() << std::endl;
+        return nullptr;
     }
     return geoTile;
 }
