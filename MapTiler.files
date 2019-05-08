@@ -16,6 +16,8 @@ Lib/StepFactory.cpp
 Lib/StepFactory.h
 Lib/StepSettings.cpp
 Lib/StepSettings.h
+Lib/TileFromLocationProducerStep.cpp
+Lib/TileFromLocationProducerStep.h
 Lib/Value.cpp
 Lib/Value.h
 Lib/json.hpp

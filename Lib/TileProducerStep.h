@@ -20,9 +20,12 @@ public:
     virtual void Run();
 
     void CreateStepData();
+    std::shared_ptr<GeoMap> Map();
     std::string PersistenceUrl();
-    Area AreaOfInterest();
-    Rect RectToProcess();
+    Area AreaOfInterest() const;
+    Rect RectToProcess() const;
+    int TileWidth() const;
+    int TileHeight() const;
 
 protected:
     bool TilesInDatabase(std::shared_ptr<DatabaseWrapper> databasePersistence, Area areaToProcess);
@@ -35,6 +38,8 @@ private:
     Area _area;
     Rect _rectToProcess;
     std::string _persistenceUrl;
+    int _tileWidth;
+    int _tileHeight;
     bool _createNewTilesIfAlreadyAvailable;
 };
 

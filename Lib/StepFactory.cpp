@@ -1,5 +1,6 @@
 #include "StepFactory.h"
 #include "GridProducerStep.h"
+#include "TileFromLocationProducerStep.h"
 #include "AddMetadataStep.h"
 #include "TileFilterStep.h"
 #include "TileDownloadStep.h"
@@ -26,6 +27,15 @@ StepFactory::StepFactory()
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
                 return std::make_unique<GridProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
+            }
+        },
+        {
+            "TileFromLocationProducerStep",
+            [&](const Settings& settings, const StepSettings& stepSettings)
+            {
+                return std::make_unique<TileFromLocationProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(),
+                            LoadVectorFile(settings, stepSettings), stepSettings.LayerName(), stepSettings.LayerIndex(),
+                            stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
             }
         },
         {

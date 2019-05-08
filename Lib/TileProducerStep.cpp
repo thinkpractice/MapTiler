@@ -21,6 +21,8 @@ TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rect
                     _map(map),
                     _area(areaToProcess),
                     _rectToProcess(rectToProcess),
+                    _tileWidth(tileWidth),
+                    _tileHeight(tileHeight),
                     _persistenceUrl(persistenceUrl),
                     _createNewTilesIfAlreadyAvailable(createNewTilesIfAlreadyAvailable)
 {
@@ -30,19 +32,34 @@ TileProducerStep::~TileProducerStep()
 {
 }
 
+std::shared_ptr<GeoMap> TileProducerStep::Map()
+{
+    return _map;
+}
+
 std::string TileProducerStep::PersistenceUrl()
 {
     return _persistenceUrl;
 }
 
-Area TileProducerStep::AreaOfInterest()
+Area TileProducerStep::AreaOfInterest() const
 {
     return _area;
 }
 
-Rect TileProducerStep::RectToProcess()
+Rect TileProducerStep::RectToProcess() const
 {
     return _rectToProcess;
+}
+
+int TileProducerStep::TileWidth() const
+{
+    return _tileWidth;
+}
+
+int TileProducerStep::TileHeight() const
+{
+    return _tileHeight;
 }
 
 bool TileProducerStep::TilesInDatabase(std::shared_ptr<DatabaseWrapper> databasePersistence, Area areaToProcess)
@@ -124,5 +141,3 @@ void TileProducerStep::Run()
 
     DoneProcessing();
 }
-
-
