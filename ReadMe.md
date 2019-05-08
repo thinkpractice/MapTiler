@@ -72,7 +72,8 @@ Unless the a polygon file has been specified MapTiler also needs the following a
 To process map files and create tiles out of them, MapTiler uses pipelines. Pipelines consist of several processing steps and can be configured using json setting files. Currently, a pipeline can consist of the following processing steps:
 
 * **AddMetadataStep**, to add extra metadata from another information source to each tiles. For example, the addresses present in each tile can be added from a register/table containing geoinformation about addresses.
-* **TileProducerStep**, a step that creates the tiles from a bounding box specified.
+* **GridProducerStep**, a step that creates the tiles from a regular grid for which the bounding box was specified.
+* **TileFromLocationProducerStep**, a step that creates the tiles from a layer containing geolocations.
 * **TileFilterStep**, a step that can filter tiles according to some metadata source added earlier by AddMetadataStep. This step can be used to for example filter out all tiles without addresses.
 * **TileDownloadStep**, downloads the tile from a map file or webservice.
 * **TileGpuTransferStep**, masks the tiles with information from a certain metadata source added earlier by AddMetadataStep. For example, a data source containing the building polygons can be used to cutout the buildings from a tile.
