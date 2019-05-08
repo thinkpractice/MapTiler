@@ -17,19 +17,23 @@ public:
     TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight, std::string persistenceUrl = "", bool createNewTilesIfAlreadyAvailable = false);
     virtual ~TileProducerStep();
 
-    void Run();
+    virtual void Run();
 
     void CreateStepData();
+    std::string PersistenceUrl();
+    Area AreaOfInterest();
+    Rect RectToProcess();
 
-private:
+protected:
     bool TilesInDatabase(std::shared_ptr<DatabaseWrapper> databasePersistence, Area areaToProcess);
-    void CreateTile(std::shared_ptr<DatabaseWrapper> databasePersistence, long long areaId, const Rect& tileRect);
-    void CreateTiles(std::shared_ptr<DatabaseWrapper> databasePersistence);
+    void CreateTile(std::shared_ptr<DatabaseWrapper> databasePersistence, long long areaId, const Rect& tileRect, int totalNumberOfTiles);
+    virtual void CreateTiles(std::shared_ptr<DatabaseWrapper> databasePersistence) = 0;
     void LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersistence, Area areaToProcess);
 
 private:
-    TileGrid _tileGrid;
-	std::shared_ptr<GeoMap> _map;
+    std::shared_ptr<GeoMap> _map;
+    Area _area;
+    Rect _rectToProcess;
     std::string _persistenceUrl;
     bool _createNewTilesIfAlreadyAvailable;
 };

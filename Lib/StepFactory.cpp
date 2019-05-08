@@ -1,5 +1,5 @@
 #include "StepFactory.h"
-#include "TileProducerStep.h"
+#include "GridProducerStep.h"
 #include "AddMetadataStep.h"
 #include "TileFilterStep.h"
 #include "TileDownloadStep.h"
@@ -17,7 +17,15 @@ StepFactory::StepFactory()
             "TileProducerStep",
             [&](const Settings& settings, const StepSettings& stepSettings)
             {
-                return std::make_unique<TileProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
+                std::cerr << "TileProducerStep type will be replaced by GridProducerStep, please use this step type in future versions" << endl;
+                return std::make_unique<GridProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
+            }
+        },
+        {
+            "GridProducerStep",
+            [&](const Settings& settings, const StepSettings& stepSettings)
+            {
+                return std::make_unique<GridProducerStep>(settings.MainRasterUrl(), settings.MainRasterLayerIndex(), settings.ChosenArea(), stepSettings.TileWidth(), stepSettings.TileHeight(), stepSettings.PersistenceUrl());
             }
         },
         {

@@ -4,6 +4,8 @@ Lib/DatabaseWrapper.cpp
 Lib/DatabaseWrapper.h
 Lib/Geometry.cpp
 Lib/Geometry.h
+Lib/GridProducerStep.cpp
+Lib/GridProducerStep.h
 Lib/JsonSettings.h
 Lib/Point.cpp
 Lib/Ring.cpp

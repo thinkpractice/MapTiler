@@ -18,8 +18,9 @@ TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Area &area
 
 TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rectToProcess, const Area& areaToProcess, int tileWidth, int tileHeight, std::string persistenceUrl, bool createNewTilesIfAlreadyAvailable)
                 :   ProcessingStep(Source),
-                    _tileGrid(rectToProcess, areaToProcess, tileWidth, tileHeight),
                     _map(map),
+                    _area(areaToProcess),
+                    _rectToProcess(rectToProcess),
                     _persistenceUrl(persistenceUrl),
                     _createNewTilesIfAlreadyAvailable(createNewTilesIfAlreadyAvailable)
 {
@@ -29,6 +30,21 @@ TileProducerStep::~TileProducerStep()
 {
 }
 
+std::string TileProducerStep::PersistenceUrl()
+{
+    return _persistenceUrl;
+}
+
+Area TileProducerStep::AreaOfInterest()
+{
+    return _area;
+}
+
+Rect TileProducerStep::RectToProcess()
+{
+    return _rectToProcess;
+}
+
 bool TileProducerStep::TilesInDatabase(std::shared_ptr<DatabaseWrapper> databasePersistence, Area areaToProcess)
 {
     if (databasePersistence && databasePersistence->GetAreaFor(areaToProcess.Description()))
@@ -36,7 +52,7 @@ bool TileProducerStep::TilesInDatabase(std::shared_ptr<DatabaseWrapper> database
     return false;
 }
 
-void TileProducerStep::CreateTile(std::shared_ptr<DatabaseWrapper> databasePersistence, long long areaId, const Rect& tileRect)
+void TileProducerStep::CreateTile(std::shared_ptr<DatabaseWrapper> databasePersistence, long long areaId, const Rect& tileRect, int totalNumberOfTiles)
 {
     try
     {
@@ -47,23 +63,13 @@ void TileProducerStep::CreateTile(std::shared_ptr<DatabaseWrapper> databasePersi
         long long tileId = databasePersistence ? databasePersistence->SaveTile(areaId, stepData->UniqueId(), area) : 0;
         stepData->SetTileId(tileId);
 
-        StepData::SetNumberOfTiles(_tileGrid.NumberOfTiles());
+        StepData::SetNumberOfTiles(totalNumberOfTiles);
 
         OutQueue()->enqueue(std::move(stepData));
     }
     catch (...)
     {
        std::cerr << "Error creating tiles." << std::endl;
-    }
-}
-
-void TileProducerStep::CreateTiles(std::shared_ptr<DatabaseWrapper> databasePersistence)
-{
-    std::cout << "Creating new tiles for area: " << _tileGrid.GridArea().Description() << endl;
-    long long areaId = databasePersistence ? databasePersistence->SaveAreaOfInterest(_tileGrid.GridArea()) : 0;
-    for (auto& tileRect : _tileGrid)
-    {
-        CreateTile(databasePersistence, areaId, tileRect);
     }
 }
 
@@ -79,7 +85,7 @@ void TileProducerStep::LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersis
         return;
     }
 
-    std::cout << "Loading tiles from database for area: " << _tileGrid.GridArea().Description() << endl;
+    std::cout << "Loading tiles from database for area: " << AreaOfInterest().Description() << endl;
     StepData::SetNumberOfTiles(tilesForArea.size());
     try
     {
@@ -109,17 +115,12 @@ void TileProducerStep::LoadTiles(std::shared_ptr<DatabaseWrapper> databasePersis
 void TileProducerStep::Run()
 {
     cout << "Map dimensions = (" << _map->WidthInPixels() << "," << _map->HeightInPixels() << ")" << endl;
-    std::cout << "Tile width: " << _tileGrid.TileWidth() << std::endl;
-    std::cout << "Tile height: " << _tileGrid.TileHeight() << std::endl;
-    cout << "TileGrid dimensions=(" << _tileGrid.WidthInTiles() << "," << _tileGrid.HeightInTiles() << ")" << endl;
-    cout << "Pixel dimensions" << _tileGrid.PixelDimensions().Left() << "," << _tileGrid.PixelDimensions().Top() << "," << _tileGrid.PixelDimensions().Width() << "," << _tileGrid.PixelDimensions().Height() << endl;
-    cout << "Tile Dimensions=(" << _tileGrid.TileWidth() << "," << _tileGrid.TileHeight() << ")" << endl;
 
     std::shared_ptr<DatabaseWrapper> databasePersistence = DatabaseWrapper::DatabaseWrapperFor(_persistenceUrl);
-    if (_createNewTilesIfAlreadyAvailable || !TilesInDatabase(databasePersistence, _tileGrid.GridArea()))
+    if (_createNewTilesIfAlreadyAvailable || !TilesInDatabase(databasePersistence, AreaOfInterest()))
         CreateTiles(databasePersistence);
     else
-        LoadTiles(databasePersistence, _tileGrid.GridArea());
+        LoadTiles(databasePersistence, AreaOfInterest());
 
     DoneProcessing();
 }
