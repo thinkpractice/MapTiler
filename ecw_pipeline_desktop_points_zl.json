@@ -1,14 +1,14 @@
 {
     "mainRaster" :
     {
-        "layer_name" : "rgb_2016",
-        "layer_url" : "/media/tim/Data/Work/CBS/DeepSolaris/Images/NL/2016_totaalmozaiek_RGB_lrl.ecw"
+        "layer_name" : "rgb_2017",
+        "layer_url" : "/media/tim/Data/Work/CBS/DeepSolaris/Images/NL/2017_totaalmozaiek_RGB_lrl.ecw"
     },
     "tile_width" : 80,
     "tile_height" : 80,
     "area" :
     {
-        "description" : "Zuid Limburg Points5",
+        "description" : "Zuid Limburg Points8",
         "epsg" : 28992,
         "top_left" :
         {
@@ -62,12 +62,12 @@
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
             "type" : "TileDownloadStep",
-            "layer_name" : "rgb_2016",
+            "layer_name" : "rgb_2017",
             "layer_url" : "/media/tim/Data/Work/CBS/DeepSolaris/Images/NL/2016_totaalmozaiek_RGB_lrl.ecw",
             "driver_options" :["ECW_CACHE_MAXMEM=2147483648"],
             "tile_width" : 80,
             "tile_height" : 80,
-            "year" : 2016
+            "year" : 2017
         },        
         {
             "name" : "Step 6: Write Files To Disk",
@@ -75,7 +75,7 @@
             "driver_name" : "GTiff",
             "file_extension" : "tiff",
 	    "driver_options" :["COMPRESS=DEFLATE"],
-            "output_directory" : "/media/tim/Data/Work/CBS/DeepSolaris/Images/ZL_Points/",
+            "output_directory" : "/media/tim/Data/Work/CBS/DeepSolaris/Images/ZL_Points_2017/",
             "persistence_url" : "PG:dbname='deepsolaris' host='localhost' port='5432' user='postgres' password='tim2839'"
         }
     ]

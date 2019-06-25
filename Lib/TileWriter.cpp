@@ -83,6 +83,12 @@ std::vector<string> GdalWriter::DriverOptions() const
 
 shared_ptr<GeoMap> GdalWriter::MapFor(shared_ptr<GeoTile> tile, string filename)
 {
+    if (!tile)
+    {
+        cerr << "Cannot write: tile is null" << endl;
+        return nullptr;
+    }
+
     GDALDriver* driver = DriverFor(DriverName());
     if (!SupportsCreate(driver))
     {
