@@ -1,0 +1,49 @@
+{
+    "mainRaster" :
+    {
+        "layer_name" : "rgb_2015",
+        "layer_url" : "/media/bumblebee/Data/Luchtfoto_2015/DKLN2015_RGB_ECW_25cm.ecw"
+    },
+    "tile_width" : 10000,
+    "tile_height" : 10000,
+    "area" :
+    {
+        "description" : "Heerlen RD 2500mx2500m (Yu)",
+        "epsg" : 4326,
+        "top_left" :
+        {
+            "lat" : 52.1667,
+            "lon" : 5.645
+        },
+        "bottom_right" :
+        {
+            "lat" : 52.187,
+            "lon" : 6.1212
+        }
+    },
+    "steps" : [
+        {
+            "name" : "Step 1: Produces Tiles for Map",
+            "type" : "TileProducerStep",
+	    "tile_width" : 10000,
+	    "tile_height" : 10000,
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'"
+        },
+        {
+            "name" : "Step 4a: Download RGB tiles for 2016",
+            "type" : "TileDownloadStep",
+            "layer_name" : "rgb_2015",
+            "layer_url" : "/media/bumblebee/Data/Luchtfoto_2015/DKLN2015_RGB_ECW_25cm.ecw",
+            "year" : 2015
+        },
+        {
+            "name" : "Step 6: Write Files To Disk",
+            "type" : "TileWriterStep",
+            "driver_name" : "GTiff",
+            "file_extension" : "tiff",
+	    "driver_options" : ["COMPRESS=JPEG"],
+            "output_directory" : "/media/bumblebee/4TB_disk1/Data/TDJG/Tiles/Heerlen-Yu-2015-20190905/",
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'"
+        }
+    ]
+}

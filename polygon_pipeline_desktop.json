@@ -4,27 +4,27 @@
         "layer_name" : "rgb_2016",
         "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
     },
-    "tile_width" : 256,
-    "tile_height" : 256,
     "area" :
     {
-        "description" : "Heerlen",
-        "epsg" : "epsg:4326",
+        "description" : "Stukje Zuid Limburg",
+        "epsg" : 28992,
         "top_left" :
         {
-            "lat" : 5,
-            "lon" : 55
+            "lat" : 338400,
+            "lon" : 172700
         },
         "bottom_right" :
         {
-            "lat" : 5,
-            "lon" : 55
+            "lat" : 339400,
+            "lon" : 173700
         }
     },
     "steps" : [
         {
             "name" : "Step 1: Produces Tiles for Map",
-            "type" : "TileProducerStep"
+            "type" : "TileProducerStep",
+	    "tile_width" : 1024,
+	    "tile_height" : 1024
         },
         {
             "name" : "Step 2a: Add BAG House Polygons",
@@ -42,36 +42,29 @@
         },
         {
             "name" : "Step 3: Filter Tiles to those with polygons",
-            "type" : "TileFilterStep"
+            "type" : "TileFilterStep",
+	    "layer_name" : "polygons"
         },
         {
             "name" : "Step 4a: Download RGB tiles for 2016",
             "type" : "TileDownloadStep",
             "layer_name" : "rgb_2016",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857"
-        },
-        {
-            "name" : "Step 4b: Download IR tiles for 2016",
-            "type" : "TileDownloadStep",
-            "layer_name" : "ir_2016",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25IR,tilematrixset=EPSG:3857"
-        },
-        {
-            "name" : "Step 4c: Download RGB tiles for 2017",
-            "type" : "TileDownloadStep",
-            "layer_name" : "rgb_2017",
-            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2017_ortho25,tilematrixset=EPSG:3857"
+            "layer_url" : "WMTS:https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/1.0.0/WMTSCapabilities.xml,layer=2016_ortho25,tilematrixset=EPSG:3857",
+	    "year" : 2016
         },
         {
             "name" : "Step 5: Mask tiles with polygon layer",
             "type" : "TileGpuTransferStep",
+	    "tile_width" : 1024,
+	    "tile_height" : 1024,
             "masking_layer_name" : "polygons"
         },
         {
             "name" : "Step 6: Write Files To Disk",
             "type" : "TileWriterStep",
             "file_type" : "GTiff",
-            "output_directory" : "/media/tim/Data/Work/CBS/Heerlen/"
+	    "file_extension" : "tiff",
+            "output_directory" : "/media/bumblebee/4TB_disk1/Data/TDJG/Tiles/Heerlen_tmp/"
         }
     ]
 }

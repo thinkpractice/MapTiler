@@ -1,0 +1,90 @@
+{
+    "mainRaster" :
+    {
+        "layer_name" : "rgb_2016",
+        "layer_url" : "/media/bumblebee/4TB_disk1/Data/TDJG/2016_totaalmozaiek_RGB_lrl.ecw"
+    },
+    "tile_width" : 75,
+    "tile_height" : 75,
+    "area" :
+    {
+        "description" : "Heerlen75x75_2013-2015",
+        "epsg" : "epsg:4326",
+        "top_left" :
+        {
+            "lat" : 50.9342223,
+            "lon" : 5.9163049
+        },
+        "bottom_right" :
+        {
+            "lat" : 50.8184032,
+            "lon" : 6.0263794
+        }
+    },
+    "steps" : [
+        {
+            "name" : "Step 1: Produces Tiles for Map",
+            "type" : "TileProducerStep",
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'"
+        },
+        {
+            "name" : "Step 2a: Add BAG House Polygons",
+            "type" : "AddMetadataStep",
+            "layer_name" : "bagactueel.pand",
+            "layer_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "persistence_layer_name" : "tile_buildings"
+        },
+        {
+            "name" : "Step 2b: Add BAG House Addresses",
+            "type" : "AddMetadataStep",
+            "layer_name" : "bagactueel.adres_full",
+            "layer_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "persistence_layer_name" : "tile_addresses"
+        },
+        {
+            "name" : "Step 2c: Add Solar Panel Addresses",
+            "type" : "AddMetadataStep",
+            "layer_name" : "pv_2017_nl",
+            "layer_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "layer_index" : -1,
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'",
+            "persistence_layer_name" : "tile_pv"
+        },
+        {
+            "name" : "Step 3: Filter Tiles to those with polygons",
+            "type" : "TileFilterStep",
+            "layer_name" : "bagactueel.pand"
+        },        
+        {
+            "name" : "Step 4c: Download RGB tiles for 2014",
+            "type" : "TileDownloadStep",
+            "layer_name" : "rgb_2014",
+            "layer_url" : "/media/bumblebee/Data/Luchtfoto_2014/Totaalmozaieken/2014_totaalmozaiek_RGB_lrl.ecw",
+            "year" : 2014
+        },
+        {
+            "name" : "Step 4d: Download IR tiles for 2014",
+            "type" : "TileDownloadStep",
+            "layer_name" : "ir_2014",
+            "layer_url" : "/media/bumblebee/Data/Luchtfoto_2014/Totaalmozaieken/2014_totaalmozaiek_CIR_lrl.ecw",
+            "year" : 2014
+        },	  
+        {
+            "name" : "Step 5: Mask tiles with polygon layer",
+            "type" : "TileGpuTransferStep",
+            "masking_layer_name" : "bagactueel.pand"
+        },
+        {
+            "name" : "Step 6: Write Files To Disk",
+            "type" : "TileWriterStep",
+            "driver_name" : "GTiff",
+            "file_extension" : "tiff",
+            "output_directory" : "/media/bumblebee/4TB_disk1/Data/TDJG/Tiles/Heerlen75x75-2014/",
+            "persistence_url" : "PG:dbname='postgres' host='localhost' port='5432' user='postgres' password='deepsolaris'"
+        }
+    ]
+}

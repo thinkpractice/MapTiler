@@ -21,9 +21,9 @@ TileProducerStep::TileProducerStep(std::shared_ptr<GeoMap> map, const Rect& rect
                     _map(map),
                     _area(areaToProcess),
                     _rectToProcess(rectToProcess),
+                    _persistenceUrl(persistenceUrl),
                     _tileWidth(tileWidth),
                     _tileHeight(tileHeight),
-                    _persistenceUrl(persistenceUrl),
                     _createNewTilesIfAlreadyAvailable(createNewTilesIfAlreadyAvailable)
 {
 }
