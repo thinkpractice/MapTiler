@@ -20,6 +20,9 @@ WORKDIR /build
 RUN cd /build && \
     git clone https://gitlab.com/CBDS/MapTiler.git
 
-RUN cd /build/MapTiler && \
-    cmake . && \
-    make .
+RUN mkdir /build/MapTiler/build && \
+    cd /build/MapTiler/build && \
+    cmake ..
+RUN cd /build/MapTiler/build && make clean && make
+
+
