@@ -14,3 +14,12 @@ RUN apt update && \
         libglfw3-dev \
         libgdal-dev \
         qt514-meta-full \
+        git
+
+WORKDIR /build
+RUN cd /build && \
+    git clone https://gitlab.com/CBDS/MapTiler.git
+
+RUN cd /build/MapTiler && \
+    cmake . && \
+    make .
