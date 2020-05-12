@@ -32,7 +32,7 @@ RUN apt-get update -y \
        liblcms2-2 libpcre3-dev libcrypto++-dev libdap-dev libfyba-dev \
        libkml-dev libmysqlclient-dev libogdi3.2-dev \
        libcfitsio-dev openjdk-8-jdk libzstd1-dev \
-       libpq-dev libssl-dev libboost-dev \
+       libpq-dev libssl-dev libboost-dev libtiff-dev \
        autoconf automake bash-completion libarmadillo-dev
 
 ARG PROJ_DATUMGRID_LATEST_LAST_MODIFIED
@@ -44,21 +44,21 @@ RUN \
     && rm -f *.zip
 
 # Build likbkea
-ARG KEA_VERSION=c6d36f3db5e4
-RUN wget -q https://bitbucket.org/chchrsc/kealib/get/${KEA_VERSION}.zip \
-    && unzip -q ${KEA_VERSION}.zip \
-    && rm -f ${KEA_VERSION}.zip \
-    && cd chchrsc-kealib-${KEA_VERSION}/trunk \
-    && cmake . -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=/usr -DHDF5_INCLUDE_DIR=/usr/include/hdf5/serial \
-        -DHDF5_LIB_PATH=/usr/lib/x86_64-linux-gnu/hdf5/serial -DLIBKEA_WITH_GDAL=OFF \
-    && make -j$(nproc) \
-    && make install DESTDIR="/build_thirdparty" \
-    && make install \
-    && cd ../.. \
-    && rm -rf chchrsc-kealib-${KEA_VERSION} \
-    && for i in /build_thirdparty/usr/lib/*; do strip -s $i 2>/dev/null || /bin/true; done \
-    && for i in /build_thirdparty/usr/bin/*; do strip -s $i 2>/dev/null || /bin/true; done
+#ARG KEA_VERSION=kealib-1.4.13
+#RUN wget -q https://github.com/ubarsc/kealib/releases/download/${KEA_VERSION}/${KEA_VERSION}.zip \
+#    && unzip -q ${KEA_VERSION}.zip \
+#    && rm -f ${KEA_VERSION}.zip \
+#    && cd chchrsc-kealib-${KEA_VERSION}/trunk \
+#    && cmake . -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release \
+#        -DCMAKE_INSTALL_PREFIX=/usr -DHDF5_INCLUDE_DIR=/usr/include/hdf5/serial \
+#        -DHDF5_LIB_PATH=/usr/lib/x86_64-linux-gnu/hdf5/serial -DLIBKEA_WITH_GDAL=OFF \
+#    && make -j$(nproc) \
+#    && make install DESTDIR="/build_thirdparty" \
+#    && make install \
+#    && cd ../.. \
+#    && rm -rf chchrsc-kealib-${KEA_VERSION} \
+#    && for i in /build_thirdparty/usr/lib/*; do strip -s $i 2>/dev/null || /bin/true; done \
+#    && for i in /build_thirdparty/usr/bin/*; do strip -s $i 2>/dev/null || /bin/true; done
 
 # Build mongo-c-driver
 ARG MONGO_C_DRIVER_VERSION=1.13.0
@@ -96,7 +96,8 @@ RUN mkdir mongocxx \
     && for i in /build_thirdparty/usr/bin/*; do strip -s $i 2>/dev/null || /bin/true; done
 
 # Build tiledb
-ARG TILEDB_VERSION=1.5.0
+#ARG TILEDB_VERSION=1.5.0
+ARG TILEDB_VERSION=2.0.0
 RUN mkdir tiledb \
     && wget -q https://github.com/TileDB-Inc/TileDB/archive/${TILEDB_VERSION}.tar.gz -O - \
         | tar xz -C tiledb --strip-components=1 \
@@ -225,7 +226,8 @@ RUN if test "${GDAL_VERSION}" = "master"; then \
     --with-hdf5 --with-dods-root=/usr --with-sosi --with-mysql \
     --with-libtiff=internal --with-rename-internal-libtiff-symbols \
     --with-geotiff=internal --with-rename-internal-libgeotiff-symbols \
-    --with-kea=/usr/bin/kea-config --with-mongocxxv3 --with-tiledb \
+    #--with-kea=/usr/bin/kea-config 
+    --with-mongocxxv3 --with-tiledb \
     --with-ecw=/usr/local/hexagon \
     --with-crypto \
     && make -j$(nproc) \
@@ -304,20 +306,19 @@ RUN mkdir /usr/local/hexagon \
     && ldconfig /usr/local/hexagon \
     && ldconfig /usr/local/lib
 
-COPY --from=builder  /build_thirdparty/usr/ /usr/
+COPY --from=gdal_builder  /build_thirdparty/usr/ /usr/
 
-COPY --from=builder  /build${PROJ_INSTALL_PREFIX}/share/proj/ ${PROJ_INSTALL_PREFIX}/share/proj/
-COPY --from=builder  /build${PROJ_INSTALL_PREFIX}/include/ ${PROJ_INSTALL_PREFIX}/include/
-COPY --from=builder  /build${PROJ_INSTALL_PREFIX}/bin/ ${PROJ_INSTALL_PREFIX}/bin/
-COPY --from=builder  /build${PROJ_INSTALL_PREFIX}/lib/ ${PROJ_INSTALL_PREFIX}/lib/
+COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/share/proj/ ${PROJ_INSTALL_PREFIX}/share/proj/
+COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/include/ ${PROJ_INSTALL_PREFIX}/include/
+COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/bin/ ${PROJ_INSTALL_PREFIX}/bin/
+COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/lib/ ${PROJ_INSTALL_PREFIX}/lib/
 
-COPY --from=builder  /build/usr/share/gdal/ /usr/share/gdal/
-COPY --from=builder  /build/usr/include/ /usr/include/
-COPY --from=builder  /build_gdal_python/usr/ /usr/
-COPY --from=builder  /build_gdal_version_changing/usr/ /usr/
+COPY --from=gdal_builder  /build/usr/share/gdal/ /usr/share/gdal/
+COPY --from=gdal_builder  /build/usr/include/ /usr/include/
+COPY --from=gdal_builder  /build_gdal_python/usr/ /usr/
+COPY --from=gdal_builder  /build_gdal_version_changing/usr/ /usr/
 
 RUN ldconfig
-
 
 RUN apt update && \
     apt install -y software-properties-common && \
@@ -325,6 +326,7 @@ RUN apt update && \
     apt update && \
     apt upgrade -y && \
     apt install -y \
+	build-essential \
         cmake \
         libpng-dev \
         uuid \
@@ -332,7 +334,6 @@ RUN apt update && \
         libglew-dev \
         libglu-dev \
         libglfw3-dev \
-        libgdal-dev \
         qt514-meta-full \
         git
 
