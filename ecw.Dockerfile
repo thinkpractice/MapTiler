@@ -246,9 +246,10 @@ RUN if test "${GDAL_VERSION}" = "master"; then \
     && mkdir -p /build_gdal_python/usr/lib \
     && mkdir -p /build_gdal_python/usr/bin \
     && mkdir -p /build_gdal_version_changing/usr/include \
+    && mkdir -p /build_gdal_version_changing/usr/include/gdal \
     && mv /build/usr/lib/python3            /build_gdal_python/usr/lib \
     && mv /build/usr/lib                    /build_gdal_version_changing/usr \
-    && mv /build/usr/include/gdal_version.h /build_gdal_version_changing/usr/include \
+    && mv /build/usr/include/gdal_version.h /build_gdal_version_changing/usr/include/gdal \
     && mv /build/usr/bin/*.py               /build_gdal_python/usr/bin \
     && mv /build/usr/bin                    /build_gdal_version_changing/usr \
     && for i in /build_gdal_version_changing/usr/lib/*; do strip -s $i 2>/dev/null || /bin/true; done \
@@ -296,7 +297,7 @@ RUN \
     && rm -f *.zip
 
 # Copy ERDAS driver into runner image
-RUN mkdir ./erdas/
+RUN mkdir ./erdas/ && mkdir /usr/include/gdal
 COPY erdas/ERDAS-ECW_JPEG_2000_SDK-5.4.0 erdas/
 RUN mkdir /usr/local/hexagon \
     && cp -r erdas/Desktop_Read-Only/* /usr/local/hexagon \
@@ -314,7 +315,7 @@ COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/bin/ ${PROJ_INSTALL_PREFI
 COPY --from=gdal_builder  /build${PROJ_INSTALL_PREFIX}/lib/ ${PROJ_INSTALL_PREFIX}/lib/
 
 COPY --from=gdal_builder  /build/usr/share/gdal/ /usr/share/gdal/
-COPY --from=gdal_builder  /build/usr/include/ /usr/include/
+COPY --from=gdal_builder  /build/usr/include/ /usr/include/gdal/
 COPY --from=gdal_builder  /build_gdal_python/usr/ /usr/
 COPY --from=gdal_builder  /build_gdal_version_changing/usr/ /usr/
 
@@ -329,7 +330,7 @@ RUN apt update && \
 	build-essential \
         cmake \
         libpng-dev \
-        uuid \
+        uuid-dev \
         libgl-dev \
         libglew-dev \
         libglu-dev \
